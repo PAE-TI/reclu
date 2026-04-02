@@ -135,7 +135,7 @@ export default function HomePage() {
             </div>
 
             <div className="reclu-fade-up" style={{ animationDelay: "100ms" }}>
-              <div className="reclu-gradient rounded-3xl p-[1px] reclu-float">
+              <div className="reclu-gradient rounded-3xl p-[1px] reclu-float shadow-[0_28px_70px_rgba(15,23,42,.25)]">
                 <div className="rounded-3xl bg-slate-950 p-6 text-slate-100">
                   <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">Busqueda en curso</p>
                   <h2 className="mt-2 font-mono text-2xl font-semibold">Product Manager Senior</h2>
@@ -152,6 +152,24 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p className="mt-4 text-xs text-slate-400">Modulos aplicados: DISC · EQ · DNA · TEC</p>
+
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs uppercase tracking-[0.12em] text-cyan-300">Compatibilidad</p>
+                      <p className="text-xs text-slate-300">Ultimos 7 dias</p>
+                    </div>
+                    <div className="mt-3 flex h-20 items-end gap-2">
+                      {[32, 48, 41, 63, 58, 76, 92].map((value, index) => (
+                        <div className="flex-1" key={`${value}-${index}`}>
+                          <div
+                            className="reclu-bar-anim rounded-md bg-gradient-to-t from-cyan-400 to-blue-500"
+                            style={{ height: `${value}%`, animationDelay: `${index * 90}ms` }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="reclu-line-anim mt-3 h-[2px] w-full rounded-full bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,13 +191,25 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white/65 py-14 backdrop-blur-sm">
+        <section className="border-y border-slate-200 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-14 text-white">
           <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
             <h2 className="font-mono text-3xl font-semibold">El Problema</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-600">
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-200">
               Contratar sin datos cuesta caro. El 46% de las contrataciones fallan en los
               primeros 18 meses y las entrevistas tradicionales tienen baja efectividad predictiva.
             </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {[
+                { kpi: "46%", label: "Contrataciones fallidas" },
+                { kpi: "2x", label: "Costo por reemplazo" },
+                { kpi: "18m", label: "Impacto operativo" },
+              ].map((item) => (
+                <article className="rounded-xl border border-white/15 bg-white/5 p-4" key={item.label}>
+                  <p className="font-mono text-2xl font-semibold text-cyan-300">{item.kpi}</p>
+                  <p className="mt-1 text-xs text-slate-200">{item.label}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -202,7 +232,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white/65 py-14 backdrop-blur-sm" id="proceso">
+        <section className="border-y border-slate-200 bg-white py-14" id="proceso">
           <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
             <h2 className="font-mono text-3xl font-semibold">Proceso Simple</h2>
             <p className="mt-2 text-sm text-slate-600">Encuentra talento en 3 pasos.</p>
@@ -254,7 +284,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white/65 py-14 backdrop-blur-sm" id="faq">
+        <section className="border-y border-slate-200 bg-slate-100/90 py-14" id="faq">
           <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
             <h2 className="font-mono text-3xl font-semibold">Preguntas Frecuentes</h2>
             <div className="mt-6 space-y-3">
@@ -311,4 +341,3 @@ export default function HomePage() {
     </div>
   );
 }
-

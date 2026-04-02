@@ -159,6 +159,32 @@ a {
   }
 }
 
+@keyframes recluBarGrow {
+  from {
+    transform: scaleY(0.25);
+    opacity: 0.6;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes recluPulseLine {
+  0% {
+    opacity: 0.35;
+    transform: translateX(-8px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateX(8px);
+  }
+}
+
 .reclu-fade-up {
   animation: recluFadeUp 0.7s ease both;
 }
@@ -176,4 +202,13 @@ a {
     linear-gradient(rgba(64, 99, 170, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(64, 99, 170, 0.07) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+.reclu-bar-anim {
+  transform-origin: bottom;
+  animation: recluBarGrow 1.05s ease both;
+}
+
+.reclu-line-anim {
+  animation: recluPulseLine 3.2s ease-in-out infinite;
 }
