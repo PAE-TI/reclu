@@ -670,6 +670,7 @@ Estas decisiones quedan establecidas desde este momento y deben respetarse duran
 - el codigo fuente de `Reclu` vivira en un repositorio `git`;
 - el despliegue principal se realizara con `Vercel`;
 - la base de datos estara en `DigitalOcean`;
+- el despliegue publico principal quedara asociado al subdominio `reclu.pasosalexito.com`;
 - este documento debe asumir esa arquitectura como base operativa del proyecto.
 
 ### Recomendacion para la replica
@@ -686,6 +687,7 @@ Estas decisiones quedan establecidas desde este momento y deben respetarse duran
 ### Implicaciones tecnicas de estas decisiones
 
 - la arquitectura debe ser compatible con despliegue serverless/hibrido en `Vercel`;
+- el proyecto debe quedar preparado para desplegarse en `reclu.pasosalexito.com` desde `Vercel`;
 - las variables de entorno deben definirse pensando en entornos `local`, `preview` y `production`;
 - la conexion a `PostgreSQL` debe quedar lista para uso remoto desde `Vercel`;
 - la estrategia de migraciones debe contemplar una base persistente en `DigitalOcean`;
@@ -698,6 +700,72 @@ Estas decisiones quedan establecidas desde este momento y deben respetarse duran
 ### Restriccion actual
 
 Aunque estas decisiones ya estan definidas, **todavia no se inicia el desarrollo**. Por ahora solo deben quedar documentadas y asumidas como base del proyecto.
+
+---
+
+## 14.1 Infraestructura y despliegue
+
+### Vercel
+
+La plataforma `Reclu` se desplegara en `Vercel` y debe contemplar desde el inicio:
+
+- entorno `production`;
+- entornos `preview` por rama o pull request;
+- dominio productivo en `reclu.pasosalexito.com`;
+- configuracion centralizada de variables de entorno;
+- compatibilidad total con despliegues incrementales sin romper la base del producto original.
+
+### DigitalOcean PostgreSQL
+
+La base de datos de `Reclu` vivira dentro de la infraestructura existente de `DigitalOcean`, pero con una regla estricta:
+
+**`Reclu` debe usar una base de datos propia e independiente, sin borrar, sobrescribir ni alterar las bases de datos actuales del cluster existente.**
+
+### Regla operativa para la base de datos
+
+- no trabajar contra una base compartida del producto sin aislamiento;
+- no borrar ninguna base existente;
+- no renombrar activos actuales;
+- crear una base especifica para `Reclu`;
+- todas las migraciones futuras de `Reclu` deben ejecutarse solo sobre esa base dedicada.
+
+### Base inicial detectada
+
+Actualmente existe un acceso a un cluster PostgreSQL en `DigitalOcean` con:
+
+- host remoto configurado;
+- puerto `25060`;
+- SSL obligatorio;
+- base actual de referencia `defaultdb`.
+
+### Decision para el proyecto
+
+Antes de iniciar implementacion real, debe crearse una base dedicada, por ejemplo:
+
+- `reclu`
+
+o en su defecto un nombre equivalente claramente aislado del resto del cluster.
+
+### Politica de secretos
+
+Las credenciales reales de acceso:
+
+- no deben escribirse en este repositorio en texto plano;
+- no deben guardarse dentro de documentacion versionada;
+- deben almacenarse solo como variables de entorno en `Vercel` y en archivos locales no versionados;
+- deben quedar referenciadas en la documentacion solo mediante placeholders.
+
+### Formato esperado de variables de entorno
+
+Ejemplo documental:
+
+```env
+DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:25060/reclu?sslmode=require
+```
+
+### Nota importante
+
+La conexion actualmente entregada apunta a una base existente dentro de un cluster que contiene otras bases. Por lo tanto, cualquier paso futuro de conexion, migracion o provisionamiento debe ejecutarse con extremo cuidado para no afectar otros proyectos ya alojados alli.
 
 ---
 
@@ -1046,3 +1114,42 @@ Cada vez que avancemos en `Reclu`, debemos volver a este documento y verificar:
 - que las decisiones nuevas quedan documentadas aqui.
 
 **Reclu debe crecer sobre la base del sitio original, no separarse de ella.**
+
+---
+
+## 26. Bitacora de avance
+
+### Etapa 0 - Fundacion tecnica
+
+Estado: `Completada`
+
+Entregables:
+
+- proyecto inicial en `Next.js` + `TypeScript` + `Tailwind`;
+- estructura base del repositorio para continuidad por etapas;
+- archivo `.env.example` con placeholders seguros;
+- lineamientos de infraestructura reflejados en este documento.
+
+### Etapa 1 - Shell funcional y mapa de rutas
+
+Estado: `Completada`
+
+Entregables:
+
+- layout principal tipo SaaS (sidebar + topbar);
+- navegacion inicial alineada al producto original;
+- rutas base del portal autenticado;
+- paginas base para dashboard, campanas, analytics, modulos, admin, perfil y settings;
+- landing y pantallas de auth base;
+- build y lint exitosos en esta etapa.
+
+### Siguiente etapa activa
+
+`Etapa 2 - Core empresarial`
+
+Objetivo inmediato:
+
+- autenticacion real;
+- modelo de organizaciones y usuarios;
+- conexion a base de datos dedicada `reclu` en DigitalOcean;
+- primeras entidades persistentes (campanas, candidatos, creditos).
