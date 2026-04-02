@@ -207,8 +207,8 @@ function ModuleIcon({ type }: { type: string }) {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#f7f8fe] text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 md:px-6">
+      <header className="sticky top-0 z-40 border-b border-white/60 bg-white/88 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-8">
             <Link className="flex items-center gap-2" href="/">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-500 text-xs font-bold text-white">
@@ -217,16 +217,16 @@ export default function HomePage() {
               <span className="text-sm font-semibold text-slate-900">Reclu</span>
             </Link>
             <nav className="hidden items-center gap-6 text-sm font-medium text-slate-500 md:flex">
-              <a href="#modulos">Evaluaciones</a>
-              <a href="#problema">Campanas</a>
-              <a href="#beneficios">Beneficios</a>
-              <a href="#faq">FAQ</a>
+              <a className="transition-colors hover:text-slate-900" href="#modulos">Evaluaciones</a>
+              <a className="transition-colors hover:text-slate-900" href="#problema">Campanas</a>
+              <a className="transition-colors hover:text-slate-900" href="#beneficios">Beneficios</a>
+              <a className="transition-colors hover:text-slate-900" href="#faq">FAQ</a>
             </nav>
           </div>
 
           <div className="flex items-center gap-2 text-sm">
             <span className="hidden text-slate-400 sm:inline-flex">ES</span>
-            <Link className="rounded-lg px-3 py-2 font-medium text-slate-600" href="/auth/signin">
+            <Link className="rounded-lg px-3 py-2 font-medium text-slate-600 transition-colors hover:text-slate-900" href="/auth/signin">
               Iniciar Sesion
             </Link>
             <Link
@@ -240,8 +240,10 @@ export default function HomePage() {
       </header>
 
       <main>
-        <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,.18),_transparent_26%),linear-gradient(120deg,_#132042_0%,_#1b2458_42%,_#4f1d95_100%)]">
+        <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,.22),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,.18),_transparent_24%),linear-gradient(120deg,_#132042_0%,_#1b2458_42%,_#4f1d95_100%)]">
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.03)_1px,transparent_1px)] bg-[size:34px_34px]" />
+          <div className="pointer-events-none absolute -left-12 top-20 h-40 w-40 rounded-full bg-cyan-400/20 blur-3xl reclu-glow-shift" />
+          <div className="pointer-events-none absolute bottom-10 right-0 h-52 w-52 rounded-full bg-fuchsia-500/18 blur-3xl reclu-glow-shift" />
           <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 pb-16 pt-8 md:px-6 lg:grid-cols-[1fr_420px] lg:items-center lg:pb-20 lg:pt-14">
             <div className="reclu-fade-up text-white">
               <span className="inline-flex rounded-full border border-cyan-400/30 bg-white/10 px-3 py-1 text-[11px] font-medium text-cyan-100">
@@ -277,7 +279,7 @@ export default function HomePage() {
               <div className="mt-7 grid max-w-md grid-cols-3 gap-3">
                 {metrics.map((item, index) => (
                   <div
-                    className="rounded-2xl border border-white/10 bg-white/7 px-4 py-3 text-center backdrop-blur-sm reclu-fade-up"
+                    className="rounded-2xl border border-white/12 bg-white/9 px-4 py-3 text-center shadow-[0_18px_32px_rgba(6,11,30,.18)] backdrop-blur-sm reclu-fade-up"
                     key={item.label}
                     style={{ animationDelay: `${index * 90}ms` }}
                   >
@@ -383,16 +385,16 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fff7fa_44%,#f4f8ff_100%)] py-18" id="problema">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,_rgba(244,63,94,.12),_transparent_55%)]" />
+        <section className="relative overflow-hidden bg-[linear-gradient(135deg,#201432_0%,#33133b_38%,#0f2743_100%)] py-20 text-white" id="problema">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(244,63,94,.18),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,.18),_transparent_28%)]" />
           <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
             <span className="inline-flex rounded-full border border-rose-200 bg-white px-3 py-1 text-[11px] font-semibold text-rose-500 shadow-[0_10px_24px_rgba(244,63,94,.08)]">
               El Problema
             </span>
-            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900">
-              Contratar sin datos <span className="text-rose-500">cuesta caro</span>
+            <h2 className="mt-4 font-mono text-4xl font-semibold text-white sm:text-5xl">
+              Contratar sin datos <span className="text-rose-300">cuesta caro</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-200">
               El 46% de las contrataciones fallan en sus primeros 18 meses. Las entrevistas
               tradicionales tienen solo 14% de efectividad predictiva.
             </p>
@@ -404,13 +406,13 @@ export default function HomePage() {
                 { value: "18m", label: "Impacto promedio", tone: "from-sky-500 to-cyan-500" },
               ].map((stat, index) => (
                 <article
-                  className="reclu-fade-up rounded-2xl border border-white bg-white/85 p-4 text-left shadow-[0_20px_40px_rgba(15,23,42,.08)] backdrop-blur-sm"
+                  className="reclu-fade-up rounded-2xl border border-white/10 bg-white/10 p-4 text-left shadow-[0_20px_40px_rgba(0,0,0,.18)] backdrop-blur-md"
                   key={stat.label}
                   style={{ animationDelay: `${index * 90}ms` }}
                 >
                   <div className={`h-1.5 w-14 rounded-full bg-gradient-to-r ${stat.tone}`} />
-                  <p className="mt-4 font-mono text-3xl font-semibold text-slate-900">{stat.value}</p>
-                  <p className="mt-1 text-xs text-slate-500">{stat.label}</p>
+                  <p className="mt-4 font-mono text-3xl font-semibold text-white">{stat.value}</p>
+                  <p className="mt-1 text-xs text-slate-200">{stat.label}</p>
                 </article>
               ))}
             </div>
@@ -486,15 +488,16 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-[linear-gradient(180deg,#f5f7ff_0%,#edf2ff_100%)] py-18" id="modulos">
-          <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
-            <span className="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-500">
+        <section className="relative overflow-hidden bg-[linear-gradient(180deg,#eef4ff_0%,#dbe8ff_100%)] py-20" id="modulos">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,.10),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,.12),_transparent_26%)]" />
+          <div className="mx-auto w-full max-w-6xl rounded-[2rem] border border-white/70 bg-white/55 px-4 py-12 text-center shadow-[0_30px_70px_rgba(37,99,235,.10)] backdrop-blur-sm md:px-8">
+            <span className="inline-flex rounded-full border border-indigo-200 bg-white px-3 py-1 text-[11px] font-semibold text-indigo-500 shadow-[0_10px_24px_rgba(99,102,241,.10)]">
               8 modulos de Analisis
             </span>
-            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900">
+            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900 sm:text-5xl">
               Analisis <span className="text-indigo-500">cientifico integral</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
               Cada modulo evalua una dimension clave del candidato. Juntos, construyen un perfil
               360 que predice el exito laboral.
             </p>
@@ -502,7 +505,7 @@ export default function HomePage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {modules.map((moduleItem, index) => (
                 <article
-                  className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-[0_18px_34px_rgba(15,23,42,.07)] reclu-fade-up"
+                  className="rounded-2xl border border-white/85 bg-white/92 p-5 text-left shadow-[0_20px_38px_rgba(37,99,235,.10)] transition-transform duration-300 hover:-translate-y-1 reclu-fade-up"
                   key={moduleItem.name}
                   style={{ animationDelay: `${index * 70}ms` }}
                 >
@@ -523,7 +526,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-white py-16" id="faq">
+        <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] py-18" id="faq">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,.10),_transparent_50%)]" />
           <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
             <div className="mb-12 text-center">
               <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold text-slate-500">
@@ -541,7 +545,7 @@ export default function HomePage() {
             <div className="mb-12 grid gap-4">
               {faqs.map((faq, index) => (
                 <details
-                  className="group reclu-fade-up overflow-hidden rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-5 shadow-[0_18px_36px_rgba(15,23,42,.06)]"
+                  className="group reclu-fade-up overflow-hidden rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-5 shadow-[0_18px_36px_rgba(15,23,42,.06)] transition-transform duration-300 hover:-translate-y-0.5"
                   key={faq.question}
                   open={index === 0}
                   style={{ animationDelay: `${index * 80}ms` }}
