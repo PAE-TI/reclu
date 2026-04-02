@@ -22,23 +22,25 @@ export function PortalTopbar() {
     "Reclu";
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="flex h-16 items-center gap-4 px-4 md:px-6">
-        <div className="min-w-0">
-          <p className="truncate text-sm text-slate-500">John Corp</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">
+            John Corp
+          </p>
           <h1 className="truncate font-mono text-lg font-semibold text-slate-900">{title}</h1>
         </div>
-        <div className="hidden flex-1 items-center justify-center xl:flex">
+        <div className="hidden flex-[1.4] items-center justify-center xl:flex">
           <input
-            className="w-full max-w-xl rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none ring-blue-200 transition focus:ring"
+            className="reclu-input max-w-xl"
             placeholder="Buscar candidatos, evaluaciones o acciones... (⌘K)"
             type="text"
           />
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <span className="reclu-pill">ES</span>
-          <span className="reclu-pill">202</span>
-          <span className="reclu-pill">4</span>
+          <span className="reclu-pill hidden sm:inline-flex">ES</span>
+          <span className="reclu-pill">202 creditos</span>
+          <span className="reclu-pill">4 alertas</span>
         </div>
       </div>
       <div className="flex gap-2 overflow-x-auto border-t border-slate-100 px-3 py-2 xl:hidden">

@@ -41,7 +41,9 @@ export default function DashboardPage() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((item) => (
           <article className="reclu-card p-4" key={item.label}>
-            <p className="text-xs font-semibold text-slate-500">{item.label}</p>
+            <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-slate-500">
+              {item.label}
+            </p>
             <p className="mt-2 font-mono text-3xl font-semibold text-slate-900">{item.value}</p>
             <p className="mt-1 text-xs text-slate-500">{item.sub}</p>
           </article>
@@ -56,7 +58,7 @@ export default function DashboardPage() {
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {actions.map((item) => (
               <Link
-                className="rounded-xl border border-slate-200 bg-slate-50 p-4 hover:bg-slate-100"
+                className="reclu-surface p-4 transition hover:translate-y-[-1px] hover:shadow-md"
                 href={item.href}
                 key={item.title}
               >
@@ -102,7 +104,7 @@ export default function DashboardPage() {
               "Johan · ACI · 30 de ene · Expirado",
             ].map((item) => (
               <div
-                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
+                className="reclu-surface px-4 py-3 text-sm text-slate-700"
                 key={item}
               >
                 {item}
@@ -118,7 +120,7 @@ export default function DashboardPage() {
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             {["DISC", "F. Motivadoras", "EQ", "DNA-25", "Acumen", "Valores", "Estres", "Tecnica"].map(
               (item) => (
-                <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-2" key={item}>
+                <div className="reclu-surface px-2 py-2" key={item}>
                   {item}
                 </div>
               ),
@@ -132,4 +134,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

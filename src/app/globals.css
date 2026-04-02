@@ -1,14 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f7fb;
-  --foreground: #132034;
+  --background: #eff3fa;
+  --background-2: #e9eef7;
+  --foreground: #162033;
   --card: #ffffff;
-  --muted: #5e6d81;
-  --border: #d8e1ee;
-  --accent: #1f78ff;
-  --accent-2: #14b8a6;
-  --accent-3: #0f172a;
+  --card-soft: #f7f9fd;
+  --muted: #58667c;
+  --border: #d8e0ef;
+  --accent: #1f63ff;
+  --accent-2: #16b3a3;
+  --accent-3: #09162d;
+  --ring: #86b3ff;
+  --sidebar: #09162d;
+  --sidebar-soft: #112447;
+  --sidebar-border: #18315b;
+  --sidebar-text: #c8d7f2;
+  --sidebar-text-strong: #f2f6ff;
 }
 
 @theme inline {
@@ -23,7 +31,7 @@
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(circle at top left, #f7f9ff 0%, var(--background) 45%, var(--background-2) 100%);
   color: var(--foreground);
   font-family: var(--font-manrope), sans-serif;
 }
@@ -35,26 +43,83 @@ a {
 
 .reclu-grid-bg {
   background-color: #eef3fb;
-  background-image: radial-gradient(#d7e3f7 0.7px, transparent 0.7px);
-  background-size: 18px 18px;
+  background-image:
+    radial-gradient(#d3def5 0.7px, transparent 0.7px),
+    radial-gradient(#d9e5f9 0.4px, transparent 0.4px);
+  background-position: 0 0, 8px 8px;
+  background-size: 18px 18px, 18px 18px;
 }
 
 .reclu-card {
   border: 1px solid var(--border);
-  background: var(--card);
-  border-radius: 1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  border-radius: 1.05rem;
+  box-shadow:
+    0 1px 2px rgba(12, 24, 44, 0.06),
+    0 12px 28px rgba(12, 24, 44, 0.08);
 }
 
 .reclu-gradient {
-  background: linear-gradient(135deg, #1f78ff 0%, #0ea5e9 45%, #14b8a6 100%);
+  background: linear-gradient(130deg, #174fd9 0%, #2563ff 40%, #15b6a6 100%);
 }
 
 .reclu-pill {
-  border: 1px solid #c6d8f5;
-  background: #e9f2ff;
-  color: #1f4a86;
+  border: 1px solid #c4d5fb;
+  background: linear-gradient(180deg, #edf3ff 0%, #e4eeff 100%);
+  color: #234f94;
   border-radius: 999px;
-  padding: 0.2rem 0.6rem;
+  padding: 0.22rem 0.68rem;
   font-size: 0.74rem;
   font-weight: 600;
+}
+
+.reclu-surface {
+  border: 1px solid var(--border);
+  background: var(--card-soft);
+  border-radius: 0.85rem;
+}
+
+.reclu-input {
+  width: 100%;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background: #f8faff;
+  padding: 0.62rem 0.8rem;
+  font-size: 0.88rem;
+  color: #13203a;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.reclu-input:focus {
+  border-color: #95b7ff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent);
+}
+
+.reclu-sidebar {
+  background: linear-gradient(180deg, var(--sidebar) 0%, #0f1f3f 100%);
+  color: var(--sidebar-text);
+}
+
+.reclu-sidebar-link {
+  border: 1px solid transparent;
+  color: var(--sidebar-text);
+}
+
+.reclu-sidebar-link:hover {
+  border-color: var(--sidebar-border);
+  background: color-mix(in srgb, var(--sidebar-soft) 72%, #fff 0%);
+  color: var(--sidebar-text-strong);
+}
+
+.reclu-sidebar-link.active {
+  border-color: #2f57a8;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #21498d 75%, #0f1f3f),
+    color-mix(in srgb, #1a3f7b 82%, #0f1f3f)
+  );
+  color: #f7fbff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }

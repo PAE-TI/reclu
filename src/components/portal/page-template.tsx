@@ -27,7 +27,7 @@ export function PageTemplate({
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {highlights.map((item) => (
-          <article className="reclu-card p-4" key={item}>
+          <article className="reclu-surface p-4" key={item}>
             <p className="text-sm font-semibold text-slate-900">{item}</p>
             <p className="mt-1 text-xs text-slate-500">Indicador clave de esta seccion.</p>
           </article>
