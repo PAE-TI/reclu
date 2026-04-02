@@ -7,20 +7,20 @@ const metrics = [
 ];
 
 const painPoints = [
-  "Procesos manuales y subjetivos",
-  "Decisiones basadas en entrevistas",
-  "Semanas revisando CVs manualmente",
-  "Alta rotacion por malas contrataciones",
-  "Sin metrica de compatibilidad real",
-  "Sesgos inconscientes en entrevistas",
+  "Filtro inicial lento y altamente manual",
+  "Decisiones basadas en intuicion y entrevista",
+  "Semanas consumidas revisando hojas de vida",
+  "Mayor rotacion por contrataciones imprecisas",
+  "Sin una metrica objetiva de compatibilidad",
+  "Sesgos inconscientes durante la evaluacion",
 ];
 
 const benefits = [
-  "Analisis cientifico con 8 modulos",
-  "Ranking automatico de candidatos",
-  "85% de retencion a 2 anos",
-  "Compatibilidad medida con precision",
-  "Evaluacion objetiva y sin sesgos",
+  "Evaluacion cientifica con 8 modulos integrados",
+  "Ranking automatico segun ajuste al cargo",
+  "Hasta 85% de retencion en roles criticos",
+  "Compatibilidad medida con criterios consistentes",
+  "Lectura objetiva y comparativa de perfiles",
 ];
 
 const modules = [
@@ -108,6 +108,56 @@ const faqs = [
     question: "Como se presenta el resultado final al reclutador?",
     answer:
       "La plataforma entrega scores, alertas, fortalezas, compatibilidad con el cargo y comparativos visuales para revisar rapidamente a los mejores perfiles.",
+  },
+  {
+    question: "Que tipo de roles puede evaluar Reclu?",
+    answer:
+      "La plataforma puede adaptarse a procesos administrativos, comerciales, operativos, gerenciales y tambien a perfiles tecnicos con rutas de evaluacion diferenciadas.",
+  },
+  {
+    question: "Las evaluaciones se pueden personalizar por vacante?",
+    answer:
+      "Si. Cada campana puede activar solo los modulos que necesita el cargo, para equilibrar profundidad de analisis y tiempo de respuesta del candidato.",
+  },
+  {
+    question: "Los resultados sirven para comparar varios candidatos a la vez?",
+    answer:
+      "Si. Reclu esta pensada para visualizar comparativos entre candidatos, detectar fortalezas compartidas y evidenciar diferencias criticas de ajuste.",
+  },
+  {
+    question: "Puedo usar la plataforma con procesos masivos?",
+    answer:
+      "Si. El flujo esta preparado para cargas grupales, envio de invitaciones y seguimiento del avance de multiples candidatos dentro de una misma campana.",
+  },
+  {
+    question: "Reclu reemplaza la entrevista humana?",
+    answer:
+      "No. La fortalece. La idea es que llegues a la entrevista con mejor contexto, menos sesgo y preguntas mas enfocadas en validar el ajuste real.",
+  },
+  {
+    question: "Como ayuda Reclu a reducir la rotacion?",
+    answer:
+      "Al medir conducta, motivadores, competencias, inteligencia emocional y capacidad tecnica, la decision final se apoya en evidencia mas completa y menos subjetiva.",
+  },
+  {
+    question: "La experiencia del candidato es mobile friendly?",
+    answer:
+      "Si. El recorrido puede completarse desde desktop o movil, con una interfaz pensada para mantener claridad, continuidad y baja friccion.",
+  },
+  {
+    question: "Se pueden revisar avances parciales por candidato?",
+    answer:
+      "Si. Reclu permite ver estados, porcentaje completado, modulos pendientes y alertas clave antes de que termine toda la ruta de evaluacion.",
+  },
+  {
+    question: "Que diferencia a Reclu de un ATS tradicional?",
+    answer:
+      "Un ATS ordena postulaciones. Reclu profundiza en el ajuste humano y tecnico del perfil para ayudarte a decidir mejor, no solo a administrar candidatos.",
+  },
+  {
+    question: "Los reportes estan pensados para equipos de talento y lideres?",
+    answer:
+      "Si. Los resultados se presentan de forma ejecutiva para RRHH, hiring managers y liderazgo, con hallazgos claros y lectura rapida para decisiones compartidas.",
   },
 ];
 
@@ -456,22 +506,29 @@ export default function HomePage() {
             </div>
 
             <div className="mt-10 grid gap-5 lg:grid-cols-2" id="beneficios">
-              <article className="reclu-fade-up rounded-[1.75rem] border border-rose-200 bg-[linear-gradient(180deg,#fff6f8_0%,#ffeef3_100%)] p-6 text-left shadow-[0_24px_50px_rgba(244,63,94,.10)]">
+              <article className="reclu-fade-up relative overflow-hidden rounded-[1.75rem] border border-rose-200/80 bg-[linear-gradient(180deg,#fff4f7_0%,#ffd9e5_100%)] p-6 text-left shadow-[0_30px_70px_rgba(244,63,94,.18)]">
+                <div className="pointer-events-none absolute right-0 top-0 h-28 w-28 rounded-full bg-rose-300/40 blur-2xl" />
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-[0_14px_24px_rgba(244,63,94,.22)]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 via-pink-500 to-fuchsia-500 text-white shadow-[0_18px_28px_rgba(244,63,94,.28)]">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24">
                       <path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">Seleccion Tradicional</p>
-                    <p className="mt-1 text-xs text-rose-500">Proceso manual y subjetivo</p>
+                    <p className="text-base font-semibold text-slate-900">Seleccion tradicional</p>
+                    <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-rose-600">
+                      Proceso lento, manual y reactivo
+                    </p>
                   </div>
                 </div>
+                <p className="mt-4 max-w-md text-sm leading-7 text-slate-700">
+                  Equipos que avanzan con poca trazabilidad, mucha intuicion y baja capacidad de
+                  comparar candidatos con criterio consistente.
+                </p>
                 <ul className="mt-4 space-y-3">
                   {painPoints.map((item) => (
-                    <li className="flex items-center gap-3 rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm text-slate-600 backdrop-blur-sm" key={item}>
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                    <li className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/82 px-4 py-3 text-sm text-slate-700 backdrop-blur-sm shadow-[0_10px_24px_rgba(244,63,94,.08)]" key={item}>
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-100 text-rose-600">
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
                           <path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                         </svg>
@@ -483,11 +540,12 @@ export default function HomePage() {
               </article>
 
               <article
-                className="reclu-fade-up rounded-[1.75rem] border border-sky-200 bg-[linear-gradient(180deg,#f4fbff_0%,#ebf4ff_100%)] p-6 text-left shadow-[0_24px_50px_rgba(59,130,246,.10)]"
+                className="reclu-fade-up relative overflow-hidden rounded-[1.75rem] border border-cyan-200/80 bg-[linear-gradient(180deg,#edf9ff_0%,#cfeeff_100%)] p-6 text-left shadow-[0_30px_70px_rgba(14,165,233,.18)]"
                 style={{ animationDelay: "120ms" }}
               >
+                <div className="pointer-events-none absolute bottom-0 right-0 h-28 w-28 rounded-full bg-cyan-300/35 blur-2xl" />
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-[0_14px_24px_rgba(59,130,246,.22)]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-500 text-white shadow-[0_18px_28px_rgba(59,130,246,.28)]">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24">
                       <path
                         d="M7 12.5 10.2 16 17 8.5"
@@ -499,14 +557,20 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">Con Reclu</p>
-                    <p className="mt-1 text-xs text-sky-500">Headhunter Tecnologico</p>
+                    <p className="text-base font-semibold text-slate-900">Con Reclu</p>
+                    <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-sky-600">
+                      Decision basada en evidencia
+                    </p>
                   </div>
                 </div>
+                <p className="mt-4 max-w-md text-sm leading-7 text-slate-700">
+                  Un flujo mucho mas claro para priorizar candidatos, medir compatibilidad y
+                  sostener decisiones de seleccion con datos comparables.
+                </p>
                 <ul className="mt-4 space-y-3">
                   {benefits.map((item) => (
-                    <li className="flex items-center gap-3 rounded-2xl border border-white/75 bg-white/75 px-4 py-3 text-sm text-slate-700 backdrop-blur-sm" key={item}>
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-sky-500">
+                    <li className="flex items-center gap-3 rounded-2xl border border-white/85 bg-white/85 px-4 py-3 text-sm text-slate-800 backdrop-blur-sm shadow-[0_10px_24px_rgba(14,165,233,.08)]" key={item}>
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-sky-600">
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
                           <path
                             d="M7 12.5 10.2 16 17 8.5"
