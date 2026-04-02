@@ -473,8 +473,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-[linear-gradient(135deg,#201432_0%,#33133b_38%,#0f2743_100%)] py-20 text-white" id="problema">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(244,63,94,.18),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,.18),_transparent_28%)]" />
+        <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,.22),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,.16),_transparent_24%),linear-gradient(120deg,_#132042_0%,_#1b2458_52%,_#16315d_100%)] py-20 text-white" id="problema">
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.03)_1px,transparent_1px)] bg-[size:34px_34px]" />
+          <div className="pointer-events-none absolute -left-10 top-10 h-40 w-40 rounded-full bg-cyan-400/18 blur-3xl reclu-glow-shift" />
+          <div className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 rounded-full bg-blue-500/16 blur-3xl reclu-glow-shift" />
           <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
             <span className="inline-flex rounded-full border border-rose-200 bg-white px-3 py-1 text-[11px] font-semibold text-rose-500 shadow-[0_10px_24px_rgba(244,63,94,.08)]">
               El Problema
