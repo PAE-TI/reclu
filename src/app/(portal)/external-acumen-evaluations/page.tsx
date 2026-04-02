@@ -1,20 +1,16 @@
-import { PageTemplate } from "@/components/portal/page-template";
+import { ExternalModulePage } from "@/components/portal/external-module-page";
 
 export default function AcumenPage() {
   return (
-    <PageTemplate
-      description="Envio y seguimiento de evaluaciones Acumen (ACI)."
-      highlights={[
-        "Invitaciones externas de Acumen",
-        "Base para analisis de juicio interno/externo",
-        "Integracion planificada con ranking",
-      ]}
-      details={[
-        "Implementar parser de resultados ACI.",
-        "Conectar graficas de claridad y sesgos.",
-      ]}
-      badge="Acumen (ACI)"
-      title="Acumen (ACI)"
+    <ExternalModulePage
+      completed={1}
+      expired={13}
+      manageCount={14}
+      pending={0}
+      sent={14}
+      subtitle="Envia evaluaciones de Capacidad Acumen por correo electronico."
+      title="Evaluaciones Acumen (ACI) Externas"
     />
   );
 }
+

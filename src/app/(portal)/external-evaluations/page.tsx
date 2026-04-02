@@ -1,21 +1,16 @@
-import { PageTemplate } from "@/components/portal/page-template";
+import { ExternalModulePage } from "@/components/portal/external-module-page";
 
 export default function DiscEvaluationsPage() {
   return (
-    <PageTemplate
-      description="Envio de evaluaciones DISC externas y gestion del historial."
-      highlights={[
-        "Formulario de envio por nombre y correo",
-        "Conteo de enviadas/completadas/pendientes/expiradas",
-        "Acciones: ver resultado, PDF, notas, eliminar",
-      ]}
-      details={[
-        "Conectar plantilla de correo real.",
-        "Persistir estado de invitaciones DISC.",
-        "Generar reporte PDF de resultado.",
-      ]}
-      badge="Evaluaciones DISC Externas"
-      title="Evaluaciones DISC externas"
+    <ExternalModulePage
+      completed={8}
+      expired={9}
+      manageCount={17}
+      pending={0}
+      sent={17}
+      subtitle="Envia evaluaciones DISC por correo electronico a candidatos y colaboradores."
+      title="Evaluaciones DISC Externas"
     />
   );
 }
+

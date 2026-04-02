@@ -1,20 +1,16 @@
-import { PageTemplate } from "@/components/portal/page-template";
+import { ExternalModulePage } from "@/components/portal/external-module-page";
 
 export default function ValuesPage() {
   return (
-    <PageTemplate
-      description="Envio y administracion de evaluaciones de valores e integridad."
-      highlights={[
-        "Flujo de evaluacion etica por candidato",
-        "Base para medicion de fit cultural",
-        "Seguimiento de historial y evidencias",
-      ]}
-      details={[
-        "Definir escala de consistencia etica.",
-        "Integrar resultados en score de compatibilidad.",
-      ]}
-      badge="Valores e Integridad"
-      title="Valores e integridad"
+    <ExternalModulePage
+      completed={1}
+      expired={14}
+      manageCount={15}
+      pending={0}
+      sent={15}
+      subtitle="Envia evaluaciones de Valores e Integridad por correo electronico."
+      title="Evaluaciones de Valores e Integridad"
     />
   );
 }
+

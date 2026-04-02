@@ -1,20 +1,16 @@
-import { PageTemplate } from "@/components/portal/page-template";
+import { ExternalModulePage } from "@/components/portal/external-module-page";
 
 export default function StressPage() {
   return (
-    <PageTemplate
-      description="Modulo de estres y resiliencia para identificar riesgo de burnout y bienestar."
-      highlights={[
-        "Invitacion de evaluacion por correo",
-        "Estados y control de enlaces",
-        "Base para recomendaciones de bienestar",
-      ]}
-      details={[
-        "Implementar scoring de estres y resiliencia.",
-        "Agregar alertas para niveles criticos.",
-      ]}
-      badge="Estres y Resiliencia"
-      title="Estres y resiliencia"
+    <ExternalModulePage
+      completed={1}
+      expired={14}
+      manageCount={15}
+      pending={0}
+      sent={15}
+      subtitle="Envia evaluaciones de Estres y Resiliencia por correo electronico."
+      title="Evaluaciones de Estres y Resiliencia"
     />
   );
 }
+

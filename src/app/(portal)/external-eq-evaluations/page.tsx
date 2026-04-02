@@ -1,20 +1,16 @@
-import { PageTemplate } from "@/components/portal/page-template";
+import { ExternalModulePage } from "@/components/portal/external-module-page";
 
 export default function EqPage() {
   return (
-    <PageTemplate
-      description="Envio y gestion de evaluaciones de inteligencia emocional."
-      highlights={[
-        "Formulario de invitacion EQ",
-        "Historial y estados de respuesta",
-        "Base para integracion con analisis individual",
-      ]}
-      details={[
-        "Scoring real por dimension emocional.",
-        "Reporte de competencias emocionales.",
-      ]}
-      badge="Inteligencia Emocional"
-      title="Inteligencia emocional"
+    <ExternalModulePage
+      completed={2}
+      expired={14}
+      manageCount={16}
+      pending={0}
+      sent={16}
+      subtitle="Envia evaluaciones EQ por correo electronico a candidatos y colaboradores."
+      title="Evaluaciones de Inteligencia Emocional"
     />
   );
 }
+
