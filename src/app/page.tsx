@@ -385,6 +385,44 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="relative overflow-hidden bg-[linear-gradient(180deg,#eef4ff_0%,#dbe8ff_100%)] py-20" id="modulos">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,.10),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,.12),_transparent_26%)]" />
+          <div className="mx-auto w-full max-w-6xl rounded-[2rem] border border-white/70 bg-white/55 px-4 py-12 text-center shadow-[0_30px_70px_rgba(37,99,235,.10)] backdrop-blur-sm md:px-8">
+            <span className="inline-flex rounded-full border border-indigo-200 bg-white px-3 py-1 text-[11px] font-semibold text-indigo-500 shadow-[0_10px_24px_rgba(99,102,241,.10)]">
+              8 modulos de Analisis
+            </span>
+            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900 sm:text-5xl">
+              Analisis <span className="text-indigo-500">cientifico integral</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+              Cada modulo evalua una dimension clave del candidato. Juntos, construyen un perfil
+              360 que predice el exito laboral.
+            </p>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {modules.map((moduleItem, index) => (
+                <article
+                  className="rounded-2xl border border-white/85 bg-white/92 p-5 text-left shadow-[0_20px_38px_rgba(37,99,235,.10)] transition-transform duration-300 hover:-translate-y-1 reclu-fade-up"
+                  key={moduleItem.name}
+                  style={{ animationDelay: `${index * 70}ms` }}
+                >
+                  <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border ${moduleItem.tone} shadow-[inset_0_1px_0_rgba(255,255,255,.6)]`}
+                  >
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${moduleItem.iconBg} shadow-[0_10px_20px_rgba(15,23,42,.16)]`}
+                    >
+                      <ModuleIcon type={moduleItem.icon} />
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm font-semibold text-slate-900">{moduleItem.name}</p>
+                  <p className="mt-1 text-xs leading-6 text-slate-500">{moduleItem.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="relative overflow-hidden bg-[linear-gradient(135deg,#201432_0%,#33133b_38%,#0f2743_100%)] py-20 text-white" id="problema">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(244,63,94,.18),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,.18),_transparent_28%)]" />
           <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
@@ -484,44 +522,6 @@ export default function HomePage() {
                   ))}
                 </ul>
               </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="relative overflow-hidden bg-[linear-gradient(180deg,#eef4ff_0%,#dbe8ff_100%)] py-20" id="modulos">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,.10),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,.12),_transparent_26%)]" />
-          <div className="mx-auto w-full max-w-6xl rounded-[2rem] border border-white/70 bg-white/55 px-4 py-12 text-center shadow-[0_30px_70px_rgba(37,99,235,.10)] backdrop-blur-sm md:px-8">
-            <span className="inline-flex rounded-full border border-indigo-200 bg-white px-3 py-1 text-[11px] font-semibold text-indigo-500 shadow-[0_10px_24px_rgba(99,102,241,.10)]">
-              8 modulos de Analisis
-            </span>
-            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900 sm:text-5xl">
-              Analisis <span className="text-indigo-500">cientifico integral</span>
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Cada modulo evalua una dimension clave del candidato. Juntos, construyen un perfil
-              360 que predice el exito laboral.
-            </p>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {modules.map((moduleItem, index) => (
-                <article
-                  className="rounded-2xl border border-white/85 bg-white/92 p-5 text-left shadow-[0_20px_38px_rgba(37,99,235,.10)] transition-transform duration-300 hover:-translate-y-1 reclu-fade-up"
-                  key={moduleItem.name}
-                  style={{ animationDelay: `${index * 70}ms` }}
-                >
-                  <div
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl border ${moduleItem.tone} shadow-[inset_0_1px_0_rgba(255,255,255,.6)]`}
-                  >
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${moduleItem.iconBg} shadow-[0_10px_20px_rgba(15,23,42,.16)]`}
-                    >
-                      <ModuleIcon type={moduleItem.icon} />
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm font-semibold text-slate-900">{moduleItem.name}</p>
-                  <p className="mt-1 text-xs leading-6 text-slate-500">{moduleItem.desc}</p>
-                </article>
-              ))}
             </div>
           </div>
         </section>
