@@ -1,81 +1,76 @@
 import Link from "next/link";
 
+const metrics = [
+  { value: "96%", label: "Precision" },
+  { value: "-70%", label: "Tiempo" },
+  { value: "+85%", label: "Retencion" },
+];
+
+const painPoints = [
+  "Procesos manuales y subjetivos",
+  "Decisiones basadas en entrevistas",
+  "Semanas revisando CVs manualmente",
+  "Alta rotacion por malas contrataciones",
+  "Sin metrica de compatibilidad real",
+  "Sesgos inconscientes en entrevistas",
+];
+
+const benefits = [
+  "Analisis cientifico con 8 modulos",
+  "Ranking automatico de candidatos",
+  "85% de retencion a 2 anos",
+  "Compatibilidad medida con precision",
+  "Evaluacion objetiva y sin sesgos",
+];
+
 const modules = [
-  { name: "DISC", desc: "Estilo conductual y comunicacion" },
-  { name: "Motivadores", desc: "12 fuerzas que impulsan decisiones" },
-  { name: "EQ", desc: "Inteligencia emocional aplicada al trabajo" },
-  { name: "DNA-25", desc: "Competencias clave para desempeno real" },
-  { name: "Acumen", desc: "Claridad de juicio y capacidad analitica" },
-  { name: "Valores", desc: "Alineacion cultural e integridad" },
-  { name: "Estres", desc: "Resiliencia y manejo bajo presion" },
-  { name: "Tecnica", desc: "225+ cargos y 13,700+ preguntas" },
+  { name: "DISC", desc: "Estilo conductual y comunicacion", tone: "border-blue-200 bg-blue-50" },
+  {
+    name: "Motivadores",
+    desc: "12 fuerzas que impulsan decisiones",
+    tone: "border-violet-200 bg-violet-50",
+  },
+  { name: "EQ", desc: "Inteligencia emocional", tone: "border-rose-200 bg-rose-50" },
+  { name: "DNA-25", desc: "25 competencias medibles", tone: "border-emerald-200 bg-emerald-50" },
+  { name: "Acumen", desc: "Claridad en toma de decisiones", tone: "border-amber-200 bg-amber-50" },
+  { name: "Valores", desc: "Alineacion cultural", tone: "border-fuchsia-200 bg-fuchsia-50" },
+  { name: "Estres", desc: "Manejo bajo presion", tone: "border-orange-200 bg-orange-50" },
+  { name: "Tecnica", desc: "+225 cargos · 13,700+ preguntas", tone: "border-cyan-200 bg-cyan-50" },
 ];
 
-const featureCards = [
-  {
-    title: "Ranking inteligente",
-    text: "Priorizacion automatica de candidatos por compatibilidad global.",
-  },
-  {
-    title: "Perfil 360",
-    text: "Integracion psicometrica y tecnica para decisiones sin sesgos.",
-  },
-  {
-    title: "Comparacion avanzada",
-    text: "Dinamicas de equipo, sinergias y posibles tensiones.",
-  },
-];
-
-const testimonials = [
-  {
-    quote:
-      "Reclu transformo nuestra forma de contratar. Bajamos la rotacion en el primer ano.",
-    author: "Maria Gonzalez · Directora RRHH",
-  },
-  {
-    quote:
-      "Los reportes comparativos hicieron evidente el mejor fit para cada vacante critica.",
-    author: "Carlos Rodriguez · CEO",
-  },
-  {
-    quote:
-      "Pasamos de procesos lentos y subjetivos a un flujo con datos claros y accionables.",
-    author: "Ana Martinez · Gerente de Talento",
-  },
+const candidates = [
+  { name: "Maria Lopez G.", tag: "Match Excelente", score: "94%", active: true },
+  { name: "Carlos R. Perez", tag: "Match Alto", score: "89%" },
+  { name: "Ana Martinez D.", tag: "Match Alto", score: "85%" },
 ];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 md:px-6">
-          <Link className="font-mono text-xl font-semibold tracking-tight" href="/">
-            Reclu
-          </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex">
-            <a className="hover:text-slate-900" href="#modulos">
-              Modulos
-            </a>
-            <a className="hover:text-slate-900" href="#proceso">
-              Proceso
-            </a>
-            <a className="hover:text-slate-900" href="#beneficios">
-              Beneficios
-            </a>
-            <a className="hover:text-slate-900" href="#faq">
-              FAQ
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <span className="reclu-pill hidden sm:inline-flex">ES</span>
-            <Link
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              href="/auth/signin"
-            >
+    <div className="min-h-screen bg-[#f7f8fe] text-slate-900">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-8">
+            <Link className="flex items-center gap-2" href="/">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-indigo-500 text-xs font-bold text-white">
+                R
+              </div>
+              <span className="text-sm font-semibold text-slate-900">Reclu</span>
+            </Link>
+            <nav className="hidden items-center gap-5 text-xs font-medium text-slate-500 md:flex">
+              <a href="#modulos">Evaluaciones</a>
+              <a href="#problema">Campanas</a>
+              <a href="#beneficios">Beneficios</a>
+              <a href="#faq">FAQ</a>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs">
+            <span className="hidden text-slate-400 sm:inline-flex">ES</span>
+            <Link className="rounded-lg px-3 py-2 font-medium text-slate-600" href="/auth/signin">
               Iniciar Sesion
             </Link>
             <Link
-              className="reclu-btn-primary rounded-xl px-3 py-2 text-sm font-semibold !text-white shadow-[0_10px_24px_rgba(37,99,235,.28)]"
+              className="rounded-lg bg-violet-600 px-3 py-2 font-semibold text-white shadow-[0_10px_24px_rgba(124,58,237,.24)] hover:bg-violet-700"
               href="/auth/signup"
             >
               Comenzar Gratis
@@ -85,90 +80,142 @@ export default function HomePage() {
       </header>
 
       <main>
-        <section className="relative overflow-hidden border-b border-slate-200/80">
-          <div className="pointer-events-none absolute inset-0 reclu-hero-grid opacity-70" />
-          <div className="pointer-events-none absolute -left-32 top-16 h-72 w-72 rounded-full bg-blue-300/35 blur-3xl reclu-glow-shift" />
-          <div className="pointer-events-none absolute -right-24 top-28 h-72 w-72 rounded-full bg-cyan-300/30 blur-3xl reclu-glow-shift" />
-          <div className="pointer-events-none absolute bottom-[-80px] left-[28%] h-64 w-64 rounded-full bg-indigo-200/35 blur-3xl reclu-glow-shift" />
-
-          <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 pb-18 pt-16 md:px-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-10 lg:pt-20">
-            <div className="reclu-fade-up">
-              <span className="reclu-pill">Headhunter Tecnologico con IA</span>
-              <h1 className="mt-5 font-mono text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Tu seleccionador de talento inteligente
+        <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,.18),_transparent_26%),linear-gradient(120deg,_#132042_0%,_#1b2458_42%,_#4f1d95_100%)]">
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.03)_1px,transparent_1px)] bg-[size:34px_34px]" />
+          <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 pb-16 pt-8 md:px-6 lg:grid-cols-[1fr_420px] lg:items-center lg:pb-20 lg:pt-14">
+            <div className="reclu-fade-up text-white">
+              <span className="inline-flex rounded-full border border-cyan-400/30 bg-white/10 px-3 py-1 text-[11px] font-medium text-cyan-100">
+                Headhunter Tecnologico con IA
+              </span>
+              <h1 className="mt-5 max-w-xl font-mono text-4xl font-semibold leading-[1.02] sm:text-5xl">
+                Tu <span className="text-cyan-300">seleccionador</span>
+                <br />
+                de talento
+                <br />
+                inteligente
               </h1>
-              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-                Reclu analiza candidatos con 8 modulos de evaluacion cientifica para encontrar al
-                profesional ideal para tu empresa. Sin sesgos, con datos precisos.
+              <p className="mt-5 max-w-md text-sm leading-7 text-slate-200">
+                MotivaiQ analiza candidatos con 8 modulos de evaluacion cientifica para encontrar
+                al profesional perfecto para tu empresa. Sin sesgos, con datos precisos.
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
+
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Link
-                  className="reclu-btn-primary rounded-xl px-5 py-3 text-sm font-semibold !text-white shadow-[0_12px_28px_rgba(37,99,235,.32)]"
+                  className="rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_24px_rgba(14,165,233,.28)] hover:bg-sky-400"
                   href="/auth/signup"
                 >
                   Comenzar a Seleccionar
                 </Link>
                 <a
-                  className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  href="#proceso"
+                  className="rounded-lg border border-white/15 bg-white/6 px-4 py-2.5 text-sm font-semibold text-slate-100 backdrop-blur-sm hover:bg-white/10"
+                  href="#problema"
                 >
                   Como Funciona
                 </a>
               </div>
 
-              <div className="mt-8 grid max-w-lg grid-cols-3 gap-3">
-                {[
-                  { value: "96%", label: "Precision" },
-                  { value: "-70%", label: "Tiempo" },
-                  { value: "+85%", label: "Retencion" },
-                ].map((item, index) => (
+              <div className="mt-7 grid max-w-md grid-cols-3 gap-3">
+                {metrics.map((item, index) => (
                   <div
-                    className="reclu-card p-3 text-center reclu-fade-up"
+                    className="rounded-2xl border border-white/10 bg-white/7 px-4 py-3 text-center backdrop-blur-sm reclu-fade-up"
                     key={item.label}
-                    style={{ animationDelay: `${index * 80}ms` }}
+                    style={{ animationDelay: `${index * 90}ms` }}
                   >
-                    <p className="font-mono text-2xl font-semibold">{item.value}</p>
-                    <p className="text-xs text-slate-500">{item.label}</p>
+                    <p className="font-mono text-2xl font-semibold text-white">{item.value}</p>
+                    <p className="mt-1 text-[11px] text-slate-300">{item.label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="reclu-fade-up" style={{ animationDelay: "100ms" }}>
-              <div className="reclu-gradient rounded-3xl p-[1px] reclu-float shadow-[0_28px_70px_rgba(15,23,42,.25)]">
-                <div className="rounded-3xl bg-slate-950 p-6 text-slate-100">
-                  <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">Busqueda en curso</p>
-                  <h2 className="mt-2 font-mono text-2xl font-semibold">Product Manager Senior</h2>
-                  <p className="mt-2 text-sm text-slate-300">Candidatos evaluados · 24 / 30</p>
-                  <div className="mt-5 space-y-3">
-                    {[
-                      "1. Maria Lopez G. · Match Excelente · 94%",
-                      "2. Carlos R. Perez · Match Alto · 89%",
-                      "3. Ana Martinez D. · Match Alto · 85%",
-                    ].map((row) => (
-                      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm" key={row}>
-                        {row}
+            <div className="reclu-fade-up" style={{ animationDelay: "120ms" }}>
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 text-white shadow-[0_32px_80px_rgba(10,14,38,.34)] backdrop-blur-md">
+                <div className="rounded-xl bg-white/8 p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-slate-300">
+                        Busqueda en curso
+                      </p>
+                      <p className="mt-1 text-sm font-semibold">Product Manager Senior</p>
+                    </div>
+                    <div className="rounded-full bg-emerald-400/20 px-2 py-1 text-[10px] font-semibold text-emerald-200">
+                      Analizando
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between text-[11px] text-slate-300">
+                    <span>Candidatos evaluados</span>
+                    <span>24 / 30</span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-sky-400 to-cyan-300" />
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-2xl bg-[linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04))] p-3">
+                  <div className="mb-3 flex gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                    <span className="text-white">Candidatos</span>
+                    <span>Metricas</span>
+                  </div>
+                  <div className="space-y-3">
+                    {candidates.map((candidate, index) => (
+                      <div
+                        className={`relative overflow-hidden rounded-xl border p-3 ${
+                          candidate.active
+                            ? "border-emerald-300/40 bg-white"
+                            : "border-white/8 bg-white/6"
+                        }`}
+                        key={candidate.name}
+                      >
+                        {candidate.active ? (
+                          <div className="absolute inset-y-0 left-0 w-1 rounded-full bg-emerald-400" />
+                        ) : null}
+                        <div className="flex items-center justify-between gap-3 pl-2">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold ${
+                                candidate.active
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : index === 1
+                                    ? "bg-sky-400/20 text-sky-200"
+                                    : "bg-violet-400/20 text-violet-200"
+                              }`}
+                            >
+                              {candidate.name[0]}
+                            </div>
+                            <div>
+                              <p
+                                className={`text-sm font-semibold ${
+                                  candidate.active ? "text-slate-800" : "text-white"
+                                }`}
+                              >
+                                {candidate.name}
+                              </p>
+                              <p
+                                className={`text-[11px] ${
+                                  candidate.active ? "text-slate-500" : "text-slate-300"
+                                }`}
+                              >
+                                {candidate.tag}
+                              </p>
+                            </div>
+                          </div>
+                          <div
+                            className={`text-lg font-semibold ${
+                              candidate.active ? "text-emerald-600" : "text-cyan-300"
+                            }`}
+                          >
+                            {candidate.score}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-4 text-xs text-slate-400">Modulos aplicados: DISC · EQ · DNA · TEC</p>
-
-                  <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs uppercase tracking-[0.12em] text-cyan-300">Compatibilidad</p>
-                      <p className="text-xs text-slate-300">Ultimos 7 dias</p>
-                    </div>
-                    <div className="mt-3 flex h-20 items-end gap-2">
-                      {[32, 48, 41, 63, 58, 76, 92].map((value, index) => (
-                        <div className="flex-1" key={`${value}-${index}`}>
-                          <div
-                            className="reclu-bar-anim rounded-md bg-gradient-to-t from-cyan-400 to-blue-500"
-                            style={{ height: `${value}%`, animationDelay: `${index * 90}ms` }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="reclu-line-anim mt-3 h-[2px] w-full rounded-full bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
+                  <div className="mt-3 flex gap-2 text-[10px] text-slate-300">
+                    <span className="rounded-full bg-white/8 px-2 py-1">DISC</span>
+                    <span className="rounded-full bg-white/8 px-2 py-1">EQ</span>
+                    <span className="rounded-full bg-white/8 px-2 py-1">DNA</span>
+                    <span className="rounded-full bg-white/8 px-2 py-1">TEC</span>
                   </div>
                 </div>
               </div>
@@ -176,149 +223,99 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 md:px-6" id="beneficios">
-          <div className="grid gap-4 md:grid-cols-3">
-            {featureCards.map((feature, index) => (
-              <article
-                className="reclu-card p-5 reclu-fade-up"
-                key={feature.title}
-                style={{ animationDelay: `${index * 90}ms` }}
-              >
-                <h3 className="font-mono text-lg font-semibold text-slate-900">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{feature.text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-y border-slate-200 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-14 text-white">
-          <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
-            <h2 className="font-mono text-3xl font-semibold">El Problema</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-200">
-              Contratar sin datos cuesta caro. El 46% de las contrataciones fallan en los
-              primeros 18 meses y las entrevistas tradicionales tienen baja efectividad predictiva.
+        <section className="bg-white py-16" id="problema">
+          <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
+            <span className="inline-flex rounded-full bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-500">
+              El Problema
+            </span>
+            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900">
+              Contratar sin datos <span className="text-rose-500">cuesta caro</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+              El 46% de las contrataciones fallan en sus primeros 18 meses. Las entrevistas
+              tradicionales tienen solo 14% de efectividad predictiva.
             </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {[
-                { kpi: "46%", label: "Contrataciones fallidas" },
-                { kpi: "2x", label: "Costo por reemplazo" },
-                { kpi: "18m", label: "Impacto operativo" },
-              ].map((item) => (
-                <article className="rounded-xl border border-white/15 bg-white/5 p-4" key={item.label}>
-                  <p className="font-mono text-2xl font-semibold text-cyan-300">{item.kpi}</p>
-                  <p className="mt-1 text-xs text-slate-200">{item.label}</p>
-                </article>
-              ))}
+
+            <div className="mt-10 grid gap-5 lg:grid-cols-2" id="beneficios">
+              <article className="rounded-3xl border border-rose-100 bg-[linear-gradient(180deg,#fff8f8_0%,#fff1f1_100%)] p-6 text-left shadow-[0_18px_40px_rgba(244,63,94,.08)]">
+                <p className="text-sm font-semibold text-slate-800">Seleccion Tradicional</p>
+                <p className="mt-1 text-xs text-rose-400">Proceso manual y subjetivo</p>
+                <ul className="mt-4 space-y-3">
+                  {painPoints.map((item) => (
+                    <li className="flex items-center gap-3 text-sm text-slate-500" key={item}>
+                      <span className="h-2 w-2 rounded-full bg-rose-300" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+
+              <article className="rounded-3xl border border-sky-100 bg-[linear-gradient(180deg,#f6fbff_0%,#eef6ff_100%)] p-6 text-left shadow-[0_18px_40px_rgba(59,130,246,.08)]">
+                <p className="text-sm font-semibold text-slate-800">Con Reclu</p>
+                <p className="mt-1 text-xs text-sky-500">Headhunter Tecnologico</p>
+                <ul className="mt-4 space-y-3">
+                  {benefits.map((item) => (
+                    <li className="flex items-center gap-3 text-sm text-slate-600" key={item}>
+                      <span className="h-2 w-2 rounded-full bg-sky-400" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 md:px-6" id="modulos">
-          <h2 className="font-mono text-3xl font-semibold">8 Modulos de Analisis</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Cada modulo evalua una dimension clave del candidato para construir un perfil 360.
-          </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {modules.map((moduleItem, index) => (
-              <article
-                className="reclu-card p-4 reclu-fade-up"
-                key={moduleItem.name}
-                style={{ animationDelay: `${index * 60}ms` }}
-              >
-                <p className="text-sm font-semibold">{moduleItem.name}</p>
-                <p className="mt-1 text-xs text-slate-500">{moduleItem.desc}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <section className="bg-[linear-gradient(180deg,#f5f7ff_0%,#edf2ff_100%)] py-18" id="modulos">
+          <div className="mx-auto w-full max-w-5xl px-4 text-center md:px-6">
+            <span className="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-500">
+              8 modulos de Analisis
+            </span>
+            <h2 className="mt-4 font-mono text-4xl font-semibold text-slate-900">
+              Analisis <span className="text-indigo-500">cientifico integral</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+              Cada modulo evalua una dimension clave del candidato. Juntos, construyen un perfil
+              360 que predice el exito laboral.
+            </p>
 
-        <section className="border-y border-slate-200 bg-white py-14" id="proceso">
-          <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
-            <h2 className="font-mono text-3xl font-semibold">Proceso Simple</h2>
-            <p className="mt-2 text-sm text-slate-600">Encuentra talento en 3 pasos.</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  n: "01",
-                  t: "Crea tu campana",
-                  d: "Define cargo, selecciona modulos y carga candidatos.",
-                },
-                {
-                  n: "02",
-                  t: "Reclu analiza",
-                  d: "Los candidatos completan evaluaciones y el sistema procesa resultados.",
-                },
-                {
-                  n: "03",
-                  t: "Recibe tu ranking",
-                  d: "Obtienes comparacion y compatibilidad para decidir con datos.",
-                },
-              ].map((step, index) => (
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {modules.map((moduleItem, index) => (
                 <article
-                  className="reclu-card p-5 reclu-fade-up"
-                  key={step.n}
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="rounded-2xl border border-white bg-white p-5 text-left shadow-[0_16px_32px_rgba(15,23,42,.06)] reclu-fade-up"
+                  key={moduleItem.name}
+                  style={{ animationDelay: `${index * 70}ms` }}
                 >
-                  <p className="text-xs font-semibold text-slate-500">{step.n}</p>
-                  <h3 className="mt-1 font-semibold">{step.t}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{step.d}</p>
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl border ${moduleItem.tone}`}
+                  >
+                    <div className="h-3 w-3 rounded-full bg-white shadow-[0_0_0_6px_rgba(255,255,255,.65)]" />
+                  </div>
+                  <p className="mt-4 text-sm font-semibold text-slate-900">{moduleItem.name}</p>
+                  <p className="mt-1 text-xs leading-6 text-slate-500">{moduleItem.desc}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 md:px-6">
-          <h2 className="font-mono text-3xl font-semibold">Testimonios</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {testimonials.map((item, index) => (
-              <article
-                className="reclu-card p-5 reclu-fade-up"
-                key={item.author}
-                style={{ animationDelay: `${index * 90}ms` }}
-              >
-                <p className="text-sm text-slate-700">&quot;{item.quote}&quot;</p>
-                <p className="mt-3 text-xs text-slate-500">{item.author}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-y border-slate-200 bg-slate-100/90 py-14" id="faq">
-          <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
-            <h2 className="font-mono text-3xl font-semibold">Preguntas Frecuentes</h2>
-            <div className="mt-6 space-y-3">
-              {[
-                "Que incluye Reclu?",
-                "Como funcionan las campanas de reclutamiento?",
-                "Cuanto tiempo toman las evaluaciones?",
-                "Que cargos cubren las pruebas tecnicas?",
-                "Como se protegen los datos?",
-              ].map((question) => (
-                <article className="reclu-card p-4" key={question}>
-                  <h3 className="text-sm font-semibold">{question}</h3>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 md:px-6">
-          <div className="reclu-gradient rounded-3xl p-[1px]">
-            <div className="rounded-3xl bg-white p-8 text-center">
-              <h2 className="font-mono text-3xl font-semibold">Comienza hoy</h2>
-              <p className="mt-2 text-sm text-slate-600">
-                Encuentra el talento que tu empresa merece.
+        <section className="bg-white py-16" id="faq">
+          <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
+            <div className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,#151e40_0%,#3f1d7b_100%)] px-8 py-10 text-center text-white shadow-[0_28px_70px_rgba(31,41,55,.18)]">
+              <h2 className="font-mono text-3xl font-semibold">Comienza a seleccionar mejor</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-200">
+                Replica el flujo de la plataforma base con una experiencia moderna, visual y lista
+                para crecer.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link
-                  className="reclu-btn-primary rounded-xl px-5 py-3 text-sm font-semibold !text-white shadow-[0_10px_24px_rgba(37,99,235,.28)]"
+                  className="rounded-lg bg-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(14,165,233,.3)] hover:bg-sky-400"
                   href="/auth/signup"
                 >
                   Crear Cuenta Gratis
                 </Link>
                 <Link
-                  className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-white/15 bg-white/8 px-5 py-3 text-sm font-semibold text-white hover:bg-white/12"
                   href="/auth/signin"
                 >
                   Ya tengo cuenta
@@ -328,16 +325,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-slate-200 py-8">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 text-sm text-slate-500 md:px-6">
-          <p>
-            <span className="font-mono font-semibold text-slate-900">Reclu</span> · Headhunter
-            Tecnologico
-          </p>
-          <Link href="/terms">Terminos y Condiciones</Link>
-        </div>
-      </footer>
     </div>
   );
 }
