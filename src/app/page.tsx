@@ -24,18 +24,62 @@ const benefits = [
 ];
 
 const modules = [
-  { name: "DISC", desc: "Estilo conductual y comunicacion", tone: "border-blue-200 bg-blue-50" },
+  {
+    name: "DISC",
+    desc: "Estilo conductual y comunicacion",
+    tone: "border-blue-300 bg-blue-100",
+    iconBg: "bg-blue-500",
+    icon: "disc",
+  },
   {
     name: "Motivadores",
     desc: "12 fuerzas que impulsan decisiones",
-    tone: "border-violet-200 bg-violet-50",
+    tone: "border-violet-300 bg-violet-100",
+    iconBg: "bg-violet-500",
+    icon: "flame",
   },
-  { name: "EQ", desc: "Inteligencia emocional", tone: "border-rose-200 bg-rose-50" },
-  { name: "DNA-25", desc: "25 competencias medibles", tone: "border-emerald-200 bg-emerald-50" },
-  { name: "Acumen", desc: "Claridad en toma de decisiones", tone: "border-amber-200 bg-amber-50" },
-  { name: "Valores", desc: "Alineacion cultural", tone: "border-fuchsia-200 bg-fuchsia-50" },
-  { name: "Estres", desc: "Manejo bajo presion", tone: "border-orange-200 bg-orange-50" },
-  { name: "Tecnica", desc: "+225 cargos · 13,700+ preguntas", tone: "border-cyan-200 bg-cyan-50" },
+  {
+    name: "EQ",
+    desc: "Inteligencia emocional",
+    tone: "border-rose-300 bg-rose-100",
+    iconBg: "bg-rose-500",
+    icon: "heart",
+  },
+  {
+    name: "DNA-25",
+    desc: "25 competencias medibles",
+    tone: "border-emerald-300 bg-emerald-100",
+    iconBg: "bg-emerald-500",
+    icon: "cross",
+  },
+  {
+    name: "Acumen",
+    desc: "Claridad en toma de decisiones",
+    tone: "border-amber-300 bg-amber-100",
+    iconBg: "bg-amber-500",
+    icon: "target",
+  },
+  {
+    name: "Valores",
+    desc: "Alineacion cultural",
+    tone: "border-fuchsia-300 bg-fuchsia-100",
+    iconBg: "bg-fuchsia-500",
+    icon: "shield",
+  },
+  {
+    name: "Estres",
+    desc: "Manejo bajo presion",
+    tone: "border-orange-300 bg-orange-100",
+    iconBg: "bg-orange-500",
+    icon: "bolt",
+  },
+  {
+    name: "Tecnica",
+    desc: "+225 cargos · 13,700+ preguntas",
+    tone: "border-cyan-300 bg-cyan-100",
+    iconBg: "bg-cyan-500",
+    icon: "grid",
+  },
 ];
 
 const candidates = [
@@ -43,6 +87,99 @@ const candidates = [
   { name: "Carlos R. Perez", tag: "Match Alto", score: "89%" },
   { name: "Ana Martinez D.", tag: "Match Alto", score: "85%" },
 ];
+
+function ModuleIcon({ type }: { type: string }) {
+  const common = "h-5 w-5 text-white";
+
+  if (type === "disc") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (type === "flame") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <path
+          d="M12 3c1.5 3-1 4.7 1.8 7.1 1.4 1.1 2.2 2.6 2.2 4.3A4.9 4.9 0 1 1 8 10.8C8.8 8.6 10.6 7 12 3Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  if (type === "heart") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <path
+          d="M12 19s-6-3.8-6-8.3A3.7 3.7 0 0 1 12 8a3.7 3.7 0 0 1 6 2.7C18 15.2 12 19 12 19Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  if (type === "cross") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <path d="M12 6v12M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (type === "target") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+      </svg>
+    );
+  }
+
+  if (type === "shield") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <path
+          d="M12 4l6 2.5V12c0 4.1-2.6 6.8-6 8-3.4-1.2-6-3.9-6-8V6.5L12 4Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  if (type === "bolt") {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24">
+        <path
+          d="M13 3 7 13h4l-1 8 7-11h-4l0-7Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className={common} fill="none" viewBox="0 0 24 24">
+      <path
+        d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -70,7 +207,7 @@ export default function HomePage() {
               Iniciar Sesion
             </Link>
             <Link
-              className="rounded-lg bg-violet-600 px-3 py-2 font-semibold text-white shadow-[0_10px_24px_rgba(124,58,237,.24)] hover:bg-violet-700"
+              className="reclu-btn-violet rounded-lg px-3 py-2 font-semibold !text-white shadow-[0_10px_24px_rgba(124,58,237,.24)]"
               href="/auth/signup"
             >
               Comenzar Gratis
@@ -282,14 +419,18 @@ export default function HomePage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {modules.map((moduleItem, index) => (
                 <article
-                  className="rounded-2xl border border-white bg-white p-5 text-left shadow-[0_16px_32px_rgba(15,23,42,.06)] reclu-fade-up"
+                  className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-[0_18px_34px_rgba(15,23,42,.07)] reclu-fade-up"
                   key={moduleItem.name}
                   style={{ animationDelay: `${index * 70}ms` }}
                 >
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl border ${moduleItem.tone}`}
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border ${moduleItem.tone} shadow-[inset_0_1px_0_rgba(255,255,255,.6)]`}
                   >
-                    <div className="h-3 w-3 rounded-full bg-white shadow-[0_0_0_6px_rgba(255,255,255,.65)]" />
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${moduleItem.iconBg} shadow-[0_10px_20px_rgba(15,23,42,.16)]`}
+                    >
+                      <ModuleIcon type={moduleItem.icon} />
+                    </div>
                   </div>
                   <p className="mt-4 text-sm font-semibold text-slate-900">{moduleItem.name}</p>
                   <p className="mt-1 text-xs leading-6 text-slate-500">{moduleItem.desc}</p>

@@ -89,6 +89,16 @@ a {
   color: #ffffff !important;
 }
 
+.reclu-btn-violet {
+  background: #7c3aed;
+  color: #ffffff !important;
+}
+
+.reclu-btn-violet:hover {
+  background: #6d28d9;
+  color: #ffffff !important;
+}
+
 .reclu-input {
   width: 100%;
   border-radius: 0.8rem;
