@@ -9,14 +9,13 @@ export default function CreditsPurchasePage() {
         "Total estimado y resumen de compra",
         "Base para integracion de pagos",
       ]}
-      nextMilestones={[
+      details={[
         "Integrar proveedor de pago en sandbox.",
         "Persistir transaccion y recarga de saldo.",
         "Emitir comprobante de operacion.",
       ]}
-      phase="Etapa 1"
+      badge="Comprar Creditos"
       title="Comprar creditos"
     />
   );
 }
-

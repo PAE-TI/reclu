@@ -9,14 +9,13 @@ export default function TechnicalEvaluationsPage() {
         "Estructura para categorias y subcategorias",
         "Historial de tecnicas enviadas y estados",
       ]}
-      nextMilestones={[
+      details={[
         "Conectar catalogo de cargos desde DB.",
         "Generar pruebas segun dificultad y perfil.",
         "Persistir resultados tecnicos por intento.",
       ]}
-      phase="Etapa 1"
+      badge="Evaluaciones Tecnicas Externas"
       title="Pruebas tecnicas"
     />
   );
 }
-

@@ -16,12 +16,12 @@ export default function CampaignsPage() {
           "Estados Activa / Analizando / Completada / Archivada",
           "Acceso a detalle por campana",
         ]}
-        nextMilestones={[
+        details={[
           "Persistencia real de campanas y candidatos.",
           "Flujo completo para crear y editar campanas.",
           "Calculo real de score promedio y progreso.",
         ]}
-        phase="Etapa 1"
+        badge="MotivaIQ Recruitment Suite"
         title="Campanas de seleccion"
       />
 
@@ -53,4 +53,3 @@ export default function CampaignsPage() {
     </div>
   );
 }
-

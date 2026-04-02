@@ -1,27 +1,24 @@
 type PageTemplateProps = {
   title: string;
   description: string;
-  phase: string;
+  badge?: string;
   highlights: string[];
-  nextMilestones: string[];
+  details?: string[];
 };
 
 export function PageTemplate({
   title,
   description,
-  phase,
+  badge,
   highlights,
-  nextMilestones,
+  details = [],
 }: PageTemplateProps) {
   return (
     <div className="space-y-6">
       <section className="reclu-card p-6 md:p-8">
         <div className="reclu-gradient rounded-2xl p-[1px]">
           <div className="rounded-2xl bg-white p-5 md:p-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="reclu-pill">{phase}</span>
-              <span className="reclu-pill">Base original preservada</span>
-            </div>
+            {badge ? <span className="reclu-pill">{badge}</span> : null}
             <h2 className="mt-4 font-mono text-2xl font-semibold text-slate-900">{title}</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{description}</p>
           </div>
@@ -32,26 +29,23 @@ export function PageTemplate({
         {highlights.map((item) => (
           <article className="reclu-card p-4" key={item}>
             <p className="text-sm font-semibold text-slate-900">{item}</p>
-            <p className="mt-1 text-xs text-slate-500">
-              Estructura inicial implementada para acelerar siguientes fases.
-            </p>
+            <p className="mt-1 text-xs text-slate-500">Indicador clave de esta seccion.</p>
           </article>
         ))}
       </section>
 
-      <section className="reclu-card p-6">
-        <h3 className="font-mono text-lg font-semibold text-slate-900">
-          Siguiente bloque de trabajo
-        </h3>
-        <ul className="mt-4 space-y-2">
-          {nextMilestones.map((item) => (
-            <li className="text-sm text-slate-600" key={item}>
-              • {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {details.length > 0 ? (
+        <section className="reclu-card p-6">
+          <h3 className="font-mono text-lg font-semibold text-slate-900">Detalle</h3>
+          <ul className="mt-4 space-y-2">
+            {details.map((item) => (
+              <li className="text-sm text-slate-600" key={item}>
+                • {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </div>
   );
 }
-

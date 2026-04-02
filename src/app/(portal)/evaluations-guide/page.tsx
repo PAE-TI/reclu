@@ -9,13 +9,12 @@ export default function EvaluationsGuidePage() {
         "Duraciones y alcance por evaluacion",
         "Conexion esperada con analisis 360",
       ]}
-      nextMilestones={[
+      details={[
         "Agregar contenido completo por modulo.",
         "Incluir ejemplos de interpretacion de resultados.",
       ]}
-      phase="Etapa 1"
+      badge="Guia de Evaluaciones MotivaIQ"
       title="Guia de evaluaciones"
     />
   );
 }
-

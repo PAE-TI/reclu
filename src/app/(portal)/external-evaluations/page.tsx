@@ -9,14 +9,13 @@ export default function DiscEvaluationsPage() {
         "Conteo de enviadas/completadas/pendientes/expiradas",
         "Acciones: ver resultado, PDF, notas, eliminar",
       ]}
-      nextMilestones={[
+      details={[
         "Conectar plantilla de correo real.",
         "Persistir estado de invitaciones DISC.",
         "Generar reporte PDF de resultado.",
       ]}
-      phase="Etapa 1"
+      badge="Evaluaciones DISC Externas"
       title="Evaluaciones DISC externas"
     />
   );
 }
-

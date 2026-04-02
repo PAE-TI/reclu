@@ -9,13 +9,12 @@ export default function EqPage() {
         "Historial y estados de respuesta",
         "Base para integracion con analisis individual",
       ]}
-      nextMilestones={[
+      details={[
         "Scoring real por dimension emocional.",
         "Reporte de competencias emocionales.",
       ]}
-      phase="Etapa 1"
+      badge="Inteligencia Emocional"
       title="Inteligencia emocional"
     />
   );
 }
-

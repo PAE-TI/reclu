@@ -10,14 +10,13 @@ export default function NewCampaignPage() {
         "Seleccion de modulos con costo en creditos",
         "CTA para crear campana",
       ]}
-      nextMilestones={[
+      details={[
         "Conectar catalogo real de cargos tecnicos.",
         "Guardar campana en DB y redirigir al detalle.",
         "Activar calculo dinamico de creditos por modulo.",
       ]}
-      phase="Etapa 1"
+      badge="Bateria completa disponible"
       title="Nueva campana de seleccion"
     />
   );
 }
-

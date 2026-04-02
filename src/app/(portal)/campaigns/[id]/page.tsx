@@ -15,14 +15,13 @@ export default async function CampaignDetailPage({
         "Listado de candidatos evaluados",
         "Acciones: agregar candidatos y analizar",
       ]}
-      nextMilestones={[
+      details={[
         "Cargar data real de campana por id.",
         "Sincronizar estado de evaluaciones por candidato.",
         "Conectar boton analizar con ranking real.",
       ]}
-      phase="Etapa 1"
+      badge="Analizando"
       title="Detalle de campana"
     />
   );
 }
-

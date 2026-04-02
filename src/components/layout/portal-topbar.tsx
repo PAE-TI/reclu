@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { moduleNav } from "@/lib/portal-navigation";
 
 const pageTitles: Record<string, string> = {
-  "/dashboard": "Centro de reclutamiento",
-  "/analytics": "Analisis avanzado",
-  "/campaigns": "Campanas de seleccion",
-  "/team": "Mi equipo",
-  "/admin": "Administracion",
-  "/profile": "Perfil empresarial",
+  "/dashboard": "Centro de Reclutamiento",
+  "/analytics": "Analisis Avanzado",
+  "/campaigns": "Campanas de Seleccion",
+  "/team": "Gestion de Equipo",
+  "/admin": "Panel de Administracion",
+  "/profile": "Perfil Empresarial",
   "/settings": "Configuracion",
 };
 
@@ -31,14 +31,14 @@ export function PortalTopbar() {
         <div className="hidden flex-1 items-center justify-center xl:flex">
           <input
             className="w-full max-w-xl rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none ring-blue-200 transition focus:ring"
-            placeholder="Buscar candidatos, evaluaciones o campanas..."
+            placeholder="Buscar candidatos, evaluaciones o acciones... (⌘K)"
             type="text"
           />
         </div>
         <div className="ml-auto flex items-center gap-2">
           <span className="reclu-pill">ES</span>
-          <span className="reclu-pill">202 creditos</span>
-          <span className="reclu-pill">4 alertas</span>
+          <span className="reclu-pill">202</span>
+          <span className="reclu-pill">4</span>
         </div>
       </div>
       <div className="flex gap-2 overflow-x-auto border-t border-slate-100 px-3 py-2 xl:hidden">
@@ -60,4 +60,3 @@ export function PortalTopbar() {
     </header>
   );
 }
-

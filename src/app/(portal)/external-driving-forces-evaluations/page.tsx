@@ -9,13 +9,12 @@ export default function DrivingForcesPage() {
         "Trazabilidad del estado por candidato",
         "Base para resultados en analytics 360",
       ]}
-      nextMilestones={[
+      details={[
         "Motor de envio por modulo con expiracion de enlace.",
         "Normalizar respuestas y scoring interno.",
       ]}
-      phase="Etapa 1"
+      badge="Fuerzas Motivadoras"
       title="Fuerzas motivadoras"
     />
   );
 }
-

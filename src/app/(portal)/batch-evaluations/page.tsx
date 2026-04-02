@@ -9,14 +9,13 @@ export default function BatchEvaluationsPage() {
         "Calculo de creditos y tiempo estimado",
         "Opcion de un correo o correo por evaluacion",
       ]}
-      nextMilestones={[
+      details={[
         "Persistir lotes de envio por candidato.",
         "Aplicar validaciones de creditos disponibles.",
         "Integrar notificaciones de completitud por modulo.",
       ]}
-      phase="Etapa 1"
+      badge="Enviar Pruebas de Evaluacion"
       title="Envio masivo"
     />
   );
 }
-

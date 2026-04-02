@@ -9,14 +9,13 @@ export default function TeamPage() {
         "Invitacion de facilitadores",
         "Niveles: acceso completo o solo sus evaluaciones",
       ]}
-      nextMilestones={[
+      details={[
         "Invitaciones reales por correo con token seguro.",
         "Asignacion persistente de roles y permisos.",
         "Metrica real de evaluaciones por usuario.",
       ]}
-      phase="Etapa 1"
+      badge="MotivaIQ Team Management"
       title="Mi equipo"
     />
   );
 }
-

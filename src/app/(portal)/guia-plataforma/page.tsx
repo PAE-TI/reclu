@@ -9,13 +9,12 @@ export default function PlatformGuidePage() {
         "Bloques de ayuda operativa",
         "Base para onboarding guiado",
       ]}
-      nextMilestones={[
+      details={[
         "Expandir contenido con capturas y flujos reales.",
         "Sincronizar guia con el tour in-app.",
       ]}
-      phase="Etapa 1"
+      badge="Guia Completa de MotivaIQ"
       title="Guia de plataforma"
     />
   );
 }
-

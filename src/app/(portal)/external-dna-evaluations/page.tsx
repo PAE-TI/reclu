@@ -9,13 +9,12 @@ export default function DnaPage() {
         "Seguimiento de completitud por candidato",
         "Base para perfil de competencias 360",
       ]}
-      nextMilestones={[
+      details={[
         "Modelo de competencias por categoria.",
         "Calculo de gaps contra perfil ideal de cargo.",
       ]}
-      phase="Etapa 1"
+      badge="DNA-25"
       title="Competencias DNA-25"
     />
   );
 }
-

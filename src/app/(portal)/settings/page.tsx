@@ -11,12 +11,12 @@ export default function SettingsPage() {
           "Historial de transacciones",
           "Panel de notificaciones",
         ]}
-        nextMilestones={[
+        details={[
           "Conectar ledger real de creditos.",
           "Activar preferencias de notificaciones.",
           "Sincronizar idioma por usuario.",
         ]}
-        phase="Etapa 1"
+        badge="Configuracion"
         title="Configuracion"
       />
       <Link
@@ -28,4 +28,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-

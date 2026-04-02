@@ -9,13 +9,12 @@ export default function ProfileEditPage() {
         "Base para validaciones de perfil",
         "Botones de guardar y cancelar",
       ]}
-      nextMilestones={[
+      details={[
         "Conectar guardado en DB.",
         "Agregar feedback de cambios exitosos.",
       ]}
-      phase="Etapa 1"
+      badge="Editar Perfil"
       title="Editar perfil"
     />
   );
 }
-

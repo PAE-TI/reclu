@@ -12,12 +12,12 @@ export default function AdminPage() {
           "Listado de usuarios y estados",
           "Acceso a banco de preguntas tecnicas",
         ]}
-        nextMilestones={[
+        details={[
           "Conectar reglas reales de creditos.",
           "Integrar pagos y transacciones en DB.",
           "Administrar usuarios desde backend seguro.",
         ]}
-        phase="Etapa 1"
+        badge="Panel de Administracion"
         title="Administracion"
       />
       <section className="reclu-card p-6">
@@ -36,4 +36,3 @@ export default function AdminPage() {
     </div>
   );
 }
-

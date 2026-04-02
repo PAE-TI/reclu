@@ -9,13 +9,12 @@ export default function ValuesPage() {
         "Base para medicion de fit cultural",
         "Seguimiento de historial y evidencias",
       ]}
-      nextMilestones={[
+      details={[
         "Definir escala de consistencia etica.",
         "Integrar resultados en score de compatibilidad.",
       ]}
-      phase="Etapa 1"
+      badge="Valores e Integridad"
       title="Valores e integridad"
     />
   );
 }
-

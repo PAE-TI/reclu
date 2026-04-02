@@ -19,14 +19,13 @@ export default async function AnalyticsPage({
         "Base para perfil 360 por persona",
         "Base para matriz de compatibilidad",
       ]}
-      nextMilestones={[
+      details={[
         "Conectar resultados reales por modulo.",
         "Implementar comparador de 2 a 4 personas.",
         "Agregar graficas de distribucion y tendencias.",
       ]}
-      phase="Etapa 1"
+      badge="MODO DE VISTA"
       title="Analisis avanzado"
     />
   );
 }
-

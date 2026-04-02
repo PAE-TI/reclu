@@ -9,13 +9,12 @@ export default function StressPage() {
         "Estados y control de enlaces",
         "Base para recomendaciones de bienestar",
       ]}
-      nextMilestones={[
+      details={[
         "Implementar scoring de estres y resiliencia.",
         "Agregar alertas para niveles criticos.",
       ]}
-      phase="Etapa 1"
+      badge="Estres y Resiliencia"
       title="Estres y resiliencia"
     />
   );
 }
-

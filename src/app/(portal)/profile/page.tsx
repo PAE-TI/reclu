@@ -11,11 +11,11 @@ export default function ProfilePage() {
           "Acceso a edicion de perfil",
           "Bloque de seguridad de cuenta",
         ]}
-        nextMilestones={[
+        details={[
           "Persistir informacion editable en DB.",
           "Agregar flujo real de cambio de password.",
         ]}
-        phase="Etapa 1"
+        badge="Perfil Empresarial"
         title="Perfil empresarial"
       />
       <div className="flex flex-wrap gap-3">
@@ -29,4 +29,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-

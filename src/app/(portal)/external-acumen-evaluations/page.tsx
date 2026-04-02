@@ -9,13 +9,12 @@ export default function AcumenPage() {
         "Base para analisis de juicio interno/externo",
         "Integracion planificada con ranking",
       ]}
-      nextMilestones={[
+      details={[
         "Implementar parser de resultados ACI.",
         "Conectar graficas de claridad y sesgos.",
       ]}
-      phase="Etapa 1"
+      badge="Acumen (ACI)"
       title="Acumen (ACI)"
     />
   );
 }
-

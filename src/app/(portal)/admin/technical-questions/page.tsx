@@ -9,14 +9,13 @@ export default function TechnicalQuestionsPage() {
         "Filtros por cargo y dificultad",
         "Flujo para crear/editar preguntas",
       ]}
-      nextMilestones={[
+      details={[
         "Modelar tablas tecnicas y semilla de cargos.",
         "Habilitar CRUD real de preguntas.",
         "Conectar con el envio de evaluaciones tecnicas.",
       ]}
-      phase="Etapa 1"
+      badge="Banco de Preguntas Tecnicas"
       title="Banco tecnico"
     />
   );
 }
-
