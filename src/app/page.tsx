@@ -75,7 +75,7 @@ export default function HomePage() {
               Iniciar Sesion
             </Link>
             <Link
-              className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(37,99,235,.28)] hover:bg-blue-700"
+              className="reclu-btn-primary rounded-xl px-3 py-2 text-sm font-semibold !text-white shadow-[0_10px_24px_rgba(37,99,235,.28)]"
               href="/auth/signup"
             >
               Comenzar Gratis
@@ -103,7 +103,7 @@ export default function HomePage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
-                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(37,99,235,.32)] hover:bg-blue-700"
+                  className="reclu-btn-primary rounded-xl px-5 py-3 text-sm font-semibold !text-white shadow-[0_12px_28px_rgba(37,99,235,.32)]"
                   href="/auth/signup"
                 >
                   Comenzar a Seleccionar
@@ -312,7 +312,7 @@ export default function HomePage() {
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link
-                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(37,99,235,.28)] hover:bg-blue-700"
+                  className="reclu-btn-primary rounded-xl px-5 py-3 text-sm font-semibold !text-white shadow-[0_10px_24px_rgba(37,99,235,.28)]"
                   href="/auth/signup"
                 >
                   Crear Cuenta Gratis
