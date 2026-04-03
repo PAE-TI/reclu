@@ -9,57 +9,46 @@ interface EmailOptions {
 
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
-    // Try Mailgun HTTP API first (preferred, more reliable)
-    const mailgunApiKey = process.env.MAILGUN_API_KEY;
-    const mailgunDomain = process.env.MAILGUN_DOMAIN;
-    if (mailgunApiKey && mailgunDomain) {
-      return this.sendViaMailgunApi({ to, subject, html, text, apiKey: mailgunApiKey, domain: mailgunDomain });
+    // 1. Resend (simplest - set RESEND_API_KEY)
+    const resendKey = process.env.RESEND_API_KEY;
+    if (resendKey) {
+      return this.sendViaResend({ to, subject, html, text, apiKey: resendKey });
     }
 
-    // Fall back to SMTP
+    // 2. SMTP fallback (set MAIL_SMTP_HOST, MAIL_SMTP_USER, MAIL_SMTP_PASS)
     return this.sendViaSMTP({ to, subject, html, text });
   }
 
-  private async sendViaMailgunApi({
-    to, subject, html, text, apiKey, domain
-  }: EmailOptions & { apiKey: string; domain: string }): Promise<boolean> {
+  private async sendViaResend({
+    to, subject, html, text, apiKey
+  }: EmailOptions & { apiKey: string }): Promise<boolean> {
     try {
       const from = this.getFromAddress();
-      const cleanKey = apiKey.trim();
-      const cleanDomain = domain.trim();
-
-      const isEU = process.env.MAILGUN_REGION === 'eu';
-      const apiBase = isEU ? 'https://api.eu.mailgun.net' : 'https://api.mailgun.net';
-      const authHeader = `Basic ${Buffer.from(`api:${cleanKey}`).toString('base64')}`;
-
-      console.log(`Sending email via Mailgun API to domain: ${cleanDomain}, region: ${isEU ? 'EU' : 'US'}`);
-
-      const params = new URLSearchParams();
-      params.append('from', from);
-      params.append('to', to);
-      params.append('subject', subject);
-      params.append('html', html);
-      params.append('text', text || this.htmlToText(html));
-
-      const response = await fetch(`${apiBase}/v3/${cleanDomain}/messages`, {
+      const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          Authorization: authHeader,
-          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${apiKey.trim()}`,
+          'Content-Type': 'application/json',
         },
-        body: params.toString(),
+        body: JSON.stringify({
+          from,
+          to,
+          subject,
+          html,
+          text: text || this.htmlToText(html),
+        }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Mailgun API error: ${response.status} ${response.statusText}`, errorText);
+        console.error('Resend API error:', response.status, errorText);
         return false;
       }
 
-      console.log('Email sent successfully via Mailgun API to:', to);
+      console.log('Email sent successfully via Resend to:', to);
       return true;
     } catch (error) {
-      console.error('Error sending email via Mailgun API:', error);
+      console.error('Error sending email via Resend:', error);
       return false;
     }
   }
@@ -68,7 +57,7 @@ class EmailService {
     try {
       const transporter = this.getTransporter();
       if (!transporter) {
-        console.error('Email configuration missing. Set MAILGUN_API_KEY + MAILGUN_DOMAIN, or MAIL_SMTP_USER + MAIL_SMTP_PASS in Vercel.');
+        console.error('No email provider configured. Set RESEND_API_KEY or MAIL_SMTP_USER + MAIL_SMTP_PASS in Vercel.');
         return false;
       }
 
@@ -89,27 +78,20 @@ class EmailService {
   }
 
   private getTransporter() {
-    const host = process.env.MAIL_SMTP_HOST || 'smtp.mailgun.org';
+    const host = process.env.MAIL_SMTP_HOST;
     const user = process.env.MAIL_SMTP_USER;
     const password = process.env.MAIL_SMTP_PASS;
     const port = Number(process.env.MAIL_SMTP_PORT || '587');
 
-    if (!user || !password) {
+    if (!host || !user || !password) {
       return null;
     }
-
-    const secure = process.env.MAIL_SMTP_SECURE
-      ? process.env.MAIL_SMTP_SECURE === 'true'
-      : port === 465;
 
     return nodemailer.createTransport({
       host,
       port,
-      secure,
-      auth: {
-        user,
-        pass: password,
-      },
+      secure: port === 465,
+      auth: { user, pass: password },
     });
   }
 
