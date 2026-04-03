@@ -22,6 +22,7 @@ function createPool() {
     ssl: shouldUseSsl
       ? {
           rejectUnauthorized: false,
+          checkServerIdentity: () => undefined,
         }
       : undefined,
   });
