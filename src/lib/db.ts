@@ -10,11 +10,16 @@ function createPool() {
     throw new Error("DATABASE_URL is not configured.");
   }
 
+  const shouldUseSsl =
+    databaseUrl.includes("sslmode=require") ||
+    process.env.PGSSLMODE === "require" ||
+    (process.env.NODE_ENV === "production" && databaseUrl.includes("ondigitalocean.com"));
+
   return new Pool({
     connectionString: databaseUrl,
     max: 10,
     idleTimeoutMillis: 30_000,
-    ssl: databaseUrl.includes("sslmode=require")
+    ssl: shouldUseSsl
       ? {
           rejectUnauthorized: false,
         }
