@@ -71,7 +71,6 @@ export function AuthShell({ title, description, footer, children }: AuthShellPro
 
           <div className="relative z-10 flex items-center justify-between text-xs text-slate-300">
             <p>Reclu Platform · Seleccion basada en evidencia</p>
-            <p>UI inspirada en la experiencia original</p>
           </div>
         </section>
 
