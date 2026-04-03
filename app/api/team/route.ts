@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { sendTeamInvitationEmail } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 // GET - List team members
 export async function GET() {
@@ -185,7 +186,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       teamMember,
-      inviteLink: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/team/invite/${inviteToken}`
+      inviteLink: `${getAppBaseUrl()}/team/invite/${inviteToken}`
     });
   } catch (error) {
     console.error('Error creating team invitation:', error);

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { emailService } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     });
 
     const senderName = user?.name || 'Reclu';
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const baseUrl = getAppBaseUrl();
 
     let evaluation: any;
     let evaluationLink: string;

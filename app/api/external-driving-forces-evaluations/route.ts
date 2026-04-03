@@ -7,6 +7,7 @@ import { randomBytes } from 'crypto';
 import { emailService } from '@/lib/email';
 import { deductCreditsForEvaluation, getCreditSettings, hasEnoughCredits, getCreditOwnerInfo } from '@/lib/credits';
 import { getTeamUserIds } from '@/lib/team';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 // GET - Obtener evaluaciones externas de Driving Forces del equipo
 export async function GET() {
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
         `${session.user.firstName} ${session.user.lastName || ''}`.trim() :
         session.user.name || 'Evaluador';
       
-      const evaluationLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/external-driving-forces-evaluation/${token}`;
+      const evaluationLink = `${getAppBaseUrl()}/external-driving-forces-evaluation/${token}`;
       
       const { subject, html } = emailService.generateDrivingForcesInvitationEmail(
         data.recipientName,

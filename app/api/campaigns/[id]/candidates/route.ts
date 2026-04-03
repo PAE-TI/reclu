@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import { EvaluationType } from '@prisma/client';
 import { getCreditSettings } from '@/lib/credits';
 import { emailService } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 // Helper to get evaluation status by token
 async function getEvaluationStatusByToken(
@@ -345,7 +346,7 @@ export async function POST(
       select: { name: true, company: true },
     });
     const senderName = sender?.company || sender?.name || 'Reclu';
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+    const baseUrl = getAppBaseUrl();
 
     // Configuración de evaluaciones para el email combinado
     const EVALUATION_CONFIG: Record<string, { name: string; description: string; icon: string; color: string; questions: number; time: string; pathPrefix: string }> = {

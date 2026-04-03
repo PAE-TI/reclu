@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { sendTeamInvitationEmail } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 // GET - Get single team member details
 export async function GET(
@@ -126,7 +127,7 @@ export async function PUT(
       return NextResponse.json({
         success: true,
         message: 'Invitación reenviada',
-        inviteLink: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/team/invite/${newToken}`
+        inviteLink: `${getAppBaseUrl()}/team/invite/${newToken}`
       });
     }
 

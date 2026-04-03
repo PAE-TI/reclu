@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import { emailService } from '@/lib/email';
 import { deductCreditsForEvaluation, getCreditSettings, hasEnoughCredits, getCreditOwnerInfo } from '@/lib/credits';
 import { getTeamUserIds } from '@/lib/team';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 export async function GET() {
   try {
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
         to: recipientEmail,
         recipientName,
         senderName: session.user.name || 'El equipo',
-        evaluationLink: `${process.env.NEXTAUTH_URL}/external-acumen-evaluation/${token}`,
+        evaluationLink: `${getAppBaseUrl()}/external-acumen-evaluation/${token}`,
         expiryDate: tokenExpiry,
       });
     } catch (emailError) {

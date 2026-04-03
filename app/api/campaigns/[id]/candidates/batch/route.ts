@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import { EvaluationType } from '@prisma/client';
 import { getCreditSettings } from '@/lib/credits';
 import { emailService } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 interface CandidateInput {
   name: string;
@@ -119,7 +120,7 @@ export async function POST(
     const existingEmails = new Set(existingCandidates.map(c => c.email.toLowerCase()));
 
     const senderName = owner?.company || owner?.name || 'Reclu';
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+    const baseUrl = getAppBaseUrl();
     const tokenExpiry = new Date();
     tokenExpiry.setDate(tokenExpiry.getDate() + 30);
 

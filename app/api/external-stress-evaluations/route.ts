@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth';
 import { emailService } from '@/lib/email';
 import { deductCreditsForEvaluation, getCreditSettings, hasEnoughCredits, getCreditOwnerInfo } from '@/lib/credits';
 import { getTeamUserIds } from '@/lib/team';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 export async function GET(request: NextRequest) {
   try {
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     // Send email invitation
     try {
-      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+      const baseUrl = getAppBaseUrl();
       await emailService.sendStressInvitation({
         to: recipientEmail,
         recipientName,

@@ -7,6 +7,7 @@ import { TokenUtils } from '@/lib/token-utils';
 import { emailService } from '@/lib/email';
 import { deductCreditsForEvaluation, getCreditSettings, hasEnoughCredits, getCreditOwnerInfo } from '@/lib/credits';
 import { getTeamUserIds } from '@/lib/team';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 export async function POST(request: NextRequest) {
   try {
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generar enlace de evaluación
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const baseUrl = getAppBaseUrl();
     const evaluationLink = `${baseUrl}/external-evaluation/${token}`;
 
     // Generar contenido del email

@@ -7,9 +7,10 @@ import { emailService } from '@/lib/email';
 import { TokenUtils } from '@/lib/token-utils';
 import { deductCreditsForEvaluation, getCreditSettings, getCreditOwnerId, getCreditOwnerInfo } from '@/lib/credits';
 import { EvaluationType } from '@prisma/client';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 const generateToken = () => randomBytes(32).toString('hex');
-const getBaseUrl = () => process.env.NEXTAUTH_URL || 'http://localhost:3000';
+const getBaseUrl = () => getAppBaseUrl();
 
 // Configuración de evaluaciones para el email combinado
 const EVALUATION_CONFIG: Record<string, { name: string; description: string; icon: string; color: string; questions: number; time: string; pathPrefix: string }> = {

@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import { EvaluationType } from '@prisma/client';
 import { getCreditSettings } from '@/lib/credits';
 import { emailService } from '@/lib/email';
+import { getAppBaseUrl } from '@/lib/site-url';
 
 type EvalType = 'DISC' | 'DRIVING_FORCES' | 'EQ' | 'DNA' | 'ACUMEN' | 'VALUES' | 'STRESS';
 
@@ -93,7 +94,7 @@ export async function POST(
       details: [] as Array<{ email: string; status: string; message?: string }>,
     };
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+    const baseUrl = getAppBaseUrl();
     const senderName = owner?.company || owner?.name || 'Reclu';
 
     // Evaluation config for emails

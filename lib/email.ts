@@ -1,3 +1,4 @@
+import { getAppBaseUrl } from '@/lib/site-url';
 interface EmailOptions {
   to: string;
   subject: string;
@@ -11,14 +12,14 @@ class EmailService {
       // Use Abacus.AI notification API
       const apiKey = process.env.ABACUSAI_API_KEY;
       const appId = process.env.WEB_APP_ID;
-      const notificationId = process.env.NOTIF_ID_INVITACIN_DE_EVALUACIN;
+      const notificationId = process.env.NOTIF_ID_INVITACION_DE_EVALUACION || process.env.NOTIF_ID_INVITACIN_DE_EVALUACIN || process.env.NOTIF_ID_INVITACION_EVALUACION;
       
       if (!apiKey || !appId || !notificationId) {
         console.error('Email configuration missing. ABACUSAI_API_KEY, WEB_APP_ID, or NOTIF_ID not set.');
         return false;
       }
 
-      const appUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+      const appUrl = getAppBaseUrl();
       const hostname = new URL(appUrl).hostname;
 
       const response = await fetch('https://apps.abacus.ai/api/sendNotificationEmail', {
@@ -383,7 +384,7 @@ class EmailService {
   }): Promise<boolean> {
     const { recipientEmail, recipientName, senderName, companyName, evaluationToken } = options;
     
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const baseUrl = getAppBaseUrl();
     const evaluationLink = `${baseUrl}/external-eq-evaluation/${evaluationToken}`;
     
     const { subject, html } = this.generateEQInvitationEmail(
@@ -584,7 +585,7 @@ class EmailService {
   }): Promise<boolean> {
     const { recipientEmail, recipientName, senderName, companyName, evaluationToken } = options;
     
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const baseUrl = getAppBaseUrl();
     const evaluationLink = `${baseUrl}/external-dna-evaluation/${evaluationToken}`;
     
     const { subject, html } = this.generateDNAInvitationEmail(
@@ -1317,7 +1318,7 @@ class EmailService {
     jobPositionTitle: string,
     senderName: string
   ): Promise<boolean> {
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+    const baseUrl = getAppBaseUrl();
     const evaluationUrl = `${baseUrl}/external-technical-evaluation/${token}`;
 
     const subject = `Evaluación Técnica - ${jobPositionTitle} | Reclu`;
@@ -1414,7 +1415,7 @@ interface TeamInvitationOptions {
 export async function sendTeamInvitationEmail(options: TeamInvitationOptions): Promise<boolean> {
   const { recipientEmail, recipientName, senderName, company, jobTitle, inviteToken } = options;
   
-  const inviteLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/team/invite/${inviteToken}`;
+  const inviteLink = `${getAppBaseUrl()}/team/invite/${inviteToken}`;
 
   const subject = `🎉 Invitación para unirte al equipo de ${company} - Reclu`;
 
