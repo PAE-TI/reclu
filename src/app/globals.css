@@ -41,6 +41,13 @@ a {
   text-decoration: none;
 }
 
+:is(button, a)[class*="bg-blue-"],
+:is(button, a)[class*="bg-sky-"],
+:is(button, a)[class*="bg-cyan-"],
+:is(button, a)[class*="bg-indigo-"] {
+  color: #ffffff;
+}
+
 .reclu-grid-bg {
   background-color: #eef3fb;
   background-image:
