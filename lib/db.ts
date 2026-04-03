@@ -22,12 +22,16 @@ function normalizeDatabaseUrl(rawUrl: string | undefined | null): string | undef
   return url.toString()
 }
 
+function resolveDatabaseUrl() {
+  return normalizeDatabaseUrl(process.env.DATABASE_POOL_URL || process.env.DATABASE_URL)
+}
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     datasources: {
       db: {
-        url: normalizeDatabaseUrl(process.env.DATABASE_URL),
+        url: resolveDatabaseUrl(),
       },
     },
   })
