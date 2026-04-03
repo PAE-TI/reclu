@@ -1,4 +1,3 @@
-import nodemailer from 'nodemailer';
 import { getAppBaseUrl } from '@/lib/site-url';
 interface EmailOptions {
   to: string;
@@ -10,21 +9,34 @@ interface EmailOptions {
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
     try {
-      const transporter = this.getTransporter();
-
-      if (!transporter) {
-        console.error('Email configuration missing. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD and SMTP_FROM.');
+      const apiKey = process.env.RESEND_API_KEY;
+      if (!apiKey) {
+        console.error('Email configuration missing. Set RESEND_API_KEY in Vercel.');
         return false;
       }
 
       const from = this.getFromAddress();
-      await transporter.sendMail({
-        from,
-        to,
-        subject,
-        html,
-        text: text || this.htmlToText(html),
+
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from,
+          to,
+          subject,
+          html,
+          text: text || this.htmlToText(html),
+        }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to send email via Resend:', errorText);
+        return false;
+      }
 
       console.log('Email sent successfully to:', to);
       return true;
@@ -34,34 +46,8 @@ class EmailService {
     }
   }
 
-  private getTransporter() {
-    const host = process.env.SMTP_HOST;
-    const portValue = process.env.SMTP_PORT;
-    const user = process.env.SMTP_USER;
-    const password = process.env.SMTP_PASSWORD;
-
-    if (!host || !portValue || !user || !password) {
-      return null;
-    }
-
-    const port = Number(portValue);
-    const secure = process.env.SMTP_SECURE
-      ? process.env.SMTP_SECURE === 'true'
-      : port === 465;
-
-    return nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: {
-        user,
-        pass: password,
-      },
-    });
-  }
-
   private getFromAddress() {
-    return process.env.SMTP_FROM || `Reclu <noreply@${new URL(getAppBaseUrl()).hostname}>`;
+    return process.env.RESEND_FROM || `Reclu <noreply@${new URL(getAppBaseUrl()).hostname}>`;
   }
 
   private htmlToText(html: string): string {
