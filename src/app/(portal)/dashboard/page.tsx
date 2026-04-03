@@ -227,7 +227,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <Link
-            className="mt-4 inline-flex rounded-xl bg-[linear-gradient(135deg,#5f6af7_0%,#7b4ef9_100%)] px-4 py-2 text-sm font-semibold text-white"
+            className="mt-4 inline-flex rounded-xl bg-[linear-gradient(135deg,#5f6af7_0%,#7b4ef9_100%)] px-4 py-2 text-sm font-semibold !text-white"
             href="/guia-plataforma"
           >
             Ver Guia Completa
