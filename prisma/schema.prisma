@@ -1,0 +1,2382 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// Authentication Models
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?   // For credentials auth
+  firstName     String?
+  lastName      String?
+  company       String?   // Nombre de la empresa
+  jobTitle      String?   // Cargo en la empresa
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true)
+  credits       Int       @default(0)  // User credit balance
+  themePreference String  @default("light") // light, dark, system
+  language      String    @default("es") // es, en - User's preferred language
+  
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  creditTransactions CreditTransaction[] @relation("UserCreditTransactions")
+  createdTransactions CreditTransaction[] @relation("CreditTransactionCreator")
+  evaluations   DiscEvaluation[]
+  responses     DiscResponse[]
+  results       DiscResult[]
+  sentExternalEvaluations ExternalEvaluation[]
+  
+  // Driving Forces Relations
+  drivingForcesEvaluations DrivingForcesEvaluation[]
+  drivingForcesResponses   DrivingForcesResponse[]
+  drivingForcesResults     DrivingForcesResult[]
+  sentExternalDrivingForcesEvaluations ExternalDrivingForcesEvaluation[]
+  
+  // Emotional Intelligence (EQ) Relations
+  eqEvaluations            EQEvaluation[]
+  eqResponses              EQResponse[]
+  eqResults                EQResult[]
+  sentExternalEQEvaluations ExternalEQEvaluation[]
+  
+  // DNA-25 Competencies Relations
+  dnaEvaluations           DNAEvaluation[]
+  dnaResponses             DNAResponse[]
+  dnaResults               DNAResult[]
+  sentExternalDNAEvaluations ExternalDNAEvaluation[]
+  
+  // Acumen (ACI) Relations
+  acumenEvaluations        AcumenEvaluation[]
+  acumenResponses          AcumenResponse[]
+  acumenResults            AcumenResult[]
+  sentExternalAcumenEvaluations ExternalAcumenEvaluation[]
+  
+  // Values & Integrity Relations
+  valuesEvaluations        ValuesEvaluation[]
+  valuesResponses          ValuesResponse[]
+  valuesResults            ValuesResult[]
+  sentExternalValuesEvaluations ExternalValuesEvaluation[]
+  
+  // Stress & Resilience Relations
+  stressEvaluations        StressEvaluation[]
+  stressResponses          StressResponse[]
+  stressResults            StressResult[]
+  sentExternalStressEvaluations ExternalStressEvaluation[]
+  
+  // Technical Evaluations Relations
+  sentExternalTechnicalEvaluations ExternalTechnicalEvaluation[]
+  
+  // Notifications
+  notifications            Notification[]
+  
+  // Evaluation Notes
+  evaluationNotes          EvaluationNote[]
+  
+  // Credit Purchases
+  creditPurchases          CreditPurchase[]
+  
+  // Selection Campaigns
+  selectionCampaigns       SelectionCampaign[] @relation("UserCampaigns")
+  
+  // Team Management - As owner
+  teamMembers              TeamMember[] @relation("TeamOwner")
+  // Team Management - As facilitator (member of someone's team)
+  memberOf                 TeamMember? @relation("TeamFacilitator")
+  ownerId                  String?     // If this user is a facilitator, this is the owner's ID
+  owner                    User?       @relation("OwnerRelation", fields: [ownerId], references: [id])
+  facilitators             User[]      @relation("OwnerRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+// DISC System Models
+model DiscQuestion {
+  id          String        @id @default(cuid())
+  questionNumber Int        @unique
+  questionText String       @db.Text
+  questionType QuestionType @default(ADJECTIVE)
+  context     String?       // Work, Personal, etc.
+  
+  // Options for the question
+  optionA     String        // Dominance option
+  optionB     String        // Influence option  
+  optionC     String        // Steadiness option
+  optionD     String        // Conscientiousness option
+  
+  // Weights for scoring (if needed for advanced scoring)
+  weightD     Float         @default(1.0)
+  weightI     Float         @default(1.0)
+  weightS     Float         @default(1.0)
+  weightC     Float         @default(1.0)
+  
+  isActive    Boolean       @default(true)
+  
+  // Relations
+  responses   DiscResponse[]
+  externalResponses ExternalEvaluationResponse[]
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("disc_questions")
+}
+
+model DiscEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  // Evaluation metadata
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   DiscResponse[]
+  results     DiscResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("disc_evaluations")
+}
+
+model DiscResponse {
+  id            String         @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response data
+  selectedOption DiscDimension  // A=D, B=I, C=S, D=C
+  responseTime   Int?           // Time in seconds to answer
+  
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    DiscEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      DiscQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("disc_responses")
+}
+
+model DiscResult {
+  id           String         @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // Raw scores (0-24 for 24 questions)
+  scoreD       Int            @default(0)
+  scoreI       Int            @default(0) 
+  scoreS       Int            @default(0)
+  scoreC       Int            @default(0)
+  
+  // Normalized scores (0-100)
+  percentileD  Float          @default(0)
+  percentileI  Float          @default(0)
+  percentileS  Float          @default(0)
+  percentileC  Float          @default(0)
+  
+  // Primary and secondary styles
+  primaryStyle   DiscDimension
+  secondaryStyle DiscDimension?
+  personalityType String       // e.g., "DI", "SC", etc.
+  
+  // Style intensity
+  styleIntensity Float         @default(0) // 0-100
+  
+  // Pattern flags
+  isOvershift    Boolean       @default(false)
+  isUndershift   Boolean       @default(false)
+  isTightPattern Boolean       @default(false)
+  
+  // Relations
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation   DiscEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  interpretation DiscInterpretation?
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("disc_results")
+}
+
+model DiscInterpretation {
+  id              String     @id @default(cuid())
+  resultId        String     @unique
+  personalityType String     // "D", "I", "S", "C", "DI", "DC", etc.
+  
+  // Main interpretation content
+  title           String
+  description     String     @db.Text
+  strengths       String[]   // Array of strengths
+  challenges      String[]   // Array of challenges  
+  motivators      String[]   // What motivates this type
+  stressors       String[]   // What causes stress
+  
+  // Work style information
+  workStyle       String     @db.Text
+  communicationStyle String  @db.Text
+  leadershipStyle String?    @db.Text
+  teamRole        String?    @db.Text
+  
+  // Development recommendations
+  developmentTips String[]   // Growth areas
+  careerSuggestions String[] // Career paths
+  
+  // Relations
+  result          DiscResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("disc_interpretations")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+  FACILITATOR
+}
+
+enum QuestionType {
+  ADJECTIVE    // Word-based questions
+  SCENARIO     // Situation-based questions
+  RANKING      // Rank order questions
+}
+
+enum EvaluationStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum DiscDimension {
+  D  // Dominance
+  I  // Influence  
+  S  // Steadiness
+  C  // Conscientiousness
+}
+
+// External Evaluations Models
+model ExternalEvaluation {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalEvaluationResponse[]
+  result          ExternalEvaluationResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_evaluations")
+}
+
+model ExternalEvaluationResponse {
+  id                     String             @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  mostValue              Int                // 1-4 representing the option chosen as MOST
+  leastValue             Int                // 1-4 representing the option chosen as LEAST
+  
+  // Relations
+  externalEvaluation     ExternalEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  question               DiscQuestion       @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime           @default(now())
+
+  @@map("external_evaluation_responses")
+}
+
+model ExternalEvaluationResult {
+  id                     String             @id @default(cuid())
+  externalEvaluationId   String             @unique
+  
+  // DISC Results
+  personalityType        String
+  primaryStyle           String
+  secondaryStyle         String?
+  styleIntensity         Float
+  percentileD            Float
+  percentileI            Float
+  percentileS            Float
+  percentileC            Float
+  
+  // Pattern flags
+  isOvershift            Boolean            @default(false)
+  isUndershift           Boolean            @default(false)
+  isTightPattern         Boolean            @default(false)
+  
+  // Relations
+  externalEvaluation     ExternalEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime           @default(now())
+
+  @@map("external_evaluation_results")
+}
+
+// Driving Forces Models
+model DrivingForcesQuestion {
+  id          String        @id @default(cuid())
+  questionNumber Int        @unique
+  questionText String       @db.Text
+  questionType DrivingForcesQuestionType @default(RANKING)
+  
+  // Statement options for ranking (1 = Most like me, 4 = Least like me)
+  statementA  String        @db.Text  // Statement for first driving force
+  statementB  String        @db.Text  // Statement for second driving force
+  statementC  String        @db.Text  // Statement for third driving force
+  statementD  String        @db.Text  // Statement for fourth driving force
+  
+  // Which driving force each statement represents
+  forceA      DrivingForce
+  forceB      DrivingForce
+  forceC      DrivingForce
+  forceD      DrivingForce
+  
+  isActive    Boolean       @default(true)
+  category    String?       // Optional category grouping
+  
+  // Relations
+  responses   DrivingForcesResponse[]
+  externalResponses ExternalDrivingForcesResponse[]
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("driving_forces_questions")
+}
+
+model DrivingForcesEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  // Evaluation metadata
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   DrivingForcesResponse[]
+  results     DrivingForcesResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("driving_forces_evaluations")
+}
+
+model DrivingForcesResponse {
+  id            String         @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response data - ranking from 1 (Most like me) to 4 (Least like me)
+  rankingA      Int            // Ranking for statement A (1-4)
+  rankingB      Int            // Ranking for statement B (1-4)
+  rankingC      Int            // Ranking for statement C (1-4)
+  rankingD      Int            // Ranking for statement D (1-4)
+  responseTime  Int?           // Time in seconds to answer
+  
+  // Relations
+  user          User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    DrivingForcesEvaluation   @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      DrivingForcesQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("driving_forces_responses")
+}
+
+model DrivingForcesResult {
+  id           String         @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // Raw scores for each driving force (sum of rankings, lower = stronger)
+  intelectualScore     Int    @default(0)
+  instintivoScore      Int    @default(0)
+  practicoScore        Int    @default(0)
+  altruistaScore       Int    @default(0)
+  armoniosoScore       Int    @default(0)
+  objetivoScore        Int    @default(0)
+  benevoloScore        Int    @default(0)
+  intencionalScore     Int    @default(0)
+  dominanteScore       Int    @default(0)
+  colaborativoScore    Int    @default(0)
+  estructuradoScore    Int    @default(0)
+  receptivoScore       Int    @default(0)
+  
+  // Normalized scores (0-100, higher = stronger)
+  intelectualPercentile    Float  @default(0)
+  instintivoPercentile     Float  @default(0)
+  practicoPercentile       Float  @default(0)
+  altruistaPercentile      Float  @default(0)
+  armoniosoPercentile      Float  @default(0)
+  objetivoPercentile       Float  @default(0)
+  benevoloPercentile       Float  @default(0)
+  intencionalPercentile    Float  @default(0)
+  dominantePercentile      Float  @default(0)
+  colaborativoPercentile   Float  @default(0)
+  estructuradoPercentile   Float  @default(0)
+  receptivoPercentile      Float  @default(0)
+  
+  // Primary motivators (top 4)
+  primaryMotivators       String[]   // Array of top motivators
+  situationalMotivators   String[]   // Array of middle motivators  
+  indifferentMotivators   String[]   // Array of bottom motivators
+  
+  // Motivational clusters
+  topMotivator       DrivingForce
+  secondMotivator    DrivingForce?
+  thirdMotivator     DrivingForce?
+  fourthMotivator    DrivingForce?
+  
+  // Relations
+  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation   DrivingForcesEvaluation   @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  interpretation DrivingForcesInterpretation?
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("driving_forces_results")
+}
+
+model DrivingForcesInterpretation {
+  id              String     @id @default(cuid())
+  resultId        String     @unique
+  motivationalProfile String // e.g., "Intellectual-Resourceful", etc.
+  
+  // Main interpretation content
+  title           String
+  description     String     @db.Text
+  strengths       String[]   // Array of motivational strengths
+  challenges      String[]   // Array of motivational challenges  
+  energizers      String[]   // What energizes this person
+  stressors       String[]   // What causes motivational stress
+  
+  // Work environment preferences
+  idealEnvironment String    @db.Text
+  workPreferences  String    @db.Text
+  avoidanceAreas   String[]  // Areas/situations to avoid
+  
+  // Development recommendations
+  developmentTips String[]   // Motivational growth areas
+  careerAlignment String[]   // Career paths that align with motivators
+  
+  // Relations
+  result          DrivingForcesResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("driving_forces_interpretations")
+}
+
+// Additional Enums for Driving Forces
+enum DrivingForcesQuestionType {
+  RANKING      // Rank statements from most to least like you
+  SCENARIO     // Situation-based questions
+  FORCED_CHOICE // Choose between options
+}
+
+enum DrivingForce {
+  INTELECTUAL     // Motivado por oportunidades de aprender
+  INSTINTIVO      // Usa experiencias pasadas e intuición
+  PRACTICO        // Resultados prácticos y eficiencia
+  ALTRUISTA       // Completar tareas sin expectativa de retorno
+  ARMONIOSO       // Experiencia y equilibrio en el entorno
+  OBJETIVO        // Funcionalidad y objetividad
+  BENEVOLO        // Ayudar a otros por satisfacción personal
+  INTENCIONAL     // Ayudar a otros con propósito específico
+  DOMINANTE       // Estatus, reconocimiento y control
+  COLABORATIVO    // Rol de apoyo con poca necesidad de reconocimiento
+  ESTRUCTURADO    // Enfoques tradicionales y métodos probados
+  RECEPTIVO       // Nuevas ideas y oportunidades fuera del sistema definido
+}
+
+// External Driving Forces Evaluations Models
+model ExternalDrivingForcesEvaluation {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalDrivingForcesResponse[]
+  result          ExternalDrivingForcesResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_driving_forces_evaluations")
+}
+
+model ExternalDrivingForcesResponse {
+  id                           String                          @id @default(cuid())
+  externalEvaluationId         String
+  questionId                   String
+  rankingA                     Int                             // Ranking para statement A (1-4)
+  rankingB                     Int                             // Ranking para statement B (1-4)
+  rankingC                     Int                             // Ranking para statement C (1-4)
+  rankingD                     Int                             // Ranking para statement D (1-4)
+  
+  // Relations
+  externalEvaluation           ExternalDrivingForcesEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  question                     DrivingForcesQuestion           @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt                    DateTime                        @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_driving_forces_responses")
+}
+
+model ExternalDrivingForcesResult {
+  id                           String                          @id @default(cuid())
+  externalEvaluationId         String                          @unique
+  
+  // Driving Forces Results
+  motivationalProfile          String
+  primaryMotivators            String[]  // Top 4 motivators
+  situationalMotivators        String[]  // Middle motivators
+  indifferentMotivators        String[]  // Bottom motivators
+  
+  topMotivator                 String
+  secondMotivator              String?
+  thirdMotivator               String?
+  fourthMotivator              String?
+  
+  // Percentiles for each driving force
+  intelectualPercentile        Float
+  instintivoPercentile         Float
+  practicoPercentile           Float
+  altruistaPercentile          Float
+  armoniosoPercentile          Float
+  objetivoPercentile           Float
+  benevoloPercentile           Float
+  intencionalPercentile        Float
+  dominantePercentile          Float
+  colaborativoPercentile       Float
+  estructuradoPercentile       Float
+  receptivoPercentile          Float
+  
+  // Relations
+  externalEvaluation           ExternalDrivingForcesEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt                    DateTime                        @default(now())
+
+  @@map("external_driving_forces_results")
+}
+
+// =====================================================
+// EMOTIONAL INTELLIGENCE (EQ) MODELS
+// =====================================================
+
+model EQQuestion {
+  id              String        @id @default(cuid())
+  questionNumber  Int           @unique
+  questionText    String        @db.Text
+  questionType    EQQuestionType @default(SCENARIO)
+  
+  // The EQ dimension this question measures
+  dimension       EQDimension
+  subdimension    String?       // e.g., "Emotional Self-Awareness", "Self-Confidence"
+  
+  // Options for Likert scale (1-5) or scenario-based
+  optionA         String        @db.Text  // Strongly Disagree / Low EQ response
+  optionB         String        @db.Text  // Disagree
+  optionC         String        @db.Text  // Neutral
+  optionD         String        @db.Text  // Agree
+  optionE         String        @db.Text  // Strongly Agree / High EQ response
+  
+  // Scoring direction (some questions are reverse-scored)
+  isReversed      Boolean       @default(false)
+  weight          Float         @default(1.0)
+  
+  isActive        Boolean       @default(true)
+  category        String?       // Optional category grouping
+  
+  // Relations
+  responses       EQResponse[]
+  externalResponses ExternalEQResponse[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("eq_questions")
+}
+
+model EQEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  // Evaluation metadata
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   EQResponse[]
+  results     EQResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("eq_evaluations")
+}
+
+model EQResponse {
+  id            String         @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response data (1-5 Likert scale)
+  selectedValue Int            // 1-5 scale
+  responseTime  Int?           // Time in seconds to answer
+  
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    EQEvaluation   @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      EQQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("eq_responses")
+}
+
+model EQResult {
+  id           String         @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // Raw scores for each dimension (sum of responses)
+  selfAwarenessScore      Int    @default(0)
+  selfRegulationScore     Int    @default(0)
+  motivationScore         Int    @default(0)
+  empathyScore            Int    @default(0)
+  socialSkillsScore       Int    @default(0)
+  
+  // Normalized scores (0-100)
+  selfAwarenessPercentile    Float  @default(0)
+  selfRegulationPercentile   Float  @default(0)
+  motivationPercentile       Float  @default(0)
+  empathyPercentile          Float  @default(0)
+  socialSkillsPercentile     Float  @default(0)
+  
+  // Overall EQ score
+  totalEQScore               Float  @default(0)
+  totalEQPercentile          Float  @default(0)
+  
+  // Subdimension scores (15 subdimensions)
+  emotionalSelfAwarenessScore    Float  @default(0)
+  accurateSelfAssessmentScore    Float  @default(0)
+  selfConfidenceScore            Float  @default(0)
+  selfControlScore               Float  @default(0)
+  trustworthinessScore           Float  @default(0)
+  conscientiousnessScore         Float  @default(0)
+  adaptabilityScore              Float  @default(0)
+  innovationScore                Float  @default(0)
+  achievementDriveScore          Float  @default(0)
+  commitmentScore                Float  @default(0)
+  initiativeScore                Float  @default(0)
+  optimismScore                  Float  @default(0)
+  understandingOthersScore       Float  @default(0)
+  developingOthersScore          Float  @default(0)
+  serviceOrientationScore        Float  @default(0)
+  leveragingDiversityScore       Float  @default(0)
+  politicalAwarenessScore        Float  @default(0)
+  influenceScore                 Float  @default(0)
+  communicationScore             Float  @default(0)
+  conflictManagementScore        Float  @default(0)
+  leadershipScore                Float  @default(0)
+  changeManagementScore          Float  @default(0)
+  buildingBondsScore             Float  @default(0)
+  teamworkScore                  Float  @default(0)
+  collaborationScore             Float  @default(0)
+  
+  // Primary strengths and development areas
+  primaryStrengths       String[]  // Top 3 dimensions
+  developmentAreas       String[]  // Bottom 2 dimensions
+  
+  // EQ Level classification
+  eqLevel               String     // Very High, High, Moderate, Low, Very Low
+  
+  // Relations
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation   EQEvaluation   @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  interpretation EQInterpretation?
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("eq_results")
+}
+
+model EQInterpretation {
+  id              String     @id @default(cuid())
+  resultId        String     @unique
+  eqProfile       String     // e.g., "Empathic Leader", "Self-Aware Achiever"
+  
+  // Main interpretation content
+  title           String
+  description     String     @db.Text
+  strengths       String[]   // Array of EQ strengths
+  challenges      String[]   // Array of EQ challenges  
+  emotionalTriggers String[] // Triggers that affect emotions
+  copingStrategies  String[] // How they handle stress
+  
+  // Work style based on EQ
+  leadershipStyle    String  @db.Text
+  communicationStyle String  @db.Text
+  conflictStyle      String  @db.Text
+  teamDynamics       String  @db.Text
+  
+  // Development recommendations
+  developmentTips    String[]  // EQ growth areas
+  exerciseSuggestions String[] // Specific EQ exercises
+  
+  // Relations
+  result          EQResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("eq_interpretations")
+}
+
+// External EQ Evaluations
+model ExternalEQEvaluation {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalEQResponse[]
+  result          ExternalEQResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_eq_evaluations")
+}
+
+model ExternalEQResponse {
+  id                     String               @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  selectedValue          Int                  // 1-5 Likert scale
+  
+  // Relations
+  externalEvaluation     ExternalEQEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  question               EQQuestion           @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime             @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_eq_responses")
+}
+
+model ExternalEQResult {
+  id                     String               @id @default(cuid())
+  externalEvaluationId   String               @unique
+  
+  // EQ Results - Main dimensions
+  eqProfile              String
+  eqLevel                String               // Very High, High, Moderate, Low, Very Low
+  totalEQPercentile      Float
+  
+  // Dimension percentiles
+  selfAwarenessPercentile    Float
+  selfRegulationPercentile   Float
+  motivationPercentile       Float
+  empathyPercentile          Float
+  socialSkillsPercentile     Float
+  
+  // Strengths and development areas
+  primaryStrengths       String[]
+  developmentAreas       String[]
+  
+  // Relations
+  externalEvaluation     ExternalEQEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime             @default(now())
+
+  @@map("external_eq_results")
+}
+
+// EQ Enums
+enum EQQuestionType {
+  SCENARIO     // Situation-based questions
+  LIKERT       // Agreement scale questions
+  SELF_REPORT  // Self-assessment questions
+}
+
+enum EQDimension {
+  SELF_AWARENESS    // Autoconciencia
+  SELF_REGULATION   // Autorregulación
+  MOTIVATION        // Motivación
+  EMPATHY           // Empatía
+  SOCIAL_SKILLS     // Habilidades Sociales
+}
+
+// =====================================================
+// DNA-25 COMPETENCIES MODELS
+// =====================================================
+
+model DNAQuestion {
+  id              String        @id @default(cuid())
+  questionNumber  Int           @unique
+  questionText    String        @db.Text
+  questionType    DNAQuestionType @default(SCENARIO)
+  
+  // The DNA competency this question measures
+  competency      DNACompetency
+  category        DNACategory   // Category grouping
+  
+  // Options for Likert scale (1-5) or scenario-based
+  optionA         String        @db.Text  // Nunca / Muy bajo
+  optionB         String        @db.Text  // Raramente / Bajo
+  optionC         String        @db.Text  // A veces / Moderado
+  optionD         String        @db.Text  // Frecuentemente / Alto
+  optionE         String        @db.Text  // Siempre / Muy alto
+  
+  // Scoring direction (some questions are reverse-scored)
+  isReversed      Boolean       @default(false)
+  weight          Float         @default(1.0)
+  
+  isActive        Boolean       @default(true)
+  
+  // Relations
+  responses       DNAResponse[]
+  externalResponses ExternalDNAResponse[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("dna_questions")
+}
+
+model DNAEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  // Evaluation metadata
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  // Relations
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   DNAResponse[]
+  results     DNAResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("dna_evaluations")
+}
+
+model DNAResponse {
+  id            String         @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response data (1-5 Likert scale)
+  selectedValue Int            // 1-5 scale
+  responseTime  Int?           // Time in seconds to answer
+  
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    DNAEvaluation  @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      DNAQuestion    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("dna_responses")
+}
+
+model DNAResult {
+  id           String         @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // Raw scores for each competency (sum of responses)
+  analyticalThinkingScore        Int    @default(0)
+  problemSolvingScore            Int    @default(0)
+  creativityScore                Int    @default(0)
+  adaptabilityScore              Int    @default(0)
+  achievementOrientationScore    Int    @default(0)
+  timeManagementScore            Int    @default(0)
+  planningOrganizationScore      Int    @default(0)
+  attentionToDetailScore         Int    @default(0)
+  customerServiceScore           Int    @default(0)
+  writtenCommunicationScore      Int    @default(0)
+  verbalCommunicationScore       Int    @default(0)
+  influenceScore                 Int    @default(0)
+  negotiationScore               Int    @default(0)
+  presentationSkillsScore        Int    @default(0)
+  teamworkScore                  Int    @default(0)
+  leadershipScore                Int    @default(0)
+  developingOthersScore          Int    @default(0)
+  conflictManagementScore        Int    @default(0)
+  decisionMakingScore            Int    @default(0)
+  strategicThinkingScore         Int    @default(0)
+  relationshipBuildingScore      Int    @default(0)
+  businessAcumenScore            Int    @default(0)
+  resultsOrientationScore        Int    @default(0)
+  resilienceScore                Int    @default(0)
+  accountabilityScore            Int    @default(0)
+  
+  // Normalized scores (0-100)
+  analyticalThinkingPercentile        Float  @default(0)
+  problemSolvingPercentile            Float  @default(0)
+  creativityPercentile                Float  @default(0)
+  adaptabilityPercentile              Float  @default(0)
+  achievementOrientationPercentile    Float  @default(0)
+  timeManagementPercentile            Float  @default(0)
+  planningOrganizationPercentile      Float  @default(0)
+  attentionToDetailPercentile         Float  @default(0)
+  customerServicePercentile           Float  @default(0)
+  writtenCommunicationPercentile      Float  @default(0)
+  verbalCommunicationPercentile       Float  @default(0)
+  influencePercentile                 Float  @default(0)
+  negotiationPercentile               Float  @default(0)
+  presentationSkillsPercentile        Float  @default(0)
+  teamworkPercentile                  Float  @default(0)
+  leadershipPercentile                Float  @default(0)
+  developingOthersPercentile          Float  @default(0)
+  conflictManagementPercentile        Float  @default(0)
+  decisionMakingPercentile            Float  @default(0)
+  strategicThinkingPercentile         Float  @default(0)
+  relationshipBuildingPercentile      Float  @default(0)
+  businessAcumenPercentile            Float  @default(0)
+  resultsOrientationPercentile        Float  @default(0)
+  resiliencePercentile                Float  @default(0)
+  accountabilityPercentile            Float  @default(0)
+  
+  // Category averages
+  thinkingCategoryScore              Float  @default(0)
+  communicationCategoryScore         Float  @default(0)
+  leadershipCategoryScore            Float  @default(0)
+  resultsCategoryScore               Float  @default(0)
+  relationshipCategoryScore          Float  @default(0)
+  
+  // Overall DNA score
+  totalDNAScore               Float  @default(0)
+  totalDNAPercentile          Float  @default(0)
+  
+  // Primary strengths and development areas
+  primaryStrengths       String[]  // Top 5 competencies
+  developmentAreas       String[]  // Bottom 5 competencies
+  
+  // DNA Level classification
+  dnaLevel               String     // Very High, High, Moderate, Low, Very Low
+  
+  // Relations
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation   DNAEvaluation  @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  interpretation DNAInterpretation?
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("dna_results")
+}
+
+model DNAInterpretation {
+  id              String     @id @default(cuid())
+  resultId        String     @unique
+  dnaProfile      String     // e.g., "Strategic Leader", "Creative Problem Solver"
+  
+  // Main interpretation content
+  title           String
+  description     String     @db.Text
+  strengths       String[]   // Array of competency strengths
+  challenges      String[]   // Array of competency challenges  
+  
+  // Work style based on DNA
+  workStyle          String  @db.Text
+  leadershipPotential String @db.Text
+  teamContribution   String  @db.Text
+  
+  // Development recommendations
+  developmentTips    String[]  // Competency growth areas
+  trainingRecommendations String[] // Training suggestions
+  
+  // Relations
+  result          DNAResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@map("dna_interpretations")
+}
+
+// External DNA Evaluations
+model ExternalDNAEvaluation {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalDNAResponse[]
+  result          ExternalDNAResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_dna_evaluations")
+}
+
+model ExternalDNAResponse {
+  id                     String               @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  selectedValue          Int                  // 1-5 Likert scale
+  
+  // Relations
+  externalEvaluation     ExternalDNAEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  question               DNAQuestion           @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime             @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_dna_responses")
+}
+
+model ExternalDNAResult {
+  id                     String               @id @default(cuid())
+  externalEvaluationId   String               @unique
+  
+  // DNA Results - Profile
+  dnaProfile             String
+  dnaLevel               String               // Very High, High, Moderate, Low, Very Low
+  totalDNAPercentile     Float
+  
+  // Competency percentiles (all 25)
+  analyticalThinkingPercentile        Float
+  problemSolvingPercentile            Float
+  creativityPercentile                Float
+  adaptabilityPercentile              Float
+  achievementOrientationPercentile    Float
+  timeManagementPercentile            Float
+  planningOrganizationPercentile      Float
+  attentionToDetailPercentile         Float
+  customerServicePercentile           Float
+  writtenCommunicationPercentile      Float
+  verbalCommunicationPercentile       Float
+  influencePercentile                 Float
+  negotiationPercentile               Float
+  presentationSkillsPercentile        Float
+  teamworkPercentile                  Float
+  leadershipPercentile                Float
+  developingOthersPercentile          Float
+  conflictManagementPercentile        Float
+  decisionMakingPercentile            Float
+  strategicThinkingPercentile         Float
+  relationshipBuildingPercentile      Float
+  businessAcumenPercentile            Float
+  resultsOrientationPercentile        Float
+  resiliencePercentile                Float
+  accountabilityPercentile            Float
+  
+  // Category scores
+  thinkingCategoryScore              Float
+  communicationCategoryScore         Float
+  leadershipCategoryScore            Float
+  resultsCategoryScore               Float
+  relationshipCategoryScore          Float
+  
+  // Strengths and development areas
+  primaryStrengths       String[]
+  developmentAreas       String[]
+  
+  // Relations
+  externalEvaluation     ExternalDNAEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime             @default(now())
+
+  @@map("external_dna_results")
+}
+
+// DNA Enums
+enum DNAQuestionType {
+  SCENARIO     // Situation-based questions
+  LIKERT       // Agreement scale questions
+  SELF_REPORT  // Self-assessment questions
+}
+
+enum DNACategory {
+  THINKING         // Pensamiento
+  COMMUNICATION    // Comunicación
+  LEADERSHIP       // Liderazgo
+  RESULTS          // Resultados
+  RELATIONSHIP     // Relacionamiento
+}
+
+enum DNACompetency {
+  ANALYTICAL_THINKING      // Pensamiento Analítico
+  PROBLEM_SOLVING          // Resolución de Problemas
+  CREATIVITY               // Creatividad/Innovación
+  ADAPTABILITY             // Adaptabilidad
+  ACHIEVEMENT_ORIENTATION  // Orientación al Logro
+  TIME_MANAGEMENT          // Gestión del Tiempo
+  PLANNING_ORGANIZATION    // Planificación y Organización
+  ATTENTION_TO_DETAIL      // Atención al Detalle
+  CUSTOMER_SERVICE         // Servicio al Cliente
+  WRITTEN_COMMUNICATION    // Comunicación Escrita
+  VERBAL_COMMUNICATION     // Comunicación Verbal
+  INFLUENCE                // Influencia
+  NEGOTIATION              // Negociación
+  PRESENTATION_SKILLS      // Habilidades de Presentación
+  TEAMWORK                 // Trabajo en Equipo
+  LEADERSHIP               // Liderazgo
+  DEVELOPING_OTHERS        // Desarrollo de Personas
+  CONFLICT_MANAGEMENT      // Gestión de Conflictos
+  DECISION_MAKING          // Toma de Decisiones
+  STRATEGIC_THINKING       // Pensamiento Estratégico
+  RELATIONSHIP_BUILDING    // Desarrollo de Relaciones
+  BUSINESS_ACUMEN          // Conocimiento del Negocio
+  RESULTS_ORIENTATION      // Orientación a Resultados
+  RESILIENCE               // Resiliencia
+  ACCOUNTABILITY           // Responsabilidad Personal
+}
+
+// =====================================================
+// ACUMEN CAPACITY INDEX (ACI) MODELS
+// =====================================================
+
+model AcumenQuestion {
+  id              String            @id @default(cuid())
+  questionNumber  Int               @unique
+  questionText    String            @db.Text
+  questionType    AcumenQuestionType @default(AGREEMENT)
+  
+  // The dimension this question measures
+  dimension       AcumenDimension
+  factor          AcumenFactor      // External or Internal
+  
+  // Options for 5-point scale (Nunca to Siempre)
+  optionA         String            @db.Text
+  optionB         String            @db.Text
+  optionC         String?           @db.Text
+  optionD         String?           @db.Text
+  optionE         String?           @db.Text
+  
+  // Scoring
+  isReversed      Boolean           @default(false)
+  weight          Float             @default(1.0)
+  isActive        Boolean           @default(true)
+  
+  // Relations
+  responses       AcumenResponse[]
+  externalResponses ExternalAcumenResponse[]
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("acumen_questions")
+}
+
+model AcumenEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   AcumenResponse[]
+  results     AcumenResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("acumen_evaluations")
+}
+
+model AcumenResponse {
+  id            String            @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response: ranking value or selection
+  selectedValue Int               // Primary response value
+  secondaryValue Int?             // For ranking comparisons
+  responseTime  Int?
+  
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    AcumenEvaluation  @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      AcumenQuestion    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("acumen_responses")
+}
+
+model AcumenResult {
+  id           String            @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // External Factors Clarity Scores (0-10 scale)
+  understandingOthersClarity    Float   @default(0)
+  practicalThinkingClarity      Float   @default(0)
+  systemsJudgmentClarity        Float   @default(0)
+  
+  // Internal Factors Clarity Scores (0-10 scale)
+  senseOfSelfClarity            Float   @default(0)
+  roleAwarenessClarity          Float   @default(0)
+  selfDirectionClarity          Float   @default(0)
+  
+  // Bias indicators (-1 undervalue, 0 neutral, 1 overvalue)
+  understandingOthersBias       Int     @default(0)
+  practicalThinkingBias         Int     @default(0)
+  systemsJudgmentBias           Int     @default(0)
+  senseOfSelfBias               Int     @default(0)
+  roleAwarenessBias             Int     @default(0)
+  selfDirectionBias             Int     @default(0)
+  
+  // Aggregate scores
+  externalClarityScore          Float   @default(0)
+  internalClarityScore          Float   @default(0)
+  totalAcumenScore              Float   @default(0)
+  
+  // Level classification
+  acumenLevel                   String  // Very High, High, Moderate, Low, Very Low
+  acumenProfile                 String  // Profile description
+  
+  // Strengths and areas for development
+  primaryStrengths              String[]
+  developmentAreas              String[]
+  
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    AcumenEvaluation  @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("acumen_results")
+}
+
+// External Acumen Evaluation (sent to external users)
+model ExternalAcumenEvaluation {
+  id              String    @id @default(cuid())
+  title           String    @default("Evaluación Acumen")
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalAcumenResponse[]
+  result          ExternalAcumenResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_acumen_evaluations")
+}
+
+model ExternalAcumenResponse {
+  id                     String                   @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  questionNumber         Int
+  
+  selectedValue          Int
+  secondaryValue         Int?
+  responseTime           Int?
+  
+  externalEvaluation     ExternalAcumenEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Cascade)
+  question               AcumenQuestion           @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                 @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_acumen_responses")
+}
+
+model ExternalAcumenResult {
+  id                     String                   @id @default(cuid())
+  externalEvaluationId   String                   @unique
+  
+  // External Factors Clarity
+  understandingOthersClarity    Float
+  practicalThinkingClarity      Float
+  systemsJudgmentClarity        Float
+  
+  // Internal Factors Clarity
+  senseOfSelfClarity            Float
+  roleAwarenessClarity          Float
+  selfDirectionClarity          Float
+  
+  // Bias
+  understandingOthersBias       Int
+  practicalThinkingBias         Int
+  systemsJudgmentBias           Int
+  senseOfSelfBias               Int
+  roleAwarenessBias             Int
+  selfDirectionBias             Int
+  
+  // Aggregates
+  externalClarityScore          Float
+  internalClarityScore          Float
+  totalAcumenScore              Float
+  
+  acumenLevel                   String
+  acumenProfile                 String
+  
+  primaryStrengths              String[]
+  developmentAreas              String[]
+  
+  externalEvaluation     ExternalAcumenEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                 @default(now())
+
+  @@map("external_acumen_results")
+}
+
+// Acumen Enums
+enum AcumenQuestionType {
+  RANKING      // Comparison/ranking questions
+  SCENARIO     // Situation-based questions
+  AGREEMENT    // Agreement scale questions
+}
+
+enum AcumenFactor {
+  EXTERNAL     // External world factors
+  INTERNAL     // Internal self factors
+}
+
+enum AcumenDimension {
+  UNDERSTANDING_OTHERS   // Comprensión de Otros
+  PRACTICAL_THINKING     // Pensamiento Práctico
+  SYSTEMS_JUDGMENT       // Juicio de Sistemas
+  SENSE_OF_SELF          // Sentido de Sí Mismo
+  ROLE_AWARENESS         // Conciencia del Rol
+  SELF_DIRECTION         // Auto-dirección
+}
+
+// ===========================================
+// VALUES & INTEGRITY MODELS
+// ===========================================
+
+model ValuesQuestion {
+  id              String              @id @default(cuid())
+  questionNumber  Int                 @unique
+  questionText    String              @db.Text
+  questionType    ValuesQuestionType  @default(RANKING)
+  
+  // The dimension this question measures
+  dimension       ValuesDimension
+  category        ValuesCategory      // Personal or Professional
+  
+  // Options for ranking (paired comparison)
+  optionA         String              @db.Text
+  optionB         String              @db.Text
+  optionC         String?             @db.Text
+  optionD         String?             @db.Text
+  optionE         String?             @db.Text
+  
+  // Scoring
+  isReversed      Boolean             @default(false)
+  weight          Float               @default(1.0)
+  isActive        Boolean             @default(true)
+  
+  // Relations
+  responses       ValuesResponse[]
+  externalResponses ExternalValuesResponse[]
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@map("values_questions")
+}
+
+model ValuesEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   ValuesResponse[]
+  results     ValuesResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("values_evaluations")
+}
+
+model ValuesResponse {
+  id            String              @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response: ranking value or selection
+  selectedValue Int                 // Primary response value (1-6 ranking)
+  secondaryValue Int?               // For paired comparisons
+  responseTime  Int?
+  
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    ValuesEvaluation    @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      ValuesQuestion      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("values_responses")
+}
+
+model ValuesResult {
+  id           String              @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // 6 Values Dimensions Scores (0-100 percentile)
+  teoricoScore          Float   @default(0)   // Theoretical - Knowledge
+  utilitarioScore       Float   @default(0)   // Utilitarian - ROI
+  esteticoScore         Float   @default(0)   // Aesthetic - Harmony
+  socialScore           Float   @default(0)   // Social - Helping others
+  individualistaScore   Float   @default(0)   // Individualistic - Power
+  tradicionalScore      Float   @default(0)   // Traditional - Order
+  
+  // Integrity Indicators
+  integrityScore        Float   @default(0)   // Overall integrity index
+  consistencyScore      Float   @default(0)   // Response consistency
+  authenticityScore     Float   @default(0)   // Authenticity indicator
+  
+  // Aggregate scores
+  totalValuesScore      Float   @default(0)
+  
+  // Level classification
+  valuesLevel           String                  // Very High, High, Moderate, Low, Very Low
+  valuesProfile         String                  // Profile description
+  
+  // Primary and situational values
+  primaryValues         String[]                // Top 2 values
+  situationalValues     String[]                // Middle values
+  indifferentValues     String[]                // Lower priority values
+  
+  // Strengths and areas for development
+  primaryStrengths      String[]
+  developmentAreas      String[]
+  
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    ValuesEvaluation    @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("values_results")
+}
+
+// External Values Evaluation (sent to external users)
+model ExternalValuesEvaluation {
+  id              String    @id @default(cuid())
+  title           String    @default("Evaluación de Valores")
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalValuesResponse[]
+  result          ExternalValuesResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_values_evaluations")
+}
+
+model ExternalValuesResponse {
+  id                     String                     @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  questionNumber         Int
+  
+  selectedValue          Int
+  secondaryValue         Int?
+  responseTime           Int?
+  
+  externalEvaluation     ExternalValuesEvaluation   @relation(fields: [externalEvaluationId], references: [id], onDelete: Cascade)
+  question               ValuesQuestion             @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                   @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_values_responses")
+}
+
+model ExternalValuesResult {
+  id                     String                     @id @default(cuid())
+  externalEvaluationId   String                     @unique
+  
+  // 6 Values Dimensions Scores
+  teoricoScore           Float
+  utilitarioScore        Float
+  esteticoScore          Float
+  socialScore            Float
+  individualistaScore    Float
+  tradicionalScore       Float
+  
+  // Integrity Indicators
+  integrityScore         Float
+  consistencyScore       Float
+  authenticityScore      Float
+  
+  // Aggregates
+  totalValuesScore       Float
+  
+  valuesLevel            String
+  valuesProfile          String
+  
+  primaryValues          String[]
+  situationalValues      String[]
+  indifferentValues      String[]
+  
+  primaryStrengths       String[]
+  developmentAreas       String[]
+  
+  externalEvaluation     ExternalValuesEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                 @default(now())
+
+  @@map("external_values_results")
+}
+
+// Values Enums
+enum ValuesQuestionType {
+  RANKING      // Paired comparison/ranking questions
+  SCENARIO     // Situation-based questions
+  FORCED       // Forced choice questions
+}
+
+enum ValuesCategory {
+  PERSONAL      // Personal life values
+  PROFESSIONAL  // Professional/work values
+}
+
+enum ValuesDimension {
+  TEORICO         // Theoretical - Knowledge seeking
+  UTILITARIO      // Utilitarian - ROI focused
+  ESTETICO        // Aesthetic - Form and harmony
+  SOCIAL          // Social - Helping others
+  INDIVIDUALISTA  // Individualistic - Power and control
+  TRADICIONAL     // Traditional - Order and system
+}
+
+// ===========================================
+// STRESS & RESILIENCE MODELS
+// ===========================================
+
+model StressQuestion {
+  id              String              @id @default(cuid())
+  questionNumber  Int                 @unique
+  questionText    String              @db.Text
+  questionType    StressQuestionType  @default(LIKERT)
+  
+  // The dimension this question measures
+  dimension       StressDimension
+  category        StressCategory      // Positive or Negative indicator
+  
+  // Options for Likert scale (1-5)
+  optionA         String              @db.Text  // 1 - Nunca/Totalmente en desacuerdo
+  optionB         String              @db.Text  // 2 - Raramente/En desacuerdo
+  optionC         String              @db.Text  // 3 - A veces/Neutral
+  optionD         String              @db.Text  // 4 - Frecuentemente/De acuerdo
+  optionE         String              @db.Text  // 5 - Siempre/Totalmente de acuerdo
+  
+  // Scoring
+  isReversed      Boolean             @default(false)
+  weight          Float               @default(1.0)
+  isActive        Boolean             @default(true)
+  
+  // Relations
+  responses       StressResponse[]
+  externalResponses ExternalStressResponse[]
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@map("stress_questions")
+}
+
+model StressEvaluation {
+  id          String            @id @default(cuid())
+  title       String
+  description String?           @db.Text
+  userId      String
+  status      EvaluationStatus  @default(DRAFT)
+  
+  startedAt   DateTime?
+  completedAt DateTime?
+  isPublic    Boolean           @default(false)
+  
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses   StressResponse[]
+  results     StressResult[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("stress_evaluations")
+}
+
+model StressResponse {
+  id            String              @id @default(cuid())
+  userId        String
+  evaluationId  String
+  questionId    String
+  questionNumber Int
+  
+  // Response: Likert value 1-5
+  selectedValue Int
+  responseTime  Int?
+  
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    StressEvaluation    @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  question      StressQuestion      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, evaluationId, questionId])
+  @@map("stress_responses")
+}
+
+model StressResult {
+  id           String              @id @default(cuid())
+  userId       String
+  evaluationId String
+  
+  // 5 Stress Dimensions Scores (0-100 percentile)
+  estresLaboralScore        Float   @default(0)   // Work Stress
+  capacidadRecuperacionScore Float  @default(0)   // Recovery Capacity
+  manejoEmocionalScore      Float   @default(0)   // Emotional Management
+  equilibrioVidaScore       Float   @default(0)   // Work-Life Balance
+  resilienciaScore          Float   @default(0)   // Resilience
+  
+  // Overall Indicators
+  nivelEstresGeneral        Float   @default(0)   // Overall stress level (lower is better)
+  indiceResiliencia         Float   @default(0)   // Resilience index (higher is better)
+  capacidadAdaptacion       Float   @default(0)   // Adaptation capacity
+  
+  // Aggregate scores
+  totalStressScore          Float   @default(0)
+  
+  // Level classification
+  stressLevel               String                  // Muy Bajo, Bajo, Moderado, Alto, Muy Alto
+  resilienceLevel           String                  // Muy Alta, Alta, Moderada, Baja, Muy Baja
+  stressProfile             String                  // Profile description
+  
+  // Risk and protective factors
+  riskFactors               String[]                // Identified risk factors
+  protectiveFactors         String[]                // Identified protective factors
+  
+  // Strengths and areas for development
+  primaryStrengths          String[]
+  developmentAreas          String[]
+  
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation    StressEvaluation    @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, evaluationId])
+  @@map("stress_results")
+}
+
+// External Stress Evaluation (sent to external users)
+model ExternalStressEvaluation {
+  id              String    @id @default(cuid())
+  title           String    @default("Evaluación de Estrés y Resiliencia")
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalStressResponse[]
+  result          ExternalStressResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@map("external_stress_evaluations")
+}
+
+model ExternalStressResponse {
+  id                     String                     @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  questionNumber         Int
+  
+  selectedValue          Int
+  responseTime           Int?
+  
+  externalEvaluation     ExternalStressEvaluation   @relation(fields: [externalEvaluationId], references: [id], onDelete: Cascade)
+  question               StressQuestion             @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                   @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_stress_responses")
+}
+
+model ExternalStressResult {
+  id                     String                     @id @default(cuid())
+  externalEvaluationId   String                     @unique
+  
+  // 5 Stress Dimensions Scores
+  estresLaboralScore         Float
+  capacidadRecuperacionScore Float
+  manejoEmocionalScore       Float
+  equilibrioVidaScore        Float
+  resilienciaScore           Float
+  
+  // Overall Indicators
+  nivelEstresGeneral         Float
+  indiceResiliencia          Float
+  capacidadAdaptacion        Float
+  
+  // Aggregates
+  totalStressScore           Float
+  
+  stressLevel                String
+  resilienceLevel            String
+  stressProfile              String
+  
+  riskFactors                String[]
+  protectiveFactors          String[]
+  
+  primaryStrengths           String[]
+  developmentAreas           String[]
+  
+  externalEvaluation     ExternalStressEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                 @default(now())
+
+  @@map("external_stress_results")
+}
+
+// Stress Enums
+enum StressQuestionType {
+  LIKERT       // Agreement scale questions
+  SCENARIO     // Situation-based questions
+  FREQUENCY    // Frequency-based questions
+}
+
+enum StressCategory {
+  POSITIVE     // Protective/resilience indicators
+  NEGATIVE     // Risk/stress indicators
+}
+
+enum StressDimension {
+  ESTRES_LABORAL          // Work-related stress
+  CAPACIDAD_RECUPERACION  // Recovery capacity
+  MANEJO_EMOCIONAL        // Emotional management
+  EQUILIBRIO_VIDA         // Work-life balance
+  RESILIENCIA             // General resilience
+}
+
+// ============================================
+// Notifications Model
+// ============================================
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  read        Boolean          @default(false)
+  
+  // Link to the relevant resource
+  evaluationType    EvaluationType?
+  evaluationToken   String?
+  recipientName     String?
+  recipientEmail    String?
+  
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  EVALUATION_COMPLETED
+  EVALUATION_EXPIRED
+  EVALUATION_REMINDER
+  CREDIT_RECHARGE
+  CREDITS_ZERO
+  CREDITS_LOW
+  SYSTEM
+}
+
+enum EvaluationType {
+  DISC
+  DRIVING_FORCES
+  EQ
+  DNA
+  ACUMEN
+  VALUES
+  STRESS
+  TECHNICAL
+}
+
+// System Settings
+model SystemSettings {
+  id            String    @id @default(cuid())
+  key           String    @unique
+  value         String
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("system_settings")
+}
+
+// Credit Transactions
+model CreditTransaction {
+  id            String    @id @default(cuid())
+  userId        String
+  amount        Int       // Positive for additions, negative for deductions
+  type          CreditTransactionType
+  description   String
+  evaluationType EvaluationType?
+  evaluationId  String?   // Reference to specific evaluation if applicable
+  balanceAfter  Int       // Balance after this transaction
+  createdBy     String?   // User who made the transaction (facilitator or admin)
+  user          User      @relation("UserCreditTransactions", fields: [userId], references: [id], onDelete: Cascade)
+  createdByUser User?     @relation("CreditTransactionCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@map("credit_transactions")
+}
+
+enum CreditTransactionType {
+  INITIAL          // Initial credits on signup
+  EVALUATION_SENT  // Credits used for sending evaluation
+  RECHARGE         // Admin recharge
+  ADJUSTMENT       // Manual adjustment
+  PURCHASE         // Credits purchased via PayPal
+}
+
+// Credit Purchases via PayPal
+model CreditPurchase {
+  id              String              @id @default(cuid())
+  userId          String
+  creditAmount    Int                 // Number of credits purchased
+  priceUSD        Float               // Total price in USD
+  pricePerCredit  Float               // Price per credit at time of purchase
+  paypalOrderId   String?             @unique  // PayPal order ID
+  paypalPayerId   String?             // PayPal payer ID
+  paypalPayerEmail String?            // PayPal payer email
+  status          CreditPurchaseStatus @default(PENDING)
+  invoiceNumber   String?             // Generated invoice number
+  invoiceSentAt   DateTime?           // When invoice email was sent
+  completedAt     DateTime?           // When payment was completed
+  errorMessage    String?             // Error message if payment failed
+  
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  @@index([userId, status])
+  @@index([paypalOrderId])
+  @@map("credit_purchases")
+}
+
+enum CreditPurchaseStatus {
+  PENDING     // Order created, waiting for payment
+  COMPLETED   // Payment successful, credits added
+  FAILED      // Payment failed
+  CANCELLED   // User cancelled payment
+}
+
+// ============================================
+// Team/Facilitator Management
+// ============================================
+model TeamMember {
+  id              String              @id @default(cuid())
+  ownerId         String              // User who invited this team member
+  
+  // Invitation data
+  email           String
+  name            String
+  jobTitle        String              // Cargo
+  
+  // Access control
+  accessLevel     TeamAccessLevel     @default(OWN_EVALUATIONS)
+  
+  // Invitation status
+  status          TeamInviteStatus    @default(PENDING)
+  inviteToken     String              @unique
+  tokenExpiry     DateTime
+  
+  // If accepted, link to the user account
+  facilitatorId   String?             @unique
+  facilitator     User?               @relation("TeamFacilitator", fields: [facilitatorId], references: [id], onDelete: SetNull)
+  
+  // Owner relation
+  owner           User                @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  invitedAt       DateTime            @default(now())
+  acceptedAt      DateTime?
+  lastActiveAt    DateTime?
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([ownerId, email])
+  @@index([ownerId, status])
+  @@index([inviteToken])
+  @@map("team_members")
+}
+
+enum TeamAccessLevel {
+  FULL_ACCESS      // Access to all company evaluations
+  OWN_EVALUATIONS  // Access only to evaluations they create
+}
+
+enum TeamInviteStatus {
+  PENDING          // Invitation sent, waiting for acceptance
+  ACCEPTED         // Invitation accepted, user created account
+  EXPIRED          // Token expired
+  REVOKED          // Invitation revoked by owner
+}
+
+// ============================================
+// Evaluation Notes/Comments
+// ============================================
+model EvaluationNote {
+  id                String              @id @default(cuid())
+  
+  // The user who wrote the note
+  authorId          String
+  author            User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Evaluation reference (polymorphic - type + id)
+  evaluationType    EvaluationType      // DISC, DRIVING_FORCES, EQ, DNA, ACUMEN, VALUES, STRESS
+  evaluationId      String              // Token for external evaluations
+  
+  // Note content
+  content           String              @db.Text
+  
+  // Metadata
+  recipientEmail    String              // Email of the person being evaluated
+  recipientName     String?             // Name of the person being evaluated
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([evaluationType, evaluationId])
+  @@index([authorId, createdAt])
+  @@index([recipientEmail])
+  @@map("evaluation_notes")
+}
+
+// ============================================
+// SELECTION CAMPAIGNS (Campañas de Selección)
+// ============================================
+
+model SelectionCampaign {
+  id              String                @id @default(cuid())
+  name            String                // Nombre de la campaña
+  jobTitle        String                // Cargo para el que se busca
+  jobCategory     String?               // Categoría del cargo
+  description     String?               @db.Text
+  
+  // Owner of the campaign
+  userId          String
+  user            User                  @relation("UserCampaigns", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Campaign settings
+  status          CampaignStatus        @default(ACTIVE)
+  evaluationTypes String[]              // Array of evaluation types to send: ["DISC", "EQ", "DNA", etc.]
+  
+  // Visibility & Permissions
+  isPrivate             Boolean         @default(true)  // true = solo owner y full access, false = visible para todo el equipo
+  allowTeamAddCandidates Boolean        @default(false) // true = cualquier miembro del equipo puede agregar candidatos
+  
+  // Analysis settings
+  idealProfileWeights Json?             // Custom weights for ideal profile (optional)
+  
+  // Candidates
+  candidates      CampaignCandidate[]
+  
+  // Timestamps
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  closedAt        DateTime?
+  
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@map("selection_campaigns")
+}
+
+model CampaignCandidate {
+  id              String                @id @default(cuid())
+  campaignId      String
+  campaign        SelectionCampaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  // Candidate info
+  name            String
+  email           String
+  phone           String?
+  notes           String?               @db.Text
+  
+  // Status tracking
+  status          CandidateStatus       @default(INVITED)
+  
+  // Linked evaluation tokens (for tracking which evaluations belong to this candidate)
+  discToken       String?               // Token of DISC external evaluation
+  drivingForcesToken String?            // Token of Driving Forces external evaluation
+  eqToken         String?               // Token of EQ external evaluation
+  dnaToken        String?               // Token of DNA external evaluation
+  acumenToken     String?               // Token of Acumen external evaluation
+  valuesToken     String?               // Token of Values external evaluation
+  stressToken     String?               // Token of Stress external evaluation
+  technicalToken  String?               // Token of Technical external evaluation
+  
+  // Analysis scores (calculated from completed evaluations)
+  overallScore    Float?                // Calculated overall fit score (0-100)
+  rankPosition    Int?                  // Position in campaign ranking
+  analysisData    Json?                 // Detailed analysis data
+  
+  // Timestamps
+  invitedAt       DateTime              @default(now())
+  lastCompletedAt DateTime?             // When last evaluation was completed
+  
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  
+  @@unique([campaignId, email])
+  @@index([campaignId, status])
+  @@index([campaignId, overallScore])
+  @@map("campaign_candidates")
+}
+
+enum CampaignStatus {
+  DRAFT           // Campaign created but not active
+  ACTIVE          // Campaign is active, candidates can be added
+  EVALUATING      // All candidates invited, waiting for results
+  ANALYZING       // All evaluations complete, analyzing results
+  COMPLETED       // Analysis done, campaign closed
+  ARCHIVED        // Campaign archived
+}
+
+enum CandidateStatus {
+  INVITED         // Candidate has been invited
+  EVALUATING      // Candidate is taking evaluations
+  COMPLETED       // All evaluations completed
+  WITHDRAWN       // Candidate withdrew or was removed
+}
+
+
+// =====================================================
+// TECHNICAL EVALUATIONS (Pruebas Técnicas por Cargo)
+// =====================================================
+
+model TechnicalQuestion {
+  id              String            @id @default(cuid())
+  questionNumber  Int
+  
+  // Spanish text (primary)
+  questionText    String            @db.Text
+  optionA         String            @db.Text
+  optionB         String            @db.Text
+  optionC         String            @db.Text
+  optionD         String            @db.Text
+  
+  // English text (multilingual support)
+  questionTextEn  String?           @db.Text
+  optionAEn       String?           @db.Text
+  optionBEn       String?           @db.Text
+  optionCEn       String?           @db.Text
+  optionDEn       String?           @db.Text
+  
+  // Job position this question belongs to
+  jobPositionId   String            // ID from job-positions.ts (e.g., "software_engineer", "accountant")
+  
+  // Correct answer (A, B, C, or D)
+  correctAnswer   String
+  
+  // Difficulty level
+  difficulty      TechnicalDifficulty @default(MEDIUM)
+  
+  // Category/topic within the job (bilingual)
+  category        String?           // Spanish: e.g., "Programación", "Principios Contables"
+  categoryEn      String?           // English: e.g., "Programming", "Accounting Principles"
+  
+  // Scoring weight
+  weight          Float             @default(1.0)
+  isActive        Boolean           @default(true)
+  
+  // Relations
+  responses       ExternalTechnicalResponse[]
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([jobPositionId, questionNumber])
+  @@index([jobPositionId, isActive])
+  @@map("technical_questions")
+}
+
+model ExternalTechnicalEvaluation {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  recipientName   String
+  recipientEmail  String
+  senderUserId    String
+  token           String    @unique
+  tokenExpiry     DateTime
+  status          String    @default("PENDING") // PENDING, COMPLETED, EXPIRED
+  
+  // Job position this evaluation is for
+  jobPositionId   String
+  jobPositionTitle String   // Store title for display
+  
+  // Relations
+  senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)
+  responses       ExternalTechnicalResponse[]
+  result          ExternalTechnicalResult?
+  
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@index([senderUserId, status])
+  @@index([recipientEmail])
+  @@index([jobPositionId])
+  @@map("external_technical_evaluations")
+}
+
+model ExternalTechnicalResponse {
+  id                     String                      @id @default(cuid())
+  externalEvaluationId   String
+  questionId             String
+  
+  // Selected answer (A, B, C, or D)
+  selectedAnswer         String
+  
+  // Was the answer correct?
+  isCorrect              Boolean
+  
+  // Time taken to answer (in seconds)
+  responseTime           Int?
+  
+  // Relations
+  externalEvaluation     ExternalTechnicalEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  question               TechnicalQuestion           @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                    @default(now())
+
+  @@unique([externalEvaluationId, questionId])
+  @@map("external_technical_responses")
+}
+
+model ExternalTechnicalResult {
+  id                     String                      @id @default(cuid())
+  externalEvaluationId   String                      @unique
+  
+  // Overall score
+  totalScore             Float                       // Percentage correct (0-100)
+  correctAnswers         Int                         // Number of correct answers
+  totalQuestions         Int                         // Total number of questions
+  
+  // Performance level
+  performanceLevel       String                      // EXCELLENT, GOOD, AVERAGE, BELOW_AVERAGE, POOR
+  
+  // Category breakdown (JSON with scores per category)
+  categoryScores         Json?                       // { "Category1": 85, "Category2": 70, ... }
+  
+  // Difficulty breakdown
+  easyCorrect            Int?
+  easyTotal              Int?
+  mediumCorrect          Int?
+  mediumTotal            Int?
+  hardCorrect            Int?
+  hardTotal              Int?
+  
+  // Time statistics
+  totalTimeTaken         Int?                        // Total time in seconds
+  averageTimePerQuestion Float?                      // Average time per question
+  
+  // Strengths and weaknesses
+  strengths              String[]                    // Categories with high scores
+  weaknesses             String[]                    // Categories with low scores
+  
+  // Relations
+  externalEvaluation     ExternalTechnicalEvaluation @relation(fields: [externalEvaluationId], references: [id], onDelete: Restrict)
+  
+  createdAt              DateTime                    @default(now())
+
+  @@map("external_technical_results")
+}
+
+enum TechnicalDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
