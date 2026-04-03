@@ -113,7 +113,7 @@ export function PortalSidebar() {
       <div className="border-t border-slate-200 p-4">
         <Link
           className="reclu-sidebar-link block rounded-2xl border px-3 py-2.5 text-center text-sm font-semibold"
-          href="/auth/signin"
+          href="/api/auth/logout"
         >
           Cerrar sesion
         </Link>

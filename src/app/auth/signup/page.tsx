@@ -1,8 +1,47 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { AuthShell } from "@/components/auth/auth-shell";
 
 export default function SignUpPage() {
+  const router = useRouter();
+  const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, companyName, email, password }),
+      });
+      const payload = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        setError(payload.error ?? "No se pudo crear la cuenta.");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("No pudimos conectar con el servidor.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <AuthShell
       title="Registro"
@@ -16,51 +55,76 @@ export default function SignUpPage() {
         </>
       }
     >
-      <form className="space-y-4">
-        <div>
-          <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-            Nombre de la empresa
-          </label>
-          <input className="reclu-input" placeholder="Empresa ABC" type="text" />
-        </div>
-
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
           <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
             Nombre del responsable
           </label>
-          <input className="reclu-input" placeholder="Tu nombre completo" type="text" />
+          <input
+            className="reclu-input"
+            onChange={(event) => setFullName(event.target.value)}
+            placeholder="Tu nombre completo"
+            required
+            type="text"
+            value={fullName}
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            Nombre de la empresa
+          </label>
+          <input
+            className="reclu-input"
+            onChange={(event) => setCompanyName(event.target.value)}
+            placeholder="Empresa ABC"
+            required
+            type="text"
+            value={companyName}
+          />
         </div>
 
         <div>
           <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
             Correo corporativo
           </label>
-          <input className="reclu-input" placeholder="tu@empresa.com" type="email" />
+          <input
+            className="reclu-input"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="tu@empresa.com"
+            required
+            type="email"
+            value={email}
+          />
         </div>
 
         <div>
           <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
             Contrasena
           </label>
-          <input className="reclu-input" placeholder="Crea una contrasena segura" type="password" />
+          <input
+            className="reclu-input"
+            minLength={8}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Crea una contrasena segura"
+            required
+            type="password"
+            value={password}
+          />
         </div>
 
-        <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-xs leading-6 text-slate-500">
-          <input className="mt-1 h-4 w-4 rounded border-slate-300" type="checkbox" />
-          <span>
-            Confirmo que la informacion suministrada corresponde a mi empresa y acepto los{" "}
-            <Link className="font-semibold text-sky-600 hover:text-sky-700" href="/terms">
-              Terminos y Condiciones
-            </Link>
-            .
-          </span>
-        </label>
+        {error ? (
+          <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+            {error}
+          </div>
+        ) : null}
 
         <button
           className="w-full rounded-xl bg-[linear-gradient(90deg,#72d9ff_0%,#7b6cff_100%)] px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_30px_rgba(99,102,241,.20)] transition-transform duration-300 hover:-translate-y-0.5"
-          type="button"
+          disabled={isLoading}
+          type="submit"
         >
-          Crear Cuenta
+          {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
         </button>
 
         <div className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3 text-center text-xs font-medium text-sky-700">
