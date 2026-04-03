@@ -353,7 +353,7 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
         <!-- Header -->
         <div class="header">
           <h1>Reporte de Evaluación DISC</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.title}</div>
           <div class="date">Completado el ${completedDate}</div>
           <div class="date">${evaluation.user.firstName} ${evaluation.user.lastName}</div>
@@ -545,7 +545,7 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
 
         <!-- Footer -->
         <div class="footer">
-          <p>Este reporte fue generado por el Sistema MotivaIQ - ${new Date().toLocaleDateString('es-ES')}</p>
+          <p>Este reporte fue generado por el Sistema Reclu - ${new Date().toLocaleDateString('es-ES')}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>

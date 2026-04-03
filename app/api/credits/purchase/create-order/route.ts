@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         intent: 'CAPTURE',
         purchase_units: [{
           reference_id: `credits_${session.user.id}_${Date.now()}`,
-          description: `${creditAmount} créditos MotivaIQ`,
+          description: `${creditAmount} créditos Reclu`,
           amount: {
             currency_code: 'USD',
             value: totalPrice

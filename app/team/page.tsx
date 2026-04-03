@@ -300,7 +300,7 @@ export default function TeamPage() {
                   <h1 className="text-xl lg:text-2xl font-bold text-white">
                     {t('team.title')}
                   </h1>
-                  <p className="text-slate-400 text-xs">MotivaIQ Team Management</p>
+                  <p className="text-slate-400 text-xs">Reclu Team Management</p>
                 </div>
               </div>
               <p className="text-slate-300 text-sm lg:text-base max-w-xl">

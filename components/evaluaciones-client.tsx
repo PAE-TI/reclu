@@ -223,7 +223,7 @@ export default function EvaluacionesClient() {
         </div>
       </section>
 
-      {/* MotivaIQ Complete */}
+      {/* Reclu Complete */}
       <section className="py-20 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
@@ -324,14 +324,14 @@ export default function EvaluacionesClient() {
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">MotivaIQ</span>
+              <span className="text-xl font-bold">Reclu</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
               <Link href="/" className="hover:text-white transition-colors">{t('evaluaciones.footer.home')}</Link>
               <Link href="/evaluaciones" className="hover:text-white transition-colors">{t('evaluaciones.footer.evaluations')}</Link>
               <Link href="/terms" className="hover:text-white transition-colors">{t('evaluaciones.footer.terms')}</Link>
             </div>
-            <p className="text-sm text-gray-500">© 2026 MotivaIQ. {t('evaluaciones.footer.rights')}</p>
+            <p className="text-sm text-gray-500">© 2026 Reclu. {t('evaluaciones.footer.rights')}</p>
           </div>
         </div>
       </footer>

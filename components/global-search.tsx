@@ -123,7 +123,7 @@ export default function GlobalSearch() {
 
   // Load recent searches from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('motivaiq_recent_searches');
+    const stored = localStorage.getItem('reclu_recent_searches');
     if (stored) {
       setRecentSearches(JSON.parse(stored).slice(0, 5));
     }
@@ -133,7 +133,7 @@ export default function GlobalSearch() {
   const saveRecentSearch = (term: string) => {
     const updated = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
     setRecentSearches(updated);
-    localStorage.setItem('motivaiq_recent_searches', JSON.stringify(updated));
+    localStorage.setItem('reclu_recent_searches', JSON.stringify(updated));
   };
 
   // Debounced search

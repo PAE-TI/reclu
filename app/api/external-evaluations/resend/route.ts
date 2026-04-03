@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       where: { id: session.user.id },
     });
 
-    const senderName = user?.name || 'MotivaIQ';
+    const senderName = user?.name || 'Reclu';
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
     let evaluation: any;

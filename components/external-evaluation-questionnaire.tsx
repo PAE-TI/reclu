@@ -431,7 +431,7 @@ export default function ExternalEvaluationQuestionnaire({
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500 mt-8">
-          <p>{t('ext.sentBy')}: {senderName} • MotivaIQ</p>
+          <p>{t('ext.sentBy')}: {senderName} • Reclu</p>
         </div>
       </div>
     </div>

@@ -118,8 +118,8 @@ export async function POST(
     });
     const existingEmails = new Set(existingCandidates.map(c => c.email.toLowerCase()));
 
-    const senderName = owner?.company || owner?.name || 'MotivaIQ';
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://motivaiq.abacusai.app';
+    const senderName = owner?.company || owner?.name || 'Reclu';
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
     const tokenExpiry = new Date();
     tokenExpiry.setDate(tokenExpiry.getDate() + 30);
 

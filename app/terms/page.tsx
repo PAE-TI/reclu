@@ -32,8 +32,8 @@ export default function TermsPage() {
           iconColor: 'indigo',
           title: '1. Introducción',
           content: [
-            'Bienvenido a MotivaIQ. Estos Términos y Condiciones regulan el uso de nuestra plataforma de evaluación de talento empresarial. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos términos. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder a nuestros servicios.',
-            'MotivaIQ es una plataforma que proporciona evaluaciones psicométricas basadas en la metodología DISC y Fuerzas Motivadoras para ayudar a las organizaciones a tomar mejores decisiones de talento.'
+            'Bienvenido a Reclu. Estos Términos y Condiciones regulan el uso de nuestra plataforma de evaluación de talento empresarial. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos términos. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder a nuestros servicios.',
+            'Reclu es una plataforma que proporciona evaluaciones psicométricas basadas en la metodología DISC y Fuerzas Motivadoras para ayudar a las organizaciones a tomar mejores decisiones de talento.'
           ]
         },
         {
@@ -41,7 +41,7 @@ export default function TermsPage() {
           iconColor: 'purple',
           title: '2. Definiciones',
           list: [
-            { term: '"Plataforma"', def: 'Se refiere al sitio web y aplicación de MotivaIQ.' },
+            { term: '"Plataforma"', def: 'Se refiere al sitio web y aplicación de Reclu.' },
             { term: '"Usuario"', def: 'Cualquier persona que acceda o utilice la Plataforma.' },
             { term: '"Administrador"', def: 'Usuario con cuenta empresarial que gestiona evaluaciones.' },
             { term: '"Evaluado"', def: 'Persona que completa una evaluación DISC o Fuerzas Motivadoras.' },
@@ -53,7 +53,7 @@ export default function TermsPage() {
           icon: Users,
           iconColor: 'green',
           title: '3. Uso del Servicio',
-          intro: 'Al utilizar MotivaIQ, usted se compromete a:',
+          intro: 'Al utilizar Reclu, usted se compromete a:',
           list: [
             'Proporcionar información veraz y actualizada al registrarse.',
             'Mantener la confidencialidad de sus credenciales de acceso.',
@@ -95,22 +95,22 @@ export default function TermsPage() {
           icon: Coins,
           iconColor: 'amber',
           title: '6. Sistema de Créditos',
-          intro: 'MotivaIQ opera mediante un sistema de créditos para el envío de evaluaciones:',
+          intro: 'Reclu opera mediante un sistema de créditos para el envío de evaluaciones:',
           list: [
-            { term: 'Costo por evaluación:', def: 'Cada evaluación enviada tiene un costo en créditos. El costo por evaluación es definido por MotivaIQ y puede cambiar en cualquier momento por decisión de la empresa, sin previo aviso.' },
-            { term: 'Créditos iniciales:', def: 'Al registrarse, cada usuario recibe una cantidad inicial de créditos. Esta cantidad es definida exclusivamente por MotivaIQ y puede ser modificada en cualquier momento sin previo aviso.' },
-            { term: 'Valor de los créditos:', def: 'El valor monetario de los créditos, incluyendo el precio de compra de créditos adicionales, es establecido por MotivaIQ y está sujeto a cambios sin previo aviso.' },
+            { term: 'Costo por evaluación:', def: 'Cada evaluación enviada tiene un costo en créditos. El costo por evaluación es definido por Reclu y puede cambiar en cualquier momento por decisión de la empresa, sin previo aviso.' },
+            { term: 'Créditos iniciales:', def: 'Al registrarse, cada usuario recibe una cantidad inicial de créditos. Esta cantidad es definida exclusivamente por Reclu y puede ser modificada en cualquier momento sin previo aviso.' },
+            { term: 'Valor de los créditos:', def: 'El valor monetario de los créditos, incluyendo el precio de compra de créditos adicionales, es establecido por Reclu y está sujeto a cambios sin previo aviso.' },
             { term: 'No reembolsables:', def: 'Los créditos utilizados para enviar evaluaciones no son reembolsables bajo ninguna circunstancia, incluso si el evaluado no completa la evaluación.' },
             { term: 'Vigencia:', def: 'Los créditos no tienen fecha de expiración mientras la cuenta del usuario permanezca activa.' },
             { term: 'Transferibilidad:', def: 'Los créditos no son transferibles entre cuentas de usuarios.' }
           ],
-          warning: '⚠️ Importante: Al utilizar la plataforma, usted acepta que MotivaIQ tiene la facultad exclusiva de definir y modificar los costos, valores y cantidades relacionadas con el sistema de créditos sin necesidad de notificación previa.'
+          warning: '⚠️ Importante: Al utilizar la plataforma, usted acepta que Reclu tiene la facultad exclusiva de definir y modificar los costos, valores y cantidades relacionadas con el sistema de créditos sin necesidad de notificación previa.'
         },
         {
           icon: AlertTriangle,
           iconColor: 'red',
           title: '7. Limitaciones de Responsabilidad',
-          intro: 'MotivaIQ se proporciona "tal cual" y "según disponibilidad":',
+          intro: 'Reclu se proporciona "tal cual" y "según disponibilidad":',
           list: [
             'No garantizamos que el servicio sea ininterrumpido o libre de errores.',
             'No somos responsables de decisiones tomadas basándose en los resultados.',
@@ -124,7 +124,7 @@ export default function TermsPage() {
           iconColor: 'indigo',
           title: '8. Propiedad Intelectual',
           content: [
-            'Todo el contenido de MotivaIQ, incluyendo pero no limitado a textos, gráficos, logos, iconos, imágenes, clips de audio, descargas digitales y compilaciones de datos, es propiedad de MotivaIQ o sus proveedores de contenido y está protegido por las leyes de propiedad intelectual. Las metodologías DISC y Fuerzas Motivadoras se utilizan bajo licencia y son propiedad de sus respectivos titulares.'
+            'Todo el contenido de Reclu, incluyendo pero no limitado a textos, gráficos, logos, iconos, imágenes, clips de audio, descargas digitales y compilaciones de datos, es propiedad de Reclu o sus proveedores de contenido y está protegido por las leyes de propiedad intelectual. Las metodologías DISC y Fuerzas Motivadoras se utilizan bajo licencia y son propiedad de sus respectivos titulares.'
           ]
         },
         {
@@ -132,7 +132,7 @@ export default function TermsPage() {
           iconColor: 'purple',
           title: '9. Modificaciones',
           content: [
-            'Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación en la plataforma. Su uso continuado de MotivaIQ después de la publicación de cambios constituye su aceptación de dichos cambios. Le recomendamos revisar periódicamente estos términos.'
+            'Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación en la plataforma. Su uso continuado de Reclu después de la publicación de cambios constituye su aceptación de dichos cambios. Le recomendamos revisar periódicamente estos términos.'
           ]
         },
         {
@@ -140,15 +140,15 @@ export default function TermsPage() {
           iconColor: 'green',
           title: '10. Contacto',
           content: [
-            'Si tiene preguntas sobre estos Términos y Condiciones, puede contactarnos a través de nuestra plataforma o enviando un correo electrónico a soporte@motivaiq.com.'
+            'Si tiene preguntas sobre estos Términos y Condiciones, puede contactarnos a través de nuestra plataforma o enviando un correo electrónico a soporte@reclu.com.'
           ]
         }
       ],
       ctaTitle: '¿Listo para comenzar?',
-      ctaText: 'Al crear una cuenta en MotivaIQ, confirmas que has leído y aceptas estos términos.',
+      ctaText: 'Al crear una cuenta en Reclu, confirmas que has leído y aceptas estos términos.',
       createAccount: 'Crear Cuenta',
       login: 'Iniciar Sesión',
-      footer: '© 2026 MotivaIQ. Plataforma de evaluación de talento empresarial.'
+      footer: '© 2026 Reclu. Plataforma de evaluación de talento empresarial.'
     },
     en: {
       title: 'Terms & Conditions',
@@ -159,8 +159,8 @@ export default function TermsPage() {
           iconColor: 'indigo',
           title: '1. Introduction',
           content: [
-            'Welcome to MotivaIQ. These Terms and Conditions govern the use of our enterprise talent assessment platform. By accessing or using our services, you agree to be bound by these terms. If you do not agree with any part of these terms, you may not access our services.',
-            'MotivaIQ is a platform that provides psychometric assessments based on DISC and Driving Forces methodology to help organizations make better talent decisions.'
+            'Welcome to Reclu. These Terms and Conditions govern the use of our enterprise talent assessment platform. By accessing or using our services, you agree to be bound by these terms. If you do not agree with any part of these terms, you may not access our services.',
+            'Reclu is a platform that provides psychometric assessments based on DISC and Driving Forces methodology to help organizations make better talent decisions.'
           ]
         },
         {
@@ -168,7 +168,7 @@ export default function TermsPage() {
           iconColor: 'purple',
           title: '2. Definitions',
           list: [
-            { term: '"Platform"', def: 'Refers to the MotivaIQ website and application.' },
+            { term: '"Platform"', def: 'Refers to the Reclu website and application.' },
             { term: '"User"', def: 'Any person who accesses or uses the Platform.' },
             { term: '"Administrator"', def: 'User with a business account who manages assessments.' },
             { term: '"Assessed"', def: 'Person who completes a DISC or Driving Forces assessment.' },
@@ -180,7 +180,7 @@ export default function TermsPage() {
           icon: Users,
           iconColor: 'green',
           title: '3. Use of Service',
-          intro: 'By using MotivaIQ, you agree to:',
+          intro: 'By using Reclu, you agree to:',
           list: [
             'Provide truthful and up-to-date information when registering.',
             'Maintain the confidentiality of your access credentials.',
@@ -222,22 +222,22 @@ export default function TermsPage() {
           icon: Coins,
           iconColor: 'amber',
           title: '6. Credit System',
-          intro: 'MotivaIQ operates through a credit system for sending assessments:',
+          intro: 'Reclu operates through a credit system for sending assessments:',
           list: [
-            { term: 'Cost per assessment:', def: 'Each assessment sent has a credit cost. The cost per assessment is defined by MotivaIQ and may change at any time at the company\'s discretion, without prior notice.' },
-            { term: 'Initial credits:', def: 'Upon registration, each user receives an initial amount of credits. This amount is defined exclusively by MotivaIQ and may be modified at any time without prior notice.' },
-            { term: 'Credit value:', def: 'The monetary value of credits, including the purchase price of additional credits, is established by MotivaIQ and is subject to change without prior notice.' },
+            { term: 'Cost per assessment:', def: 'Each assessment sent has a credit cost. The cost per assessment is defined by Reclu and may change at any time at the company\'s discretion, without prior notice.' },
+            { term: 'Initial credits:', def: 'Upon registration, each user receives an initial amount of credits. This amount is defined exclusively by Reclu and may be modified at any time without prior notice.' },
+            { term: 'Credit value:', def: 'The monetary value of credits, including the purchase price of additional credits, is established by Reclu and is subject to change without prior notice.' },
             { term: 'Non-refundable:', def: 'Credits used to send assessments are non-refundable under any circumstances, even if the assessed person does not complete the assessment.' },
             { term: 'Validity:', def: 'Credits do not expire as long as the user\'s account remains active.' },
             { term: 'Transferability:', def: 'Credits are not transferable between user accounts.' }
           ],
-          warning: '⚠️ Important: By using the platform, you accept that MotivaIQ has the exclusive authority to define and modify costs, values, and amounts related to the credit system without the need for prior notification.'
+          warning: '⚠️ Important: By using the platform, you accept that Reclu has the exclusive authority to define and modify costs, values, and amounts related to the credit system without the need for prior notification.'
         },
         {
           icon: AlertTriangle,
           iconColor: 'red',
           title: '7. Limitations of Liability',
-          intro: 'MotivaIQ is provided "as is" and "as available":',
+          intro: 'Reclu is provided "as is" and "as available":',
           list: [
             'We do not guarantee that the service will be uninterrupted or error-free.',
             'We are not responsible for decisions made based on the results.',
@@ -251,7 +251,7 @@ export default function TermsPage() {
           iconColor: 'indigo',
           title: '8. Intellectual Property',
           content: [
-            'All MotivaIQ content, including but not limited to text, graphics, logos, icons, images, audio clips, digital downloads, and data compilations, is the property of MotivaIQ or its content providers and is protected by intellectual property laws. DISC and Driving Forces methodologies are used under license and are the property of their respective owners.'
+            'All Reclu content, including but not limited to text, graphics, logos, icons, images, audio clips, digital downloads, and data compilations, is the property of Reclu or its content providers and is protected by intellectual property laws. DISC and Driving Forces methodologies are used under license and are the property of their respective owners.'
           ]
         },
         {
@@ -259,7 +259,7 @@ export default function TermsPage() {
           iconColor: 'purple',
           title: '9. Modifications',
           content: [
-            'We reserve the right to modify these Terms and Conditions at any time. Changes will take effect immediately upon publication on the platform. Your continued use of MotivaIQ after the publication of changes constitutes your acceptance of such changes. We recommend periodically reviewing these terms.'
+            'We reserve the right to modify these Terms and Conditions at any time. Changes will take effect immediately upon publication on the platform. Your continued use of Reclu after the publication of changes constitutes your acceptance of such changes. We recommend periodically reviewing these terms.'
           ]
         },
         {
@@ -267,15 +267,15 @@ export default function TermsPage() {
           iconColor: 'green',
           title: '10. Contact',
           content: [
-            'If you have questions about these Terms and Conditions, you can contact us through our platform or by sending an email to support@motivaiq.com.'
+            'If you have questions about these Terms and Conditions, you can contact us through our platform or by sending an email to support@reclu.com.'
           ]
         }
       ],
       ctaTitle: 'Ready to get started?',
-      ctaText: 'By creating an account on MotivaIQ, you confirm that you have read and accept these terms.',
+      ctaText: 'By creating an account on Reclu, you confirm that you have read and accept these terms.',
       createAccount: 'Create Account',
       login: 'Log In',
-      footer: '© 2026 MotivaIQ. Enterprise talent assessment platform.'
+      footer: '© 2026 Reclu. Enterprise talent assessment platform.'
     }
   };
 

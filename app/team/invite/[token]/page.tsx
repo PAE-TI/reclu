@@ -170,7 +170,7 @@ export default function AcceptInvitePage({ params }: { params: { token: string }
               <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-gray-900 mb-2">¡Cuenta Creada Exitosamente!</h2>
               <p className="text-gray-600 mb-6">
-                Ya puedes iniciar sesión en MotivaIQ con tu correo electrónico y contraseña.
+                Ya puedes iniciar sesión en Reclu con tu correo electrónico y contraseña.
               </p>
               <Link href="/auth/signin">
                 <Button className="w-full bg-indigo-600 hover:bg-indigo-700">

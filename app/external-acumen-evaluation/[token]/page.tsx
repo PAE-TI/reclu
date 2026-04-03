@@ -18,7 +18,7 @@ function BrandingHeader() {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">MotivaIQ</h1>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">Reclu</h1>
               <p className="text-xs text-gray-500">Plataforma de Talento</p>
             </div>
           </div>
@@ -41,7 +41,7 @@ function BrandingFooter({ showCTA = true }: { showCTA?: boolean }) {
             <h3 className="text-xl font-bold text-white mb-2">¿Te interesa evaluar a tu equipo?</h3>
             <p className="text-cyan-100 mb-4 text-sm">Descubre el potencial con evaluaciones completas</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/" className="inline-flex items-center gap-2 bg-white text-cyan-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-cyan-50 transition-colors shadow-lg">Conocer MotivaIQ <ArrowRight className="w-4 h-4" /></Link>
+              <Link href="/" className="inline-flex items-center gap-2 bg-white text-cyan-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-cyan-50 transition-colors shadow-lg">Conocer Reclu <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-white/20 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-white/30 transition-colors border border-white/30">Crear cuenta gratis</Link>
             </div>
           </div>
@@ -54,7 +54,7 @@ function BrandingFooter({ showCTA = true }: { showCTA?: boolean }) {
             <div className="flex items-center gap-2 text-gray-400"><Award className="w-4 h-4 text-yellow-400" /><span className="text-sm">Metodología certificada</span></div>
             <div className="flex items-center gap-2 text-gray-400"><Users className="w-4 h-4 text-blue-400" /><span className="text-sm">+10,000 evaluaciones</span></div>
           </div>
-          <div className="text-center text-gray-500 text-sm">© 2025 MotivaIQ. Plataforma de evaluación de talento empresarial.</div>
+          <div className="text-center text-gray-500 text-sm">© 2025 Reclu. Plataforma de evaluación de talento empresarial.</div>
         </div>
       </div>
     </footer>

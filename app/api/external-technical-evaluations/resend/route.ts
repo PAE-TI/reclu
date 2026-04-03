@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       evaluation.recipientName,
       evaluation.token,
       evaluation.jobPositionTitle,
-      evaluation.senderUser.name || 'MotivaIQ'
+      evaluation.senderUser.name || 'Reclu'
     );
 
     return NextResponse.json({ success: true });

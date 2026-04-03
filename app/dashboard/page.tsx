@@ -153,9 +153,9 @@ export default async function Dashboard() {
   const peopleWithBothCompleted = [...completedDiscEmails].filter(email => completedFmEmails.has(email)).length;
   const peopleWithTripleCompleted = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email)).length;
   const peopleWithFullProfile = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email)).length;
-  const peopleWithCompleteMotivaIQ = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email) && completedAcumenEmails.has(email)).length;
+  const peopleWithCompleteReclu = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email) && completedAcumenEmails.has(email)).length;
   const peopleWithSixModules = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email) && completedAcumenEmails.has(email) && completedValuesEmails.has(email)).length;
-  const peopleWithFullMotivaIQ = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email) && completedAcumenEmails.has(email) && completedValuesEmails.has(email) && completedStressEmails.has(email)).length;
+  const peopleWithFullReclu = [...completedDiscEmails].filter(email => completedFmEmails.has(email) && completedEqEmails.has(email) && completedDnaEmails.has(email) && completedAcumenEmails.has(email) && completedValuesEmails.has(email) && completedStressEmails.has(email)).length;
 
   // Totales calculados (incluyendo técnicas)
   const totalEvaluations = totalDiscEvaluations + totalFmEvaluations + totalEqEvaluations + totalDnaEvaluations + totalAcumenEvaluations + totalValuesEvaluations + totalStressEvaluations + totalTechnicalEvaluations;
@@ -183,7 +183,7 @@ export default async function Dashboard() {
     totalExpired,
     totalPeopleEvaluated,
     completionRate,
-    peopleWithFullMotivaIQ,
+    peopleWithFullReclu,
     recentActivity: allRecentActivity,
     // Technical evaluations specific stats
     technicalTotal: totalTechnicalEvaluations,

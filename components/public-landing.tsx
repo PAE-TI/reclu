@@ -84,8 +84,8 @@ export default function PublicLanding() {
               
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 {language === 'es' 
-                  ? 'MotivaIQ analiza candidatos con 8 módulos de evaluación científica para encontrar al profesional perfecto para tu empresa. Sin sesgos, con datos precisos.'
-                  : 'MotivaIQ analyzes candidates with 8 scientific assessment modules to find the perfect professional for your company. No bias, with precise data.'}
+                  ? 'Reclu analiza candidatos con 8 módulos de evaluación científica para encontrar al profesional perfecto para tu empresa. Sin sesgos, con datos precisos.'
+                  : 'Reclu analyzes candidates with 8 scientific assessment modules to find the perfect professional for your company. No bias, with precise data.'}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -204,7 +204,7 @@ export default function PublicLanding() {
         </div>
       </section>
 
-      {/* Problem/Solution - Por qué MotivaIQ */}
+      {/* Problem/Solution - Por qué Reclu */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -223,7 +223,7 @@ export default function PublicLanding() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
-            {/* Sin MotivaIQ */}
+            {/* Sin Reclu */}
             <div className="bg-red-50 rounded-2xl p-8 border border-red-100">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
@@ -258,14 +258,14 @@ export default function PublicLanding() {
               </ul>
             </div>
 
-            {/* Con MotivaIQ */}
+            {/* Con Reclu */}
             <div className="bg-gradient-to-br from-cyan-50 to-indigo-50 rounded-2xl p-8 border border-cyan-100">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-indigo-500 rounded-xl flex items-center justify-center">
                   <Cpu className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">{language === 'es' ? 'Con MotivaIQ' : 'With MotivaIQ'}</h3>
+                  <h3 className="font-bold text-gray-900">{language === 'es' ? 'Con Reclu' : 'With Reclu'}</h3>
                   <p className="text-sm text-gray-500">{language === 'es' ? 'Headhunter Tecnológico' : 'Tech Headhunter'}</p>
                 </div>
               </div>
@@ -381,7 +381,7 @@ export default function PublicLanding() {
               { 
                 step: '02', 
                 icon: Cpu, 
-                title: language === 'es' ? 'MotivaIQ analiza' : 'MotivaIQ analyzes',
+                title: language === 'es' ? 'Reclu analiza' : 'Reclu analyzes',
                 desc: language === 'es' 
                   ? 'Los candidatos completan las evaluaciones. Nuestro sistema procesa los datos y genera perfiles completos.'
                   : 'Candidates complete evaluations. Our system processes data and generates complete profiles.',
@@ -590,7 +590,7 @@ export default function PublicLanding() {
               {language === 'es' ? 'Testimonios' : 'Testimonials'}
             </Badge>
             <h2 className="text-3xl font-bold text-gray-900">
-              {language === 'es' ? 'Empresas que confían en MotivaIQ' : 'Companies that trust MotivaIQ'}
+              {language === 'es' ? 'Empresas que confían en Reclu' : 'Companies that trust Reclu'}
             </h2>
           </div>
 
@@ -640,16 +640,16 @@ export default function PublicLanding() {
           <div className="space-y-4">
             {[
               {
-                q: language === 'es' ? '¿Qué incluye MotivaIQ?' : 'What does MotivaIQ include?',
+                q: language === 'es' ? '¿Qué incluye Reclu?' : 'What does Reclu include?',
                 a: language === 'es' 
-                  ? 'MotivaIQ incluye 8 módulos de evaluación científica: DISC, Motivadores, EQ, DNA-25, Acumen, Valores, Estrés y Pruebas Técnicas. Cada módulo genera reportes detallados para una visión 360° del candidato.'
-                  : 'MotivaIQ includes 8 scientific assessment modules: DISC, Motivators, EQ, DNA-25, Acumen, Values, Stress and Technical Tests. Each module generates detailed reports for a 360° candidate view.'
+                  ? 'Reclu incluye 8 módulos de evaluación científica: DISC, Motivadores, EQ, DNA-25, Acumen, Valores, Estrés y Pruebas Técnicas. Cada módulo genera reportes detallados para una visión 360° del candidato.'
+                  : 'Reclu includes 8 scientific assessment modules: DISC, Motivators, EQ, DNA-25, Acumen, Values, Stress and Technical Tests. Each module generates detailed reports for a 360° candidate view.'
               },
               {
                 q: language === 'es' ? '¿Cómo funcionan las campañas de reclutamiento?' : 'How do recruitment campaigns work?',
                 a: language === 'es'
-                  ? 'Creas una campaña definiendo el cargo, seleccionas qué módulos aplicar, cargas los candidatos y MotivaIQ envía las invitaciones automáticamente. Los candidatos completan las evaluaciones y recibes un ranking ordenado por compatibilidad.'
-                  : 'You create a campaign defining the position, select which modules to apply, upload candidates and MotivaIQ automatically sends invitations. Candidates complete evaluations and you receive a ranking sorted by compatibility.'
+                  ? 'Creas una campaña definiendo el cargo, seleccionas qué módulos aplicar, cargas los candidatos y Reclu envía las invitaciones automáticamente. Los candidatos completan las evaluaciones y recibes un ranking ordenado por compatibilidad.'
+                  : 'You create a campaign defining the position, select which modules to apply, upload candidates and Reclu automatically sends invitations. Candidates complete evaluations and you receive a ranking sorted by compatibility.'
               },
               {
                 q: language === 'es' ? '¿Cuánto tiempo toman las evaluaciones?' : 'How long do evaluations take?',
@@ -693,8 +693,8 @@ export default function PublicLanding() {
           </h2>
           <p className="text-xl text-gray-300 mb-10">
             {language === 'es' 
-              ? 'Únete a cientos de empresas que ya seleccionan mejor con MotivaIQ'
-              : 'Join hundreds of companies already hiring better with MotivaIQ'}
+              ? 'Únete a cientos de empresas que ya seleccionan mejor con Reclu'
+              : 'Join hundreds of companies already hiring better with Reclu'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/auth/signup">
@@ -721,14 +721,14 @@ export default function PublicLanding() {
                 <Cpu className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-white font-bold text-lg">MotivaIQ</span>
+                <span className="text-white font-bold text-lg">Reclu</span>
                 <p className="text-xs text-gray-500">{language === 'es' ? 'Headhunter Tecnológico' : 'Tech Headhunter'}</p>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm">
               <Link href="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
             </div>
-            <p className="text-sm">© 2026 MotivaIQ. {t('footer.rights')}</p>
+            <p className="text-sm">© 2026 Reclu. {t('footer.rights')}</p>
           </div>
         </div>
       </footer>

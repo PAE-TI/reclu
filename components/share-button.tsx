@@ -71,7 +71,7 @@ export default function ShareButton({
       const subject = encodeURIComponent(`Reporte DISC: ${evaluationTitle}`);
       const body = encodeURIComponent(
         `${message}\n\nPuedes ver el reporte completo en: ${shareUrl}\n\n` +
-        `Este reporte fue generado por el Sistema MotivaIQ.`
+        `Este reporte fue generado por el Sistema Reclu.`
       );
       
       const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;

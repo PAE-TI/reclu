@@ -11,7 +11,7 @@ import { authOptions } from '@/lib/auth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MotivaIQ - Plataforma de Evaluación de Talento',
+  title: 'Reclu - Plataforma de Evaluación de Talento',
   description: 'Plataforma empresarial de evaluaciones DISC y Fuerzas Motivadoras para análisis de talento y desarrollo organizacional',
   icons: {
     icon: '/favicon.svg',

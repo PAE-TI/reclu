@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
           recipientName,
           token,
           jobPositionTitle,
-          session.user.name || 'MotivaIQ'
+          session.user.name || 'Reclu'
         );
       } catch (emailError) {
         console.error('Error sending email:', emailError);

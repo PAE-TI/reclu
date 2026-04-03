@@ -344,8 +344,8 @@ export async function POST(
       where: { id: ownerId },
       select: { name: true, company: true },
     });
-    const senderName = sender?.company || sender?.name || 'MotivaIQ';
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://motivaiq.abacusai.app';
+    const senderName = sender?.company || sender?.name || 'Reclu';
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
 
     // Configuración de evaluaciones para el email combinado
     const EVALUATION_CONFIG: Record<string, { name: string; description: string; icon: string; color: string; questions: number; time: string; pathPrefix: string }> = {

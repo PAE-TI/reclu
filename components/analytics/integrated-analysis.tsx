@@ -798,7 +798,7 @@ export default function IntegratedAnalysis({ discData, dfData, eqData, dnaData, 
           </div>
         )}
 
-        {/* Resumen Ejecutivo MotivaIQ Completo */}
+        {/* Resumen Ejecutivo Reclu Completo */}
         {discData && dfData && eqData && dnaData && acumenData && valuesData && stressData && (
           <div className="p-5 rounded-xl bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 border border-indigo-300">
             <h4 className="font-semibold text-indigo-900 mb-3 flex items-center gap-2">

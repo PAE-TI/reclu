@@ -239,7 +239,7 @@ export default function CampaignsPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold">{t('campaigns.page.title')}</h1>
-                  <p className="text-slate-400 text-sm">{language === 'es' ? 'MotivaIQ Recruitment Suite' : 'MotivaIQ Recruitment Suite'}</p>
+                  <p className="text-slate-400 text-sm">{language === 'es' ? 'Reclu Recruitment Suite' : 'Reclu Recruitment Suite'}</p>
                 </div>
               </div>
               <p className="text-slate-300 max-w-xl text-sm sm:text-base">

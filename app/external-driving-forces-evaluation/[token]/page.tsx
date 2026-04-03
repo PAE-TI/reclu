@@ -34,7 +34,7 @@ function BrandingHeader() {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">MotivaIQ</h1>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Reclu</h1>
               <p className="text-xs text-gray-500">Plataforma de Talento</p>
             </div>
           </div>
@@ -59,7 +59,7 @@ function BrandingFooter({ showCTA = true }: { showCTA?: boolean }) {
             <p className="text-purple-100 mb-4 text-sm">Descubre el potencial de tu organización con evaluaciones DISC, Fuerzas Motivadoras e Inteligencia Emocional</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link href="/" className="inline-flex items-center gap-2 bg-white text-purple-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-purple-50 transition-colors shadow-lg">
-                Conocer MotivaIQ <ArrowRight className="w-4 h-4" />
+                Conocer Reclu <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-white/20 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-white/30 transition-colors border border-white/30">
                 Crear cuenta gratis
@@ -85,7 +85,7 @@ function BrandingFooter({ showCTA = true }: { showCTA?: boolean }) {
             </div>
           </div>
           <div className="text-center text-gray-500 text-sm">
-            © 2025 MotivaIQ. Plataforma de evaluación de talento empresarial.
+            © 2025 Reclu. Plataforma de evaluación de talento empresarial.
           </div>
         </div>
       </div>

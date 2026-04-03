@@ -177,8 +177,8 @@ const tourStepConfigs: TourStepConfig[] = [
   }
 ];
 
-const TOUR_STORAGE_KEY = 'motivaiq_tour_completed';
-const TOUR_DONT_SHOW_KEY = 'motivaiq_tour_dont_show';
+const TOUR_STORAGE_KEY = 'reclu_tour_completed';
+const TOUR_DONT_SHOW_KEY = 'reclu_tour_dont_show';
 
 export default function AppTour() {
   const { t } = useLanguage();

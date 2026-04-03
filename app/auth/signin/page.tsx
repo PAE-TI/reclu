@@ -98,7 +98,7 @@ export default function SignIn() {
               <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <span className="text-2xl font-bold text-white">MotivaIQ</span>
+              <span className="text-2xl font-bold text-white">Reclu</span>
             </Link>
           </div>
 
@@ -206,7 +206,7 @@ export default function SignIn() {
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-indigo-600 bg-clip-text text-transparent">MotivaIQ</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-indigo-600 bg-clip-text text-transparent">Reclu</span>
             </Link>
           </div>
 
@@ -317,7 +317,7 @@ export default function SignIn() {
                       >
                         {t('auth.login.termsLink')}
                       </Link>
-                      {' '}{t('auth.login.ofMotivaIQ')}
+                      {' '}{t('auth.login.ofReclu')}
                     </label>
                     <p className="text-xs text-gray-500 mt-1">
                       <FileText className="w-3 h-3 inline mr-1" />

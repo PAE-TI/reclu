@@ -348,7 +348,7 @@ function generateExternalReportHTML(evaluation: any, result: any, interpretation
         <!-- Header -->
         <div class="header">
           <h1>Reporte de Evaluación DISC</h1>
-          <div class="subtitle">MotivaIQ System - Evaluación Externa</div>
+          <div class="subtitle">Reclu System - Evaluación Externa</div>
           <div class="subtitle">${evaluation.title}</div>
           <div class="date">Completado el ${completedDate}</div>
           <div class="date">Evaluado: ${evaluation.recipientName}</div>
@@ -523,7 +523,7 @@ function generateExternalReportHTML(evaluation: any, result: any, interpretation
 
         <!-- Footer -->
         <div class="footer">
-          <p>Este reporte fue generado por el Sistema MotivaIQ - ${new Date().toLocaleDateString('es-ES')}</p>
+          <p>Este reporte fue generado por el Sistema Reclu - ${new Date().toLocaleDateString('es-ES')}</p>
           <p>Evaluación Externa - Enviado por: ${evaluation.senderUser.firstName} ${evaluation.senderUser.lastName}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>

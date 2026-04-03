@@ -93,8 +93,8 @@ export async function POST(
       details: [] as Array<{ email: string; status: string; message?: string }>,
     };
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://motivaiq.abacusai.app';
-    const senderName = owner?.company || owner?.name || 'MotivaIQ';
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
+    const senderName = owner?.company || owner?.name || 'Reclu';
 
     // Evaluation config for emails
     const EVALUATION_CONFIG: Record<string, { name: string; description: string; icon: string; color: string; questions: number; time: string; pathPrefix: string }> = {

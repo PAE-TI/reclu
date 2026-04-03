@@ -40,7 +40,7 @@ function BrandingHeader({ language, onLanguageChange }: { language: string; onLa
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">MotivaIQ</h1>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Reclu</h1>
               <p className="text-xs text-gray-500">{language === 'es' ? 'Plataforma de Talento' : 'Talent Platform'}</p>
             </div>
           </div>
@@ -83,7 +83,7 @@ function BrandingFooter({ showCTA = true, language }: { showCTA?: boolean; langu
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link href="/" className="inline-flex items-center gap-2 bg-white text-sky-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-sky-50 transition-colors shadow-lg">
-                {language === 'es' ? 'Conocer MotivaIQ' : 'Learn about MotivaIQ'} <ArrowRight className="w-4 h-4" />
+                {language === 'es' ? 'Conocer Reclu' : 'Learn about Reclu'} <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-white/20 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-white/30 transition-colors border border-white/30">
                 {language === 'es' ? 'Crear cuenta gratis' : 'Create free account'}
@@ -109,7 +109,7 @@ function BrandingFooter({ showCTA = true, language }: { showCTA?: boolean; langu
             </div>
           </div>
           <div className="text-center text-gray-500 text-sm">
-            © 2025 MotivaIQ. {language === 'es' ? 'Plataforma de evaluación de talento empresarial.' : 'Enterprise talent assessment platform.'}
+            © 2025 Reclu. {language === 'es' ? 'Plataforma de evaluación de talento empresarial.' : 'Enterprise talent assessment platform.'}
           </div>
         </div>
       </div>
@@ -394,7 +394,7 @@ export default function ExternalTechnicalEvaluationPage() {
     const senderName = evaluation?.senderUser 
       ? `${evaluation.senderUser.firstName || ''} ${evaluation.senderUser.lastName || ''}`.trim() || (language === 'es' ? 'Equipo de Selección' : 'Selection Team')
       : (language === 'es' ? 'Equipo de Selección' : 'Selection Team');
-    const company = evaluation?.senderUser?.company || 'MotivaIQ';
+    const company = evaluation?.senderUser?.company || 'Reclu';
 
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50">

@@ -367,7 +367,7 @@ const discInterpretations = [
 ];
 
 async function main() {
-  console.log('🌱 Iniciando seed del sistema MotivaIQ...');
+  console.log('🌱 Iniciando seed del sistema Reclu...');
 
   try {
     // Crear usuario administrador de prueba

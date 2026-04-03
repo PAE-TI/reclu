@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     const senderName = session.user.firstName 
       ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
       : session.user.name || 'Evaluador';
-    const companyName = session.user.company || 'MotivaIQ';
+    const companyName = session.user.company || 'Reclu';
 
     // Para el email combinado, recopilamos los datos de cada evaluación
     const combinedEmailData: Array<{

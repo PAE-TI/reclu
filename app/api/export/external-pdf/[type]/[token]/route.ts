@@ -190,7 +190,7 @@ function generateDISCPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header">
           <h1>Reporte de Evaluación DISC</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -255,7 +255,7 @@ function generateDISCPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -288,7 +288,7 @@ function generateDrivingForcesPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header" style="border-bottom-color: #8b5cf6;">
           <h1 style="color: #8b5cf6;">Reporte de Fuerzas Motivadoras</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -329,7 +329,7 @@ function generateDrivingForcesPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -361,7 +361,7 @@ function generateEQPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header" style="border-bottom-color: #f43f5e;">
           <h1 style="color: #f43f5e;">Reporte de Inteligencia Emocional</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -411,7 +411,7 @@ function generateEQPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -443,7 +443,7 @@ function generateDNAPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header" style="border-bottom-color: #14b8a6;">
           <h1 style="color: #14b8a6;">Reporte DNA-25 Competencias</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -484,7 +484,7 @@ function generateDNAPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -558,7 +558,7 @@ function generateAcumenPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -583,7 +583,7 @@ function generateValuesPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header" style="border-bottom-color: #8b5cf6;">
           <h1 style="color: #8b5cf6;">Reporte de Valores e Integridad</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -631,7 +631,7 @@ function generateValuesPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>
@@ -663,7 +663,7 @@ function generateStressPDF(evaluation: any): string {
       <div class="report-container">
         <div class="header" style="border-bottom-color: #f97316;">
           <h1 style="color: #f97316;">Reporte de Estrés y Resiliencia</h1>
-          <div class="subtitle">MotivaIQ System</div>
+          <div class="subtitle">Reclu System</div>
           <div class="subtitle">${evaluation.recipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
@@ -723,7 +723,7 @@ function generateStressPDF(evaluation: any): string {
         ` : ''}
 
         <div class="footer">
-          <p>Este reporte fue generado por MotivaIQ - ${formatDate(new Date())}</p>
+          <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
       </div>

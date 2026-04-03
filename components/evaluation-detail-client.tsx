@@ -69,7 +69,7 @@ El DISC es especialmente útil para mejorar la comunicación interpersonal, form
       tips: [
         'No hay estilos "buenos" o "malos", cada uno tiene fortalezas únicas',
         'Las personas pueden adaptar su comportamiento según la situación',
-        'Es más efectivo cuando se combina con otras evaluaciones de MotivaIQ',
+        'Es más efectivo cuando se combina con otras evaluaciones de Reclu',
         'Los resultados deben usarse como punto de partida para conversaciones, no como etiquetas fijas'
       ],
       examples: [
@@ -77,7 +77,7 @@ El DISC es especialmente útil para mejorar la comunicación interpersonal, form
         { scenario: 'Un analista con alto C trabajando con ventas de alto I', insight: 'Pueden complementarse: C aporta rigor y datos, I aporta entusiasmo y relaciones. Clave: establecer expectativas claras de comunicación.' }
       ],
       faqs: [
-        { question: '¿Cuánto tiempo toma completar la evaluación DISC?', answer: 'La evaluación DISC de MotivaIQ toma entre 10-15 minutos. Consta de 24 preguntas diseñadas para capturar tus preferencias conductuales naturales.' },
+        { question: '¿Cuánto tiempo toma completar la evaluación DISC?', answer: 'La evaluación DISC de Reclu toma entre 10-15 minutos. Consta de 24 preguntas diseñadas para capturar tus preferencias conductuales naturales.' },
         { question: '¿Puede cambiar mi perfil DISC con el tiempo?', answer: 'Tu perfil base tiende a ser estable, pero puedes desarrollar flexibilidad conductual. Las situaciones de estrés pueden revelar tu estilo más natural.' },
         { question: '¿El DISC mide inteligencia o competencias?', answer: 'No. El DISC mide preferencias de comportamiento, no capacidad intelectual ni competencias. Es cómo prefieres actuar, no qué puedes hacer.' }
       ]
@@ -112,7 +112,7 @@ DISC is especially useful for improving interpersonal communication, building ba
       tips: [
         'There are no "good" or "bad" styles, each has unique strengths',
         'People can adapt their behavior depending on the situation',
-        'It is more effective when combined with other MotivaIQ assessments',
+        'It is more effective when combined with other Reclu assessments',
         'Results should be used as a starting point for conversations, not as fixed labels'
       ],
       examples: [
@@ -120,7 +120,7 @@ DISC is especially useful for improving interpersonal communication, building ba
         { scenario: 'A high C analyst working with high I sales', insight: 'They can complement each other: C brings rigor and data, I brings enthusiasm and relationships. Key: establish clear communication expectations.' }
       ],
       faqs: [
-        { question: 'How long does the DISC assessment take?', answer: 'The MotivaIQ DISC assessment takes between 10-15 minutes. It consists of 24 questions designed to capture your natural behavioral preferences.' },
+        { question: 'How long does the DISC assessment take?', answer: 'The Reclu DISC assessment takes between 10-15 minutes. It consists of 24 questions designed to capture your natural behavioral preferences.' },
         { question: 'Can my DISC profile change over time?', answer: 'Your base profile tends to be stable, but you can develop behavioral flexibility. Stressful situations may reveal your most natural style.' },
         { question: 'Does DISC measure intelligence or competencies?', answer: 'No. DISC measures behavioral preferences, not intellectual capacity or competencies. It is how you prefer to act, not what you can do.' }
       ]
@@ -707,7 +707,7 @@ This assessment identifies specific risk factors, protective factors, and provid
       duration: '25-35 minutos',
       questions: 20,
       description: 'Evalúa conocimientos técnicos específicos para más de 225 cargos con preguntas clasificadas por nivel de dificultad.',
-      longDescription: `Las Pruebas Técnicas de MotivaIQ evalúan el conocimiento específico del cargo de manera objetiva y estandarizada. Con más de 13,700 preguntas distribuidas en más de 225 posiciones diferentes, nuestro sistema selecciona automáticamente las preguntas más relevantes para el cargo que está evaluando.
+      longDescription: `Las Pruebas Técnicas de Reclu evalúan el conocimiento específico del cargo de manera objetiva y estandarizada. Con más de 13,700 preguntas distribuidas en más de 225 posiciones diferentes, nuestro sistema selecciona automáticamente las preguntas más relevantes para el cargo que está evaluando.
 
 Las preguntas están clasificadas en tres niveles de dificultad: Básico (15%), Intermedio (25%) y Avanzado (60%), lo que permite una evaluación precisa del nivel de expertise del candidato. Esto garantiza que no solo sepa los conceptos básicos, sino que pueda aplicarlos en situaciones complejas.
 
@@ -749,7 +749,7 @@ A diferencia de las evaluaciones psicométricas que miden rasgos de personalidad
       duration: '25-35 minutes',
       questions: 20,
       description: 'Evaluates specific technical knowledge for 225+ positions with questions classified by difficulty level.',
-      longDescription: `MotivaIQ's Technical Tests evaluate position-specific knowledge objectively and in a standardized way. With over 13,700 questions distributed across more than 225 different positions, our system automatically selects the most relevant questions for the position you're evaluating.
+      longDescription: `Reclu's Technical Tests evaluate position-specific knowledge objectively and in a standardized way. With over 13,700 questions distributed across more than 225 different positions, our system automatically selects the most relevant questions for the position you're evaluating.
 
 Questions are classified into three difficulty levels: Basic (15%), Intermediate (25%), and Advanced (60%), allowing for precise assessment of the candidate's expertise level. This ensures they not only know basic concepts but can apply them in complex situations.
 
@@ -1017,14 +1017,14 @@ export default function EvaluationDetailClient({ slug }: EvaluationDetailClientP
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">MotivaIQ</span>
+              <span className="text-xl font-bold">Reclu</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
               <Link href="/" className="hover:text-white transition-colors">{t('evaluaciones.footer.home')}</Link>
               <Link href="/evaluaciones" className="hover:text-white transition-colors">{t('evaluaciones.footer.evaluations')}</Link>
               <Link href="/terms" className="hover:text-white transition-colors">{t('evaluaciones.footer.terms')}</Link>
             </div>
-            <p className="text-sm text-gray-500">© 2026 MotivaIQ. {t('evaluaciones.footer.rights')}</p>
+            <p className="text-sm text-gray-500">© 2026 Reclu. {t('evaluaciones.footer.rights')}</p>
           </div>
         </div>
       </footer>

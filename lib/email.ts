@@ -18,7 +18,7 @@ class EmailService {
         return false;
       }
 
-      const appUrl = process.env.NEXTAUTH_URL || 'https://motivaiq.abacusai.app';
+      const appUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
       const hostname = new URL(appUrl).hostname;
 
       const response = await fetch('https://apps.abacus.ai/api/sendNotificationEmail', {
@@ -33,7 +33,7 @@ class EmailService {
           is_html: true,
           recipient_email: to,
           sender_email: `noreply@${hostname}`,
-          sender_alias: 'MotivaIQ',
+          sender_alias: 'Reclu',
         }),
       });
 
@@ -148,7 +148,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>🎯 Evaluación Driving Forces</h1>
-          <p>Sistema MotivaIQ de Evaluación de Fuerzas Motivacionales</p>
+          <p>Sistema Reclu de Evaluación de Fuerzas Motivacionales</p>
         </div>
         
         <div class="content">
@@ -211,7 +211,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones Psicométricas</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -303,7 +303,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>🧠 Evaluación DISC</h1>
-          <p>Sistema MotivaIQ de Evaluación Psicométrica</p>
+          <p>Sistema Reclu de Evaluación Psicométrica</p>
         </div>
         
         <div class="content">
@@ -362,7 +362,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones Psicométricas</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -488,7 +488,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>❤️ Evaluación de Inteligencia Emocional</h1>
-          <p>Sistema MotivaIQ - Evaluación EQ</p>
+          <p>Sistema Reclu - Evaluación EQ</p>
         </div>
         
         <div class="content">
@@ -563,7 +563,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -689,7 +689,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>🧬 Evaluación de Competencias DNA-25</h1>
-          <p>Sistema MotivaIQ - Evaluación de Competencias</p>
+          <p>Sistema Reclu - Evaluación de Competencias</p>
         </div>
         
         <div class="content">
@@ -758,7 +758,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -800,7 +800,7 @@ class EmailService {
   }) {
     const { recipientName, senderName, evaluationLink, expiryDays, evaluationTitle } = options;
 
-    const subject = `🎯 Invitación: Evaluación Acumen de ${senderName} - MotivaIQ`;
+    const subject = `🎯 Invitación: Evaluación Acumen de ${senderName} - Reclu`;
 
     const html = `
       <!DOCTYPE html>
@@ -826,7 +826,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>🎯 Evaluación Acumen</h1>
-          <p>Sistema MotivaIQ - Índice de Capacidad de Juicio</p>
+          <p>Sistema Reclu - Índice de Capacidad de Juicio</p>
         </div>
         
         <div class="content">
@@ -902,7 +902,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -944,7 +944,7 @@ class EmailService {
   }) {
     const { recipientName, senderName, evaluationLink, expiryDays, evaluationTitle } = options;
 
-    const subject = `⚖️ Invitación: Evaluación de Valores de ${senderName} - MotivaIQ`;
+    const subject = `⚖️ Invitación: Evaluación de Valores de ${senderName} - Reclu`;
 
     const html = `
       <!DOCTYPE html>
@@ -968,7 +968,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>⚖️ Evaluación de Valores</h1>
-          <p>Sistema MotivaIQ - Descubre tus Motivadores Internos</p>
+          <p>Sistema Reclu - Descubre tus Motivadores Internos</p>
         </div>
         
         <div class="content">
@@ -1041,7 +1041,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -1082,7 +1082,7 @@ class EmailService {
   }) {
     const { recipientName, senderName, evaluationLink, expiryDays, evaluationTitle } = options;
 
-    const subject = `🧘 Invitación: Evaluación de Estrés y Resiliencia de ${senderName} - MotivaIQ`;
+    const subject = `🧘 Invitación: Evaluación de Estrés y Resiliencia de ${senderName} - Reclu`;
 
     const html = `
       <!DOCTYPE html>
@@ -1106,7 +1106,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>🧘 Evaluación de Estrés y Resiliencia</h1>
-          <p>Sistema MotivaIQ - Descubre tu Perfil de Bienestar</p>
+          <p>Sistema Reclu - Descubre tu Perfil de Bienestar</p>
         </div>
         
         <div class="content">
@@ -1167,7 +1167,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -1196,7 +1196,7 @@ class EmailService {
   }): { subject: string; html: string } {
     const { recipientName, senderName, evaluations, expiryDays } = options;
 
-    const subject = `🎯 ${evaluations.length} Evaluaciones de Talento - MotivaIQ`;
+    const subject = `🎯 ${evaluations.length} Evaluaciones de Talento - Reclu`;
 
     const evaluationCards = evaluations.map(eval_ => `
       <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 12px; padding: 20px; margin: 15px 0; border-left: 4px solid ${eval_.color};">
@@ -1226,14 +1226,14 @@ class EmailService {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Evaluaciones MotivaIQ</title>
+        <title>Evaluaciones Reclu</title>
       </head>
       <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: #f3f4f6;">
         
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 16px 16px 0 0;">
           <h1 style="margin: 0; font-size: 26px;">🎯 Evaluaciones de Talento</h1>
-          <p style="margin: 10px 0 0 0; opacity: 0.9;">Sistema MotivaIQ - Evaluación Integral</p>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">Sistema Reclu - Evaluación Integral</p>
         </div>
         
         <!-- Content -->
@@ -1298,7 +1298,7 @@ class EmailService {
         
         <!-- Footer -->
         <div style="background: #1e293b; color: #94a3b8; padding: 20px; text-align: center; border-radius: 0 0 16px 16px; font-size: 14px;">
-          <p style="margin: 0; font-weight: 600; color: white;">MotivaIQ System</p>
+          <p style="margin: 0; font-weight: 600; color: white;">Reclu System</p>
           <p style="margin: 4px 0 0 0;">Sistema Profesional de Evaluaciones de Talento</p>
           <p style="margin: 8px 0 0 0; font-size: 12px;">Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -1317,10 +1317,10 @@ class EmailService {
     jobPositionTitle: string,
     senderName: string
   ): Promise<boolean> {
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://motivaiq.abacusai.app';
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://reclu.abacusai.app';
     const evaluationUrl = `${baseUrl}/external-technical-evaluation/${token}`;
 
-    const subject = `Evaluación Técnica - ${jobPositionTitle} | MotivaIQ`;
+    const subject = `Evaluación Técnica - ${jobPositionTitle} | Reclu`;
     const html = `
       <!DOCTYPE html>
       <html>
@@ -1345,7 +1345,7 @@ class EmailService {
       <body>
         <div class="header">
           <h1>💼 Evaluación Técnica</h1>
-          <p>MotivaIQ - Sistema de Evaluación de Competencias</p>
+          <p>Reclu - Sistema de Evaluación de Competencias</p>
         </div>
         
         <div class="content">
@@ -1387,7 +1387,7 @@ class EmailService {
         </div>
         
         <div class="footer">
-          <p><strong>MotivaIQ System</strong></p>
+          <p><strong>Reclu System</strong></p>
           <p>Sistema Profesional de Evaluaciones de Talento</p>
           <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
         </div>
@@ -1416,7 +1416,7 @@ export async function sendTeamInvitationEmail(options: TeamInvitationOptions): P
   
   const inviteLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/team/invite/${inviteToken}`;
 
-  const subject = `🎉 Invitación para unirte al equipo de ${company} - MotivaIQ`;
+  const subject = `🎉 Invitación para unirte al equipo de ${company} - Reclu`;
 
   const html = `
     <!DOCTYPE html>
@@ -1442,13 +1442,13 @@ export async function sendTeamInvitationEmail(options: TeamInvitationOptions): P
     <body>
       <div class="header">
         <h1>🎉 Invitación al Equipo</h1>
-        <p>${company} - MotivaIQ</p>
+        <p>${company} - Reclu</p>
       </div>
       
       <div class="content">
         <h2>¡Hola ${recipientName}!</h2>
         
-        <p><strong>${senderName}</strong> te ha invitado a unirte al equipo de <strong>${company}</strong> en MotivaIQ.</p>
+        <p><strong>${senderName}</strong> te ha invitado a unirte al equipo de <strong>${company}</strong> en Reclu.</p>
         
         <div class="info-box">
           <h3>📋 Detalles de tu cuenta</h3>
@@ -1478,7 +1478,7 @@ export async function sendTeamInvitationEmail(options: TeamInvitationOptions): P
           ⚠️ <strong>Importante:</strong> Este enlace es válido por 7 días. Si expira, solicita una nueva invitación a ${senderName}.
         </div>
         
-        <h3>🚀 ¿Qué podrás hacer en MotivaIQ?</h3>
+        <h3>🚀 ¿Qué podrás hacer en Reclu?</h3>
         
         <div class="feature">
           <strong>📊 Enviar Evaluaciones:</strong> Evalúa talento con 8 módulos científicos (DISC, EQ, DNA-25, etc.)
@@ -1503,7 +1503,7 @@ export async function sendTeamInvitationEmail(options: TeamInvitationOptions): P
       </div>
       
       <div class="footer">
-        <p><strong>MotivaIQ System</strong></p>
+        <p><strong>Reclu System</strong></p>
         <p>Sistema Profesional de Evaluaciones de Talento</p>
         <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
       </div>
@@ -1574,7 +1574,7 @@ export async function sendPurchaseInvoiceEmail(data: PurchaseInvoiceData): Promi
     <body>
       <div class="header">
         <h1>✅ Compra Confirmada</h1>
-        <p>MotivaIQ - Factura de Créditos</p>
+        <p>Reclu - Factura de Créditos</p>
       </div>
       
       <div class="content">
@@ -1600,7 +1600,7 @@ export async function sendPurchaseInvoiceEmail(data: PurchaseInvoiceData): Promi
           
           <div class="line-item">
             <span class="item-label">Descripción</span>
-            <span class="item-value">Créditos MotivaIQ</span>
+            <span class="item-value">Créditos Reclu</span>
           </div>
           
           <div class="line-item">
@@ -1635,7 +1635,7 @@ export async function sendPurchaseInvoiceEmail(data: PurchaseInvoiceData): Promi
       </div>
       
       <div class="footer">
-        <p><strong>MotivaIQ System</strong></p>
+        <p><strong>Reclu System</strong></p>
         <p>Sistema Profesional de Evaluaciones de Talento</p>
         <p>Este correo fue enviado automáticamente. Por favor no respondas a esta dirección.</p>
       </div>

@@ -226,7 +226,7 @@ export default function InsightsPanel({
         id: 'integrated-available',
         type: 'integrated',
         icon: <Sparkles className="w-4 h-4" />,
-        title: 'Análisis MotivaIQ Completo Disponible',
+        title: 'Análisis Reclu Completo Disponible',
         description: 'Tienes datos de comportamiento (DISC) y motivadores (FM). Esto permite un análisis integral de tu perfil profesional.',
         priority: 'high',
         category: 'integrated'

@@ -579,8 +579,8 @@ export default async function Analytics() {
     ...person,
     hasComplete: person.disc !== null && person.drivingForces !== null,
     hasFullProfile: person.disc !== null && person.drivingForces !== null && person.eq !== null && person.dna !== null,
-    hasMotivaIQComplete: person.disc !== null && person.drivingForces !== null && person.eq !== null && person.dna !== null && person.acumen !== null && person.values !== null,
-    hasFullMotivaIQ: person.disc !== null && person.drivingForces !== null && person.eq !== null && person.dna !== null && person.acumen !== null && person.values !== null && person.stress !== null,
+    hasRecluComplete: person.disc !== null && person.drivingForces !== null && person.eq !== null && person.dna !== null && person.acumen !== null && person.values !== null,
+    hasFullReclu: person.disc !== null && person.drivingForces !== null && person.eq !== null && person.dna !== null && person.acumen !== null && person.values !== null && person.stress !== null,
     hasTechnical: person.technical !== null,
   }));
 

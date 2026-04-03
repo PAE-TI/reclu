@@ -115,7 +115,7 @@ export async function PUT(
           recipientEmail: teamMember.email,
           recipientName: teamMember.name,
           senderName: user.name || user.email,
-          company: user.company || 'MotivaIQ',
+          company: user.company || 'Reclu',
           jobTitle: teamMember.jobTitle,
           inviteToken: newToken
         });

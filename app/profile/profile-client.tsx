@@ -620,7 +620,7 @@ export default function ProfileClient({ user, facilitatorInfo, teamMembers = [] 
               <CardContent className="p-6 text-white">
                 <div className="flex items-center gap-2 mb-3">
                   {isFacilitator ? <Users className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-                  <h3 className="font-semibold">{isFacilitator ? t('profile.facilitatorMotivaIQ') : t('profile.motivaIQPro')}</h3>
+                  <h3 className="font-semibold">{isFacilitator ? t('profile.facilitatorReclu') : t('profile.recluPro')}</h3>
                 </div>
                 <p className={`text-sm mb-4 ${isFacilitator ? 'text-amber-100' : 'text-indigo-100'}`}>
                   {isFacilitator 

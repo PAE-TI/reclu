@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
         recipientEmail: email,
         recipientName: name,
         senderName: user.name || user.email,
-        company: user.company || 'MotivaIQ',
+        company: user.company || 'Reclu',
         jobTitle,
         inviteToken
       });

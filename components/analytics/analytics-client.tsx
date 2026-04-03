@@ -207,8 +207,8 @@ interface PersonData {
   technicalDate: string | null;
   hasComplete: boolean;
   hasFullProfile: boolean;
-  hasMotivaIQComplete?: boolean;
-  hasFullMotivaIQ?: boolean;
+  hasRecluComplete?: boolean;
+  hasFullReclu?: boolean;
   hasTechnical?: boolean;
 }
 
@@ -1526,7 +1526,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                   </div>
                   <div>
                     <p className="text-white font-semibold">{t('analytics.7dimensions')}</p>
-                    <p className="text-white/70 text-xs">{t('analytics.fullMotivaIQAnalysis')}</p>
+                    <p className="text-white/70 text-xs">{t('analytics.fullRecluAnalysis')}</p>
                   </div>
                 </div>
               </div>
@@ -3957,7 +3957,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
     const withValues = people.filter(p => p.values !== null).length;
     const withBoth = people.filter(p => p.hasComplete).length;
     const withFullProfile = people.filter(p => p.hasFullProfile).length;
-    const withMotivaIQComplete = people.filter(p => p.hasMotivaIQComplete).length;
+    const withRecluComplete = people.filter(p => p.hasRecluComplete).length;
     
     // Distribución DISC
     const discDistribution = { D: 0, I: 0, S: 0, C: 0 };
@@ -4119,7 +4119,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
       withStress,
       withBoth,
       withFullProfile,
-      withMotivaIQComplete,
+      withRecluComplete,
       discDistribution,
       motivatorCounts,
       eqDistribution,
@@ -4309,7 +4309,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                   {t('analytics.title')}
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  {language === 'es' ? 'Inteligencia de Talento MotivaIQ 360°' : 'MotivaIQ 360° Talent Intelligence'}
+                  {language === 'es' ? 'Inteligencia de Talento Reclu 360°' : 'Reclu 360° Talent Intelligence'}
                 </p>
               </div>
             </div>
@@ -4326,7 +4326,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10">
                 <Sparkles className="w-4 h-4 text-slate-300" />
-                <span className="text-white font-semibold">{stats.withMotivaIQComplete}</span>
+                <span className="text-white font-semibold">{stats.withRecluComplete}</span>
                 <span className="text-slate-400 text-sm">{language === 'es' ? 'perfil 360°' : '360° profile'}</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10">
@@ -4425,8 +4425,8 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
           <CardContent className="p-5">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-3xl font-bold text-amber-600">{stats.withMotivaIQComplete}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">MotivaIQ 360°</p>
+                <p className="text-3xl font-bold text-amber-600">{stats.withRecluComplete}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">Reclu 360°</p>
               </div>
               <div className="p-3 bg-amber-50 rounded-xl group-hover:scale-110 transition-transform">
                 <Sparkles className="w-5 h-5 text-amber-600" />
@@ -4481,7 +4481,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
         <div className="space-y-6">
           {/* Métricas principales - Layout mejorado */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Card: Evaluaciones por tipo - 8 módulos MotivaIQ */}
+            {/* Card: Evaluaciones por tipo - 8 módulos Reclu */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('analytics.completedEvaluations')}</h3>
@@ -4565,7 +4565,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                     <Award className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-gray-900">8 {language === 'es' ? 'Módulos MotivaIQ' : 'MotivaIQ Modules'}</p>
+                    <p className="text-sm font-bold text-gray-900">8 {language === 'es' ? 'Módulos Reclu' : 'Reclu Modules'}</p>
                     <p className="text-xs text-gray-500">{language === 'es' ? 'Sistema completo de evaluación 360°' : 'Complete 360° evaluation system'}</p>
                   </div>
                 </div>
@@ -5573,7 +5573,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                       {person.technical && (
                         <Badge className="bg-sky-500 text-white text-xs px-1.5 py-0.5">Téc</Badge>
                       )}
-                      {person.hasFullMotivaIQ && (
+                      {person.hasFullReclu && (
                         <Badge className="bg-gradient-to-r from-indigo-500 via-purple-500 to-orange-500 text-white text-xs px-1.5 py-0.5">
                           <Sparkles className="w-3 h-3" />
                         </Badge>
@@ -5670,7 +5670,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-white">{t('analytics.individualAnalysis')}</h1>
-                  <p className="text-white/80 text-sm sm:text-base">{language === 'es' ? 'Perfil completo MotivaIQ de una persona' : 'Complete MotivaIQ profile of a person'}</p>
+                  <p className="text-white/80 text-sm sm:text-base">{language === 'es' ? 'Perfil completo Reclu de una persona' : 'Complete Reclu profile of a person'}</p>
                 </div>
               </div>
               
@@ -5704,7 +5704,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                     </div>
                     <div>
                       <p className="text-white font-semibold">{t('analytics.integratedAnalysis')}</p>
-                      <p className="text-white/70 text-xs">{language === 'es' ? 'Perfil MotivaIQ completo' : 'Complete MotivaIQ profile'}</p>
+                      <p className="text-white/70 text-xs">{language === 'es' ? 'Perfil Reclu completo' : 'Complete Reclu profile'}</p>
                     </div>
                   </div>
                 </div>
@@ -5810,10 +5810,10 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                           {language === 'es' ? 'Técnica' : 'Technical'}
                         </Badge>
                       )}
-                      {selectedPerson.hasFullMotivaIQ && (
+                      {selectedPerson.hasFullReclu && (
                         <Badge className="bg-white text-indigo-600">
                           <Sparkles className="w-3 h-3 mr-1" />
-                          {language === 'es' ? 'MotivaIQ Completo' : 'Complete MotivaIQ'}
+                          {language === 'es' ? 'Reclu Completo' : 'Complete Reclu'}
                         </Badge>
                       )}
                     </div>
@@ -7186,12 +7186,12 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             
                             // Header and styles
                             htmlParts.push('<!DOCTYPE html><html><head>');
-                            htmlParts.push('<title>Análisis Integrado MotivaIQ - ' + selectedPerson.name + '</title>');
+                            htmlParts.push('<title>Análisis Integrado Reclu - ' + selectedPerson.name + '</title>');
                             htmlParts.push('<style>');
                             htmlParts.push("@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');");
                             htmlParts.push('* { margin: 0; padding: 0; box-sizing: border-box; }');
                             htmlParts.push("body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #eef2ff 0%, #ffffff 50%, #faf5ff 100%); color: #1f2937; min-height: 100vh; padding: 0; }");
-                            htmlParts.push('.motivaiq-header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%); color: white; padding: 32px 40px; margin-bottom: 32px; }');
+                            htmlParts.push('.reclu-header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%); color: white; padding: 32px 40px; margin-bottom: 32px; }');
                             htmlParts.push('.header-content { max-width: 1200px; margin: 0 auto; }');
                             htmlParts.push('.logo-section { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }');
                             htmlParts.push('.logo-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }');
@@ -7256,16 +7256,16 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             htmlParts.push('.executive-box { padding: 20px; background: rgba(255,255,255,0.6); border-radius: 16px; }');
                             htmlParts.push('.executive-text { font-size: 14px; line-height: 1.7; color: #374151; }');
                             htmlParts.push('.executive-text strong { color: #1f2937; }');
-                            htmlParts.push('.motivaiq-footer { margin-top: 40px; padding: 24px 40px; background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; text-align: center; }');
+                            htmlParts.push('.reclu-footer { margin-top: 40px; padding: 24px 40px; background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; text-align: center; }');
                             htmlParts.push('.footer-logo { font-size: 20px; font-weight: 700; margin-bottom: 8px; }');
                             htmlParts.push('.footer-text { font-size: 13px; opacity: 0.8; }');
                             htmlParts.push('.footer-date { font-size: 12px; opacity: 0.6; margin-top: 12px; }');
-                            htmlParts.push('@media print { body { background: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .motivaiq-header, .motivaiq-footer, .analysis-card, .section-box, .badge, .progress-fill, .card-icon, .metric-card { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .section-box, .analysis-card { page-break-inside: avoid; } @page { margin: 0.5cm; } }');
+                            htmlParts.push('@media print { body { background: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .reclu-header, .reclu-footer, .analysis-card, .section-box, .badge, .progress-fill, .card-icon, .metric-card { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .section-box, .analysis-card { page-break-inside: avoid; } @page { margin: 0.5cm; } }');
                             htmlParts.push('</style></head><body>');
                             
                             // Header
-                            htmlParts.push('<div class="motivaiq-header"><div class="header-content">');
-                            htmlParts.push('<div class="logo-section"><div class="logo-icon">💼</div><div><div class="logo-text">MotivaIQ</div><div class="logo-subtext">Plataforma de Análisis de Talento</div></div></div>');
+                            htmlParts.push('<div class="reclu-header"><div class="header-content">');
+                            htmlParts.push('<div class="logo-section"><div class="logo-icon">💼</div><div><div class="logo-text">Reclu</div><div class="logo-subtext">Plataforma de Análisis de Talento</div></div></div>');
                             htmlParts.push('<div class="person-info"><div class="person-avatar">' + selectedPerson.name.charAt(0).toUpperCase() + '</div>');
                             htmlParts.push('<div class="person-details"><h2>' + selectedPerson.name + '</h2><p>' + selectedPerson.email + '</p></div>');
                             htmlParts.push('<div class="report-badge">✨ Análisis Integrado Completo</div></div></div></div>');
@@ -7274,7 +7274,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             htmlParts.push('<div class="main-content">');
                             
                             // Card 1: Integrated Analysis
-                            htmlParts.push('<div class="analysis-card"><div class="card-header"><div class="card-icon indigo">✨</div><div><div class="card-title-text">Análisis Integrado MotivaIQ</div><div class="card-subtitle">Comportamiento + Motivadores</div></div></div><div class="card-content">');
+                            htmlParts.push('<div class="analysis-card"><div class="card-header"><div class="card-icon indigo">✨</div><div><div class="card-title-text">Análisis Integrado Reclu</div><div class="card-subtitle">Comportamiento + Motivadores</div></div></div><div class="card-content">');
                             
                             // Profile Summary
                             htmlParts.push('<div class="section-box indigo-full"><div class="section-title indigo">🧠 Resumen del Perfil</div><p class="section-text">' + profileSummary + '</p>');
@@ -7417,7 +7417,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                               const val = selectedPerson.values;
                               const str = selectedPerson.stress;
                               htmlParts.push('<div class="analysis-card" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #fce7f3 100%);">');
-                              htmlParts.push('<div class="card-header" style="background: rgba(255,255,255,0.5);"><div class="card-icon indigo">🏆</div><div><div class="card-title-text">Resumen Ejecutivo MotivaIQ Completo</div><div class="card-subtitle">8 Módulos de Evaluación</div></div></div><div class="card-content">');
+                              htmlParts.push('<div class="card-header" style="background: rgba(255,255,255,0.5);"><div class="card-icon indigo">🏆</div><div><div class="card-title-text">Resumen Ejecutivo Reclu Completo</div><div class="card-subtitle">8 Módulos de Evaluación</div></div></div><div class="card-content">');
                               htmlParts.push('<div class="grid-7">');
                               htmlParts.push('<div class="metric-card"><div class="metric-icon">🧠</div><div class="metric-value indigo">' + discStyle + '</div><div class="metric-label">DISC</div></div>');
                               htmlParts.push('<div class="metric-card"><div class="metric-icon">🎯</div><div class="metric-value purple">' + (motivatorDescriptions[topMotivator]?.name || 'FM').substring(0, 4) + '</div><div class="metric-label">Motivador</div></div>');
@@ -7450,8 +7450,8 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             const now = new Date();
                             const dateStr = now.toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
                             const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-                            htmlParts.push('<div class="motivaiq-footer">');
-                            htmlParts.push('<div class="footer-logo">💼 MotivaIQ</div>');
+                            htmlParts.push('<div class="reclu-footer">');
+                            htmlParts.push('<div class="footer-logo">💼 Reclu</div>');
                             htmlParts.push('<div class="footer-text">Plataforma de Evaluación y Análisis de Talento Empresarial</div>');
                             htmlParts.push('<div class="footer-date">Reporte generado el ' + dateStr + ' a las ' + timeStr + '</div>');
                             htmlParts.push('</div></body></html>');
@@ -7577,7 +7577,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                   <p className="text-sm text-gray-600 font-medium">{t('analytics.empty.peopleEvaluated')}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 text-center">
-                  <p className="text-3xl font-bold text-emerald-600">{people.filter(p => p.hasFullMotivaIQ).length}</p>
+                  <p className="text-3xl font-bold text-emerald-600">{people.filter(p => p.hasFullReclu).length}</p>
                   <p className="text-sm text-gray-600 font-medium">{t('analytics.empty.completeProfile')}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 text-center">

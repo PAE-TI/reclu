@@ -452,7 +452,7 @@ export default function EvaluationsGuidePage() {
               </CardContent>
             </Card>
 
-            {/* MotivaIQ Complete */}
+            {/* Reclu Complete */}
             <Card className="bg-gradient-to-br from-slate-800 to-slate-900 text-white border-0 shadow-xl">
               <CardContent className="pt-6">
                 <div className="text-center">

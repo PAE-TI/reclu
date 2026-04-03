@@ -40,7 +40,7 @@ export function BrandingHeader({
             </div>
             <div>
               <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                MotivaIQ
+                Reclu
               </h1>
               <p className="text-xs text-gray-500">{t('ext.platform')}</p>
             </div>
@@ -91,7 +91,7 @@ export function BrandingFooter({ language, showCTA = true }: BrandingFooterProps
                 href="/"
                 className="inline-flex items-center gap-2 bg-white text-indigo-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-indigo-50 transition-colors shadow-lg"
               >
-                {t('ext.knowMotivaiq')}
+                {t('ext.knowReclu')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
@@ -126,10 +126,10 @@ export function BrandingFooter({ language, showCTA = true }: BrandingFooterProps
                 <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-white font-semibold">MotivaIQ</span>
+                <span className="text-white font-semibold">Reclu</span>
               </div>
               <p className="text-gray-500 text-sm text-center">
-                © 2025 MotivaIQ. {t('ext.platformDesc')}
+                © 2025 Reclu. {t('ext.platformDesc')}
               </p>
               <div className="flex items-center gap-4">
                 <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">

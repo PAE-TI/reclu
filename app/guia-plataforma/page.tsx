@@ -127,12 +127,12 @@ export default function GuiaPlataformaPage() {
                 <GraduationCap className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-white">Guía Completa de MotivaIQ</h1>
+                <h1 className="text-2xl lg:text-3xl font-bold text-white">Guía Completa de Reclu</h1>
                 <p className="text-slate-300 text-sm">Todo lo que necesitas saber para usar la plataforma</p>
               </div>
             </div>
             <p className="text-slate-200 text-base max-w-2xl">
-              Aprende paso a paso cómo enviar evaluaciones, gestionar resultados, analizar perfiles y sacar el máximo provecho de los 8 módulos de MotivaIQ.
+              Aprende paso a paso cómo enviar evaluaciones, gestionar resultados, analizar perfiles y sacar el máximo provecho de los 8 módulos de Reclu.
             </p>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function GuiaPlataformaPage() {
         <div className="mb-8">
           <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-slate-600" />
-            Los 7 Módulos de MotivaIQ
+            Los 7 Módulos de Reclu
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
             {modules.map((mod) => (
@@ -450,7 +450,7 @@ export default function GuiaPlataformaPage() {
                 <div className="flex items-start gap-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200">
                   <Info className="w-6 h-6 text-amber-600 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-amber-800">El Análisis Avanzado es la función más poderosa de MotivaIQ</p>
+                    <p className="font-semibold text-amber-800">El Análisis Avanzado es la función más poderosa de Reclu</p>
                     <p className="text-sm text-amber-700 mt-1">Te permite ver el perfil integrado de una persona (combinando todos sus módulos) o comparar varias personas entre sí.</p>
                   </div>
                 </div>
@@ -461,7 +461,7 @@ export default function GuiaPlataformaPage() {
                     Análisis Individual
                   </h3>
                   <div className="text-sm text-gray-700 space-y-2">
-                    <p><strong>¿Para qué sirve?</strong> Ver el perfil completo MotivaIQ de una persona que ha completado varios módulos.</p>
+                    <p><strong>¿Para qué sirve?</strong> Ver el perfil completo Reclu de una persona que ha completado varios módulos.</p>
                     <div className="bg-amber-50 rounded-lg p-4">
                       <p className="font-semibold text-amber-800 mb-2">Pasos:</p>
                       <ol className="list-decimal list-inside space-y-1 text-amber-700">

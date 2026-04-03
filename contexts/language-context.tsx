@@ -58,7 +58,7 @@ export const translations = {
     'hero.title1': 'Descubre el verdadero',
     'hero.title2': 'potencial',
     'hero.title3': 'de tu equipo',
-    'hero.subtitle': 'MotivaIQ es la plataforma líder en evaluaciones psicométricas que te permite conocer en profundidad las fortalezas, motivaciones y áreas de desarrollo de cada miembro de tu organización.',
+    'hero.subtitle': 'Reclu es la plataforma líder en evaluaciones psicométricas que te permite conocer en profundidad las fortalezas, motivaciones y áreas de desarrollo de cada miembro de tu organización.',
     'hero.cta.primary': 'Comenzar Evaluación Gratuita',
     'hero.cta.secondary': 'Ver Demo',
     'hero.stats.evaluations': 'Evaluaciones',
@@ -67,7 +67,7 @@ export const translations = {
     
     // Trust Section
     'trust.badge': 'Confianza',
-    'trust.title': 'Empresas líderes confían en MotivaIQ',
+    'trust.title': 'Empresas líderes confían en Reclu',
     
     // Problem Section
     'problem.badge': 'El Problema',
@@ -84,7 +84,7 @@ export const translations = {
     
     // Solution Section
     'solution.badge': 'La Solución',
-    'solution.title1': 'MotivaIQ:',
+    'solution.title1': 'Reclu:',
     'solution.title2': '8 Evaluaciones,',
     'solution.title3': '1 Plataforma',
     'solution.subtitle': 'Un sistema integral que te da visibilidad completa del potencial humano',
@@ -152,7 +152,7 @@ export const translations = {
     
     // Benefits Section
     'benefits.badge': 'Beneficios',
-    'benefits.title': '¿Por qué elegir MotivaIQ?',
+    'benefits.title': '¿Por qué elegir Reclu?',
     'benefits.subtitle': 'Herramientas diseñadas para maximizar el potencial de tu equipo',
     'benefits.item1.title': 'Decisiones basadas en datos',
     'benefits.item1.desc': 'Elimina el sesgo en contrataciones y promociones con evaluaciones objetivas y científicamente validadas.',
@@ -170,7 +170,7 @@ export const translations = {
     // Testimonials
     'testimonials.badge': 'Testimonios',
     'testimonials.title': 'Lo que dicen nuestros clientes',
-    'testimonials.quote1': 'MotivaIQ transformó nuestra forma de contratar. Ahora tenemos un 70% menos de rotación en el primer año.',
+    'testimonials.quote1': 'Reclu transformó nuestra forma de contratar. Ahora tenemos un 70% menos de rotación en el primer año.',
     'testimonials.author1': 'María González',
     'testimonials.role1': 'Directora de RRHH, TechCorp',
     'testimonials.quote2': 'Los reportes son increíblemente detallados. Nos ayudaron a formar equipos mucho más efectivos.',
@@ -182,7 +182,7 @@ export const translations = {
     
     // CTA Banner
     'ctaBanner.title': '¿Listo para conocer el verdadero potencial de tu equipo?',
-    'ctaBanner.subtitle': 'Únete a más de 500 empresas que ya usan MotivaIQ',
+    'ctaBanner.subtitle': 'Únete a más de 500 empresas que ya usan Reclu',
     'ctaBanner.cta': 'Comenzar Gratis',
     'ctaBanner.demo': 'Agendar Demo',
     
@@ -193,7 +193,7 @@ export const translations = {
     'faq.a1': 'Cada evaluación individual toma entre 8-25 minutos. El set completo de 8 evaluaciones se puede completar en 90-120 minutos, aunque recomendamos hacerlas en sesiones separadas.',
     'faq.q2': '¿Qué tan precisos son los resultados?',
     'faq.a2': 'Nuestras evaluaciones están científicamente validadas con una precisión superior al 90%. Utilizamos algoritmos avanzados y metodologías probadas por más de 30 años de investigación.',
-    'faq.q3': '¿Puedo usar MotivaIQ para procesos de selección?',
+    'faq.q3': '¿Puedo usar Reclu para procesos de selección?',
     'faq.a3': '¡Absolutamente! Tenemos funcionalidades específicas para reclutamiento, incluyendo comparación de candidatos contra perfiles ideales de más de 225 cargos predefinidos.',
     'faq.q4': '¿Los datos son confidenciales?',
     'faq.a4': 'Sí, cumplimos con las normativas de protección de datos más estrictas. Los resultados solo son accesibles para el administrador de la cuenta y los usuarios autorizados.',
@@ -250,7 +250,7 @@ export const translations = {
     'ext.startEvaluation': 'Comenzar Evaluación',
     'ext.interestedInTeam': '¿Te interesa evaluar a tu equipo?',
     'ext.discoverPotential': 'Descubre el potencial de tu organización con evaluaciones DISC, Fuerzas Motivadoras e Inteligencia Emocional',
-    'ext.knowMotivaiq': 'Conocer MotivaIQ',
+    'ext.knowReclu': 'Conocer Reclu',
     'ext.createFreeAccount': 'Crear cuenta gratis',
     'ext.confidentialData': 'Datos 100% confidenciales',
     'ext.certifiedMethod': 'Metodología certificada',
@@ -352,11 +352,11 @@ export const translations = {
     // Evaluaciones Page
     'evaluaciones.badge': '8 Evaluaciones Científicas',
     'evaluaciones.title1': 'Conoce las Evaluaciones de',
-    'evaluaciones.title2': ' MotivaIQ',
+    'evaluaciones.title2': ' Reclu',
     'evaluaciones.subtitle': 'Cada evaluación está diseñada para revelar una dimensión única del talento humano. Juntas, crean el perfil más completo para la toma de decisiones en recursos humanos.',
     'evaluaciones.startEvaluations': 'Comenzar Evaluaciones',
     'evaluaciones.learnMore': 'Conocer más',
-    'evaluaciones.completeProfile': 'Perfil MotivaIQ Completo',
+    'evaluaciones.completeProfile': 'Perfil Reclu Completo',
     'evaluaciones.sevenEquals360': '8 Evaluaciones = 1 Visión 360°',
     'evaluaciones.completeDescription': 'Cuando combinas las 8 evaluaciones, obtienes el perfil de talento más completo del mercado. Entiende no solo cómo actúa alguien, sino por qué, qué puede hacer, cómo piensa, qué valora y cómo maneja el estrés.',
     'evaluaciones.createFreeAccount': 'Crear Cuenta Gratis',
@@ -451,21 +451,21 @@ export const translations = {
     // Terms Page
     'terms.title': 'Términos y Condiciones',
     'terms.subtitle': 'Última actualización: Enero 2026',
-    'terms.intro': 'Al utilizar MotivaIQ, aceptas estos términos que rigen el uso de nuestra plataforma de evaluaciones psicométricas.',
+    'terms.intro': 'Al utilizar Reclu, aceptas estos términos que rigen el uso de nuestra plataforma de evaluaciones psicométricas.',
     'terms.section1.title': '1. Introducción',
-    'terms.section1.content': 'Bienvenido a MotivaIQ. Estos términos y condiciones rigen el uso de nuestra plataforma de evaluaciones psicométricas. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos términos.',
+    'terms.section1.content': 'Bienvenido a Reclu. Estos términos y condiciones rigen el uso de nuestra plataforma de evaluaciones psicométricas. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos términos.',
     'terms.section2.title': '2. Definiciones',
-    'terms.section2.content': 'En estos términos: "Plataforma" se refiere al sistema MotivaIQ; "Usuario" es cualquier persona que accede al servicio; "Evaluación" se refiere a cualquiera de las 7 herramientas de medición disponibles; "Administrador" es el usuario con privilegios de gestión de cuenta.',
+    'terms.section2.content': 'En estos términos: "Plataforma" se refiere al sistema Reclu; "Usuario" es cualquier persona que accede al servicio; "Evaluación" se refiere a cualquiera de las 7 herramientas de medición disponibles; "Administrador" es el usuario con privilegios de gestión de cuenta.',
     'terms.section3.title': '3. Uso del Servicio',
-    'terms.section3.content': 'El uso de MotivaIQ debe ser exclusivamente para fines legítimos de evaluación de talento humano. No está permitido: compartir credenciales de acceso, manipular resultados de evaluaciones, o utilizar la plataforma para discriminación ilegal.',
+    'terms.section3.content': 'El uso de Reclu debe ser exclusivamente para fines legítimos de evaluación de talento humano. No está permitido: compartir credenciales de acceso, manipular resultados de evaluaciones, o utilizar la plataforma para discriminación ilegal.',
     'terms.section4.title': '4. Privacidad y Datos',
     'terms.section4.content': 'Los datos de las evaluaciones son tratados con estricta confidencialidad. Solo los administradores autorizados pueden acceder a los resultados. Para más información, consulte nuestra Política de Privacidad.',
     'terms.section5.title': '5. Evaluaciones',
-    'terms.section5.content': 'Las evaluaciones deben ser completadas de manera honesta y sin ayuda externa. Los resultados son válidos únicamente para el individuo evaluado. MotivaIQ no garantiza resultados específicos basados en las evaluaciones.',
+    'terms.section5.content': 'Las evaluaciones deben ser completadas de manera honesta y sin ayuda externa. Los resultados son válidos únicamente para el individuo evaluado. Reclu no garantiza resultados específicos basados en las evaluaciones.',
     'terms.section6.title': '6. Limitaciones',
-    'terms.section6.content': 'MotivaIQ proporciona herramientas de evaluación como apoyo para la toma de decisiones. Los resultados no deben ser el único factor en decisiones de contratación, promoción o terminación laboral.',
+    'terms.section6.content': 'Reclu proporciona herramientas de evaluación como apoyo para la toma de decisiones. Los resultados no deben ser el único factor en decisiones de contratación, promoción o terminación laboral.',
     'terms.section7.title': '7. Propiedad Intelectual',
-    'terms.section7.content': 'Todo el contenido de la plataforma, incluyendo metodologías de evaluación, reportes y algoritmos, son propiedad exclusiva de MotivaIQ y están protegidos por derechos de autor.',
+    'terms.section7.content': 'Todo el contenido de la plataforma, incluyendo metodologías de evaluación, reportes y algoritmos, son propiedad exclusiva de Reclu y están protegidos por derechos de autor.',
     'terms.section8.title': '8. Modificaciones',
     'terms.section8.content': 'Nos reservamos el derecho de modificar estos términos en cualquier momento. Los usuarios serán notificados de cambios significativos a través del correo electrónico registrado.',
     'terms.backHome': 'Volver al inicio',
@@ -478,14 +478,14 @@ export const translations = {
     'auth.login.password': 'Contraseña',
     'auth.login.termsLabel': 'Al iniciar sesión, confirmo que he leído y acepto los',
     'auth.login.termsLink': 'Términos y Condiciones',
-    'auth.login.ofMotivaIQ': 'de MotivaIQ.',
+    'auth.login.ofReclu': 'de Reclu.',
     'auth.login.dataProtected': 'Tus datos están protegidos',
     'auth.login.submit': 'Ingresar al Portal',
     'auth.login.submitting': 'Ingresando...',
     'auth.login.noAccount': '¿No tienes una cuenta?',
     'auth.login.signupFree': 'Regístrate gratis',
     'auth.login.termsFooter': 'Términos y Condiciones',
-    'auth.login.copyright': '© 2026 MotivaIQ. Plataforma de evaluación de talento empresarial.',
+    'auth.login.copyright': '© 2026 Reclu. Plataforma de evaluación de talento empresarial.',
     'auth.login.welcomeBack': 'Bienvenido de nuevo',
     'auth.login.welcomeDesc': 'Continúa gestionando el talento de tu organización con evaluaciones basadas en ciencia.',
     'auth.login.errorTerms': 'Debes aceptar los Términos y Condiciones para continuar',
@@ -515,13 +515,13 @@ export const translations = {
     'auth.signup.termsLink': 'Términos y Condiciones',
     'auth.signup.andThe': 'y la',
     'auth.signup.privacyLink': 'Política de Privacidad',
-    'auth.signup.ofMotivaIQ': 'de MotivaIQ.',
+    'auth.signup.ofReclu': 'de Reclu.',
     'auth.signup.dataProtected': 'Tus datos serán tratados de forma confidencial.',
     'auth.signup.submit': 'Crear Cuenta Gratis',
     'auth.signup.submitting': 'Creando cuenta...',
     'auth.signup.hasAccount': '¿Ya tienes una cuenta?',
     'auth.signup.login': 'Inicia sesión',
-    'auth.signup.copyright': '© 2026 MotivaIQ. Plataforma de evaluación de talento empresarial.',
+    'auth.signup.copyright': '© 2026 Reclu. Plataforma de evaluación de talento empresarial.',
     'auth.signup.heroTitle': 'Potencia tu gestión de talento',
     'auth.signup.heroSubtitle': 'Únete a las empresas líderes que toman decisiones de talento basadas en ciencia.',
     'auth.signup.feature1': 'Metodología Validada',
@@ -560,7 +560,7 @@ export const translations = {
     'auth.eval.technicalDesc': '+225 cargos especializados',
     
     // Logged-in Area - Sidebar
-    'sidebar.logo.title': 'MotivaIQ',
+    'sidebar.logo.title': 'Reclu',
     'sidebar.logo.subtitle': 'Portal Empresarial',
     'sidebar.general.dashboard': 'Panel de Control',
     'sidebar.general.analytics': 'Análisis Avanzado',
@@ -637,7 +637,7 @@ export const translations = {
     'technicalEval.results.strengths': 'Fortalezas',
     'technicalEval.results.areasToImprove': 'Áreas de Mejora',
     'technicalEval.results.createAccount': '¿Quieres enviar evaluaciones?',
-    'technicalEval.results.createAccountDesc': 'Crea una cuenta para evaluar candidatos con MotivaIQ',
+    'technicalEval.results.createAccountDesc': 'Crea una cuenta para evaluar candidatos con Reclu',
     'technicalEval.results.signUp': 'Registrarse',
     
     // Technical Evaluation - Management
@@ -714,7 +714,7 @@ export const translations = {
     'notification.evalName.TECHNICAL': 'Evaluación Técnica',
     
     // Dashboard
-    'dashboard.welcome': '¡Bienvenido a MotivaIQ!',
+    'dashboard.welcome': '¡Bienvenido a Reclu!',
     'dashboard.whatToDo': '¿Qué quieres hacer hoy?',
     'dashboard.mainAction': 'Acción Principal',
     'dashboard.sendTests': 'Enviar Pruebas',
@@ -737,7 +737,7 @@ export const translations = {
     'dashboard.campaigns.autoComparison': 'Comparación Automática',
     'dashboard.campaigns.autoComparison.desc': 'Ranking de candidatos por compatibilidad',
     'dashboard.campaigns.allModules': 'Todos los Módulos',
-    'dashboard.campaigns.allModules.desc': 'Aplica las 8 evaluaciones MotivaIQ',
+    'dashboard.campaigns.allModules.desc': 'Aplica las 8 evaluaciones Reclu',
     'dashboard.campaigns.cta': 'Crear mi primera campaña',
     'dashboard.campaigns.viewAll': 'Ver todas las campañas',
     'dashboard.tipOfDay': 'Tip del Día',
@@ -789,12 +789,12 @@ export const translations = {
     'analytics.noPeople': 'No hay personas evaluadas',
     'analytics.noPeople.desc': 'Envía evaluaciones para ver los resultados aquí',
     'analytics.noEvaluations': 'No hay evaluaciones completadas',
-    'analytics.noEvaluations.desc': 'Envía las 8 evaluaciones MotivaIQ a tu equipo para ver análisis detallados e integrados.',
+    'analytics.noEvaluations.desc': 'Envía las 8 evaluaciones Reclu a tu equipo para ver análisis detallados e integrados.',
     'analytics.selectPerson': 'Selecciona una persona',
     'analytics.selectPerson.desc': 'Elige a alguien de la lista para ver su perfil completo',
     'analytics.profile': 'Perfil',
     'analytics.modules': 'módulos completados',
-    'analytics.fullProfile': 'Perfil MotivaIQ Completo',
+    'analytics.fullProfile': 'Perfil Reclu Completo',
     'analytics.partialProfile': 'Perfil Parcial',
     'analytics.missingModules': 'Faltan módulos para perfil completo',
     'analytics.tabs.individual': 'Individual',
@@ -808,7 +808,7 @@ export const translations = {
     'analytics.stats.avgEQ': 'EQ Promedio',
     // Empty State
     'analytics.empty.title': 'Selecciona una persona para comenzar',
-    'analytics.empty.description': 'Usa el buscador arriba para encontrar a alguien y explorar su perfil MotivaIQ completo con las 7 dimensiones de evaluación.',
+    'analytics.empty.description': 'Usa el buscador arriba para encontrar a alguien y explorar su perfil Reclu completo con las 7 dimensiones de evaluación.',
     'analytics.empty.whatYouSee': '¿Qué verás en el análisis?',
     'analytics.empty.disc': 'DISC',
     'analytics.empty.disc.desc': 'Estilo de comportamiento',
@@ -956,7 +956,7 @@ export const translations = {
     'analytics.upTo4People': 'Hasta 4 personas',
     'analytics.sideComparison': 'Comparación lado a lado',
     'analytics.7dimensions': '8 Dimensiones',
-    'analytics.fullMotivaIQAnalysis': 'Análisis completo MotivaIQ',
+    'analytics.fullRecluAnalysis': 'Análisis completo Reclu',
     'analytics.teamDynamics': 'Dinámicas de Equipo',
     'analytics.compatibilityInsights': 'Insights de compatibilidad',
     'analytics.selectMin2': 'Selecciona al menos 2 personas',
@@ -1075,11 +1075,11 @@ export const translations = {
     'analytics.dna.comp.collaboration': 'Colaboración',
     
     // Integrated Analysis - Main titles
-    'analytics.integrated.title': 'Análisis Integrado MotivaIQ',
+    'analytics.integrated.title': 'Análisis Integrado Reclu',
     'analytics.integrated.subtitle': 'Comportamiento + Motivadores',
     'analytics.integrated.completeProfile': 'Perfil Completo',
     'analytics.integrated.notAvailable': 'Análisis Integrado No Disponible',
-    'analytics.integrated.notAvailableDesc': 'Complete al menos una evaluación DISC y una de Fuerzas Motivadoras para obtener el análisis integrado MotivaIQ.',
+    'analytics.integrated.notAvailableDesc': 'Complete al menos una evaluación DISC y una de Fuerzas Motivadoras para obtener el análisis integrado Reclu.',
     'analytics.integrated.profileSummary': 'Resumen del Perfil',
     'analytics.integrated.workStyle': 'Estilo de Trabajo',
     'analytics.integrated.communicationStyle': 'Estilo de Comunicación',
@@ -1092,7 +1092,7 @@ export const translations = {
     'analytics.integrated.acumenIntegrated': 'Capacidad Acumen Integrada',
     'analytics.integrated.valuesIntegrated': 'Valores e Integridad Integrados',
     'analytics.integrated.stressIntegrated': 'Estrés y Resiliencia Integrados',
-    'analytics.integrated.executiveSummary': 'Resumen Ejecutivo MotivaIQ Completo',
+    'analytics.integrated.executiveSummary': 'Resumen Ejecutivo Reclu Completo',
     'analytics.integrated.resilience': 'Resiliencia',
     'analytics.integrated.generalStress': 'Estrés General',
     'analytics.integrated.adaptation': 'Adaptación',
@@ -1713,7 +1713,7 @@ export const translations = {
     'tip.sendPackages.desc': "Usa 'Enviar Pruebas' para aplicar los 8 módulos a una persona en un solo paso.",
     'tip.analyzeTeam.title': 'Analiza tu equipo',
     'tip.analyzeTeam.desc': 'En Análisis puedes comparar perfiles y descubrir patrones de tu equipo.',
-    'tip.fullProfile.title': 'Perfil MotivaIQ Completo',
+    'tip.fullProfile.title': 'Perfil Reclu Completo',
     'tip.fullProfile.desc': 'Una persona con los 8 módulos completados tiene un perfil integral único.',
     'tip.quickEvals.title': 'Evaluaciones rápidas',
     'tip.quickEvals.desc': 'Las evaluaciones se completan en 10-15 minutos en promedio.',
@@ -1970,7 +1970,7 @@ export const translations = {
     'team.description': 'Administra los facilitadores de tu empresa. Los facilitadores pueden enviar evaluaciones usando los créditos de tu cuenta principal.',
     'team.inviteFacilitator': 'Invitar Facilitador',
     'team.inviteNewFacilitator': 'Invitar Nuevo Facilitador',
-    'team.inviteDescription': 'Envía una invitación para que un miembro de tu equipo acceda a MotivaIQ.',
+    'team.inviteDescription': 'Envía una invitación para que un miembro de tu equipo acceda a Reclu.',
     'team.fullName': 'Nombre completo',
     'team.email': 'Correo electrónico',
     'team.jobTitle': 'Cargo',
@@ -2026,7 +2026,7 @@ export const translations = {
     'team.jobTitlePlaceholder': 'Gerente de RRHH',
 
     // Evaluations Guide
-    'guide.title': 'Guía de Evaluaciones MotivaIQ',
+    'guide.title': 'Guía de Evaluaciones Reclu',
     'guide.subtitle': 'Conoce a fondo cada una de las 8 evaluaciones del sistema',
     'guide.duration': 'Duración',
     'guide.questions': 'preguntas',
@@ -2043,10 +2043,10 @@ export const translations = {
     'guide.sendEvaluation': 'Envía una evaluación {name} a tu equipo',
     'guide.send': 'Enviar',
     'guide.sendEvaluationBtn': 'Enviar Evaluación',
-    'guide.completeProfile': 'Perfil MotivaIQ Completo',
+    'guide.completeProfile': 'Perfil Reclu Completo',
     'guide.completeProfileDescription': 'Obtén el análisis más completo combinando las 8 evaluaciones',
     'guide.viewAdvancedAnalysis': 'Ver Análisis Avanzado',
-    'guide.allEvaluations': 'Todas las Evaluaciones MotivaIQ',
+    'guide.allEvaluations': 'Todas las Evaluaciones Reclu',
 
     // DISC Evaluation Guide Content
     'guide.disc.name': 'DISC',
@@ -2071,7 +2071,7 @@ export const translations = {
     'guide.disc.useCase4.description': 'Facilitar la comunicación efectiva al entender cómo cada persona prefiere recibir información.',
     'guide.disc.tip1': 'No hay estilos "buenos" o "malos", cada uno tiene fortalezas únicas',
     'guide.disc.tip2': 'Las personas pueden adaptar su comportamiento según la situación',
-    'guide.disc.tip3': 'Es más efectivo cuando se combina con otras evaluaciones de MotivaIQ',
+    'guide.disc.tip3': 'Es más efectivo cuando se combina con otras evaluaciones de Reclu',
     'guide.disc.tip4': 'Los resultados deben usarse como punto de partida para conversaciones, no como etiquetas fijas',
     'guide.disc.example1.scenario': 'Un gerente con alto D',
     'guide.disc.example1.insight': 'Prefiere comunicación directa y concisa. Responde bien a retos y metas ambiciosas. Puede necesitar desarrollar paciencia con procesos largos.',
@@ -2190,7 +2190,7 @@ export const translations = {
     'guide.technical.name': 'Pruebas Técnicas',
     'guide.technical.fullName': 'Evaluación Técnica por Cargo',
     'guide.technical.description': 'Evalúa conocimientos técnicos específicos para +225 cargos con preguntas clasificadas por nivel de dificultad.',
-    'guide.technical.longDescription': 'Las Pruebas Técnicas de MotivaIQ evalúan el conocimiento específico del cargo de manera objetiva y estandarizada. Con más de 13,700 preguntas distribuidas en más de 225 posiciones diferentes, nuestro sistema selecciona automáticamente las preguntas más relevantes para el cargo que está evaluando.\n\nLas preguntas están clasificadas en tres niveles de dificultad: Básico (15%), Intermedio (25%) y Avanzado (60%), lo que permite una evaluación precisa del nivel de expertise del candidato.',
+    'guide.technical.longDescription': 'Las Pruebas Técnicas de Reclu evalúan el conocimiento específico del cargo de manera objetiva y estandarizada. Con más de 13,700 preguntas distribuidas en más de 225 posiciones diferentes, nuestro sistema selecciona automáticamente las preguntas más relevantes para el cargo que está evaluando.\n\nLas preguntas están clasificadas en tres niveles de dificultad: Básico (15%), Intermedio (25%) y Avanzado (60%), lo que permite una evaluación precisa del nivel de expertise del candidato.',
     'guide.technical.dim1.name': 'Nivel Básico',
     'guide.technical.dim1.description': 'Conceptos fundamentales del área (15% de las preguntas)',
     'guide.technical.dim2.name': 'Nivel Intermedio',
@@ -2440,13 +2440,13 @@ export const translations = {
     'branding.results': 'Resultados',
     'branding.ctaTitle': '¿Te interesa evaluar a tu equipo?',
     'branding.ctaDesc': 'Descubre el potencial de tu organización con evaluaciones DISC, Fuerzas Motivadoras e Inteligencia Emocional',
-    'branding.ctaDescFull': 'Descubre el potencial de tu organización con las 8 evaluaciones MotivaIQ',
-    'branding.learnMore': 'Conocer MotivaIQ',
+    'branding.ctaDescFull': 'Descubre el potencial de tu organización con las 8 evaluaciones Reclu',
+    'branding.learnMore': 'Conocer Reclu',
     'branding.createAccount': 'Crear cuenta gratis',
     'branding.confidential': 'Datos 100% confidenciales',
     'branding.certified': 'Metodología certificada',
     'branding.evaluations': '+10,000 evaluaciones',
-    'branding.copyright': '© 2025 MotivaIQ. Plataforma de evaluación de talento empresarial.',
+    'branding.copyright': '© 2025 Reclu. Plataforma de evaluación de talento empresarial.',
     
     // DISC Results specific
     'extResults.disc.title': 'Resultados DISC',
@@ -2547,10 +2547,10 @@ export const translations = {
     'profile.repeatPassword': 'Repite la contraseña',
     'profile.update': 'Actualizar',
     'profile.saving': 'Guardando...',
-    'profile.facilitatorMotivaIQ': 'Facilitador MotivaIQ',
-    'profile.motivaIQPro': 'MotivaIQ Pro',
+    'profile.facilitatorReclu': 'Facilitador Reclu',
+    'profile.recluPro': 'Reclu Pro',
     'profile.facilitatorAccessDesc': 'Tienes acceso a las evaluaciones del equipo según tu nivel de permisos. Los créditos son gestionados por el dueño de la cuenta.',
-    'profile.proAccessDesc': 'Tu cuenta tiene acceso a las 8 evaluaciones del sistema MotivaIQ para análisis integral de talento.',
+    'profile.proAccessDesc': 'Tu cuenta tiene acceso a las 8 evaluaciones del sistema Reclu para análisis integral de talento.',
     'profile.accountInfo': 'Información de Cuenta',
     'profile.userId': 'ID de Usuario',
     'profile.role': 'Rol',
@@ -2631,7 +2631,7 @@ export const translations = {
     
     // Settings Page
     'settings.title': 'Configuración',
-    'settings.subtitle': 'Personaliza tu experiencia en MotivaIQ',
+    'settings.subtitle': 'Personaliza tu experiencia en Reclu',
     'settings.myCredits': 'Mis Créditos',
     'settings.creditsHistory': 'Historial de consumo y recargas de créditos',
     'settings.currentBalance': 'Saldo actual',
@@ -2744,7 +2744,7 @@ export const translations = {
     'search.action.sendTechnical': 'Enviar Técnica',
     
     // App Tour
-    'tour.title': 'Tour MotivaIQ',
+    'tour.title': 'Tour Reclu',
     'tour.step': 'Paso {current} de {total}',
     'tour.importantStep': 'Paso importante',
     'tour.previous': 'Anterior',
@@ -2755,7 +2755,7 @@ export const translations = {
     'tour.helpButtonAria': 'Iniciar tour de la aplicación',
     
     // Tour Steps
-    'tour.welcome.title': '¡Bienvenido a MotivaIQ!',
+    'tour.welcome.title': '¡Bienvenido a Reclu!',
     'tour.welcome.description': 'Descubre cómo evaluar el talento de tu equipo con 8 módulos científicos: DISC, Fuerzas Motivadoras, EQ, DNA-25, Acumen, Valores, Estrés y Pruebas Técnicas. Te guiaremos paso a paso.',
     
     'tour.globalSearch.title': '⭐ Buscador Global',
@@ -2804,7 +2804,7 @@ export const translations = {
     'tour.settings.description': 'Accede al historial de transacciones de créditos para ver un registro detallado de cada evaluación enviada y los créditos consumidos.',
     
     'tour.finish.title': '🎉 ¡Listo para comenzar!',
-    'tour.finish.description': 'Ya conoces MotivaIQ. El siguiente paso: ve a "Enviar Pruebas" y envía tu primera evaluación. Si necesitas ayuda, recuerda que puedes consultar la guía completa en cualquier momento.',
+    'tour.finish.description': 'Ya conoces Reclu. El siguiente paso: ve a "Enviar Pruebas" y envía tu primera evaluación. Si necesitas ayuda, recuerda que puedes consultar la guía completa en cualquier momento.',
     
     // Results - Common
     'results.loading': 'Cargando resultados...',
@@ -2845,12 +2845,12 @@ export const translations = {
     'results.brand.stressResults': 'Estrés y Resiliencia',
     'results.footer.interestedTitle': '¿Te interesa evaluar a tu equipo?',
     'results.footer.interestedSubtitle': 'Descubre el potencial de tu organización con evaluaciones DISC, Fuerzas Motivadoras e Inteligencia Emocional',
-    'results.footer.learnMore': 'Conocer MotivaIQ',
+    'results.footer.learnMore': 'Conocer Reclu',
     'results.footer.createAccount': 'Crear cuenta gratis',
     'results.footer.confidential': 'Datos 100% confidenciales',
     'results.footer.certified': 'Metodología certificada',
     'results.footer.evaluationsCount': '+10,000 evaluaciones',
-    'results.footer.copyright': '© 2025 MotivaIQ. Plataforma de evaluación de talento empresarial.',
+    'results.footer.copyright': '© 2025 Reclu. Plataforma de evaluación de talento empresarial.',
     
     // DISC Results
     'results.disc.title': 'Resultados DISC',
@@ -3198,7 +3198,7 @@ export const translations = {
     'results.eq.percentile': 'Percentil',
     'results.eq.topPercentile': 'Top',
     'results.eq.note': 'Nota',
-    'results.eq.noteText': 'Esta evaluación proporciona una visión general de las competencias emocionales. Para un análisis más profundo, se recomienda combinar estos resultados con otras evaluaciones del sistema MotivaIQ.',
+    'results.eq.noteText': 'Esta evaluación proporciona una visión general de las competencias emocionales. Para un análisis más profundo, se recomienda combinar estos resultados con otras evaluaciones del sistema Reclu.',
     
     // Technical Results
     'results.technical.title': 'Resultados de Evaluación Técnica',
@@ -3369,7 +3369,7 @@ export const translations = {
     'hero.title1': 'Discover the true',
     'hero.title2': 'potential',
     'hero.title3': 'of your team',
-    'hero.subtitle': 'MotivaIQ is the leading psychometric assessment platform that allows you to deeply understand the strengths, motivations, and development areas of each member of your organization.',
+    'hero.subtitle': 'Reclu is the leading psychometric assessment platform that allows you to deeply understand the strengths, motivations, and development areas of each member of your organization.',
     'hero.cta.primary': 'Start Free Assessment',
     'hero.cta.secondary': 'Watch Demo',
     'hero.stats.evaluations': 'Assessments',
@@ -3378,7 +3378,7 @@ export const translations = {
     
     // Trust Section
     'trust.badge': 'Trust',
-    'trust.title': 'Leading companies trust MotivaIQ',
+    'trust.title': 'Leading companies trust Reclu',
     
     // Problem Section
     'problem.badge': 'The Problem',
@@ -3395,7 +3395,7 @@ export const translations = {
     
     // Solution Section
     'solution.badge': 'The Solution',
-    'solution.title1': 'MotivaIQ:',
+    'solution.title1': 'Reclu:',
     'solution.title2': '7 Assessments,',
     'solution.title3': '1 Platform',
     'solution.subtitle': 'A comprehensive system that gives you complete visibility into human potential',
@@ -3463,7 +3463,7 @@ export const translations = {
     
     // Benefits Section
     'benefits.badge': 'Benefits',
-    'benefits.title': 'Why choose MotivaIQ?',
+    'benefits.title': 'Why choose Reclu?',
     'benefits.subtitle': 'Tools designed to maximize your team\'s potential',
     'benefits.item1.title': 'Data-driven decisions',
     'benefits.item1.desc': 'Eliminate bias in hiring and promotions with objective, scientifically validated assessments.',
@@ -3481,7 +3481,7 @@ export const translations = {
     // Testimonials
     'testimonials.badge': 'Testimonials',
     'testimonials.title': 'What our clients say',
-    'testimonials.quote1': 'MotivaIQ transformed how we hire. We now have 70% less turnover in the first year.',
+    'testimonials.quote1': 'Reclu transformed how we hire. We now have 70% less turnover in the first year.',
     'testimonials.author1': 'María González',
     'testimonials.role1': 'HR Director, TechCorp',
     'testimonials.quote2': 'The reports are incredibly detailed. They helped us form much more effective teams.',
@@ -3493,7 +3493,7 @@ export const translations = {
     
     // CTA Banner
     'ctaBanner.title': 'Ready to discover your team\'s true potential?',
-    'ctaBanner.subtitle': 'Join more than 500 companies already using MotivaIQ',
+    'ctaBanner.subtitle': 'Join more than 500 companies already using Reclu',
     'ctaBanner.cta': 'Start Free',
     'ctaBanner.demo': 'Schedule Demo',
     
@@ -3504,7 +3504,7 @@ export const translations = {
     'faq.a1': 'Each individual assessment takes between 8-25 minutes. The complete set of 7 assessments can be completed in 90-120 minutes, although we recommend doing them in separate sessions.',
     'faq.q2': 'How accurate are the results?',
     'faq.a2': 'Our assessments are scientifically validated with over 90% accuracy. We use advanced algorithms and methodologies proven by more than 30 years of research.',
-    'faq.q3': 'Can I use MotivaIQ for recruitment?',
+    'faq.q3': 'Can I use Reclu for recruitment?',
     'faq.a3': 'Absolutely! We have specific features for recruitment, including candidate comparison against ideal profiles of more than 225 predefined positions.',
     'faq.q4': 'Is the data confidential?',
     'faq.a4': 'Yes, we comply with the strictest data protection regulations. Results are only accessible to the account administrator and authorized users.',
@@ -3561,7 +3561,7 @@ export const translations = {
     'ext.startEvaluation': 'Start Assessment',
     'ext.interestedInTeam': 'Interested in assessing your team?',
     'ext.discoverPotential': 'Discover your organization\'s potential with DISC, Driving Forces, and Emotional Intelligence assessments',
-    'ext.knowMotivaiq': 'Learn about MotivaIQ',
+    'ext.knowReclu': 'Learn about Reclu',
     'ext.createFreeAccount': 'Create free account',
     'ext.confidentialData': '100% confidential data',
     'ext.certifiedMethod': 'Certified methodology',
@@ -3663,11 +3663,11 @@ export const translations = {
     // Evaluaciones Page
     'evaluaciones.badge': '7 Scientific Assessments',
     'evaluaciones.title1': 'Discover the Assessments of',
-    'evaluaciones.title2': ' MotivaIQ',
+    'evaluaciones.title2': ' Reclu',
     'evaluaciones.subtitle': 'Each assessment is designed to reveal a unique dimension of human talent. Together, they create the most complete profile for HR decision-making.',
     'evaluaciones.startEvaluations': 'Start Assessments',
     'evaluaciones.learnMore': 'Learn more',
-    'evaluaciones.completeProfile': 'Complete MotivaIQ Profile',
+    'evaluaciones.completeProfile': 'Complete Reclu Profile',
     'evaluaciones.sevenEquals360': '7 Assessments = 1 360° View',
     'evaluaciones.completeDescription': 'When you combine all 7 assessments, you get the most complete talent profile on the market. Understand not just how someone acts, but why, what they can do, how they think, what they value, and how they handle stress.',
     'evaluaciones.createFreeAccount': 'Create Free Account',
@@ -3762,21 +3762,21 @@ export const translations = {
     // Terms Page
     'terms.title': 'Terms & Conditions',
     'terms.subtitle': 'Last updated: January 2026',
-    'terms.intro': 'By using MotivaIQ, you accept these terms that govern the use of our psychometric assessment platform.',
+    'terms.intro': 'By using Reclu, you accept these terms that govern the use of our psychometric assessment platform.',
     'terms.section1.title': '1. Introduction',
-    'terms.section1.content': 'Welcome to MotivaIQ. These terms and conditions govern the use of our psychometric assessment platform. By accessing or using our services, you agree to be bound by these terms.',
+    'terms.section1.content': 'Welcome to Reclu. These terms and conditions govern the use of our psychometric assessment platform. By accessing or using our services, you agree to be bound by these terms.',
     'terms.section2.title': '2. Definitions',
-    'terms.section2.content': 'In these terms: "Platform" refers to the MotivaIQ system; "User" is any person who accesses the service; "Assessment" refers to any of the 7 available measurement tools; "Administrator" is the user with account management privileges.',
+    'terms.section2.content': 'In these terms: "Platform" refers to the Reclu system; "User" is any person who accesses the service; "Assessment" refers to any of the 7 available measurement tools; "Administrator" is the user with account management privileges.',
     'terms.section3.title': '3. Use of Service',
-    'terms.section3.content': 'The use of MotivaIQ must be exclusively for legitimate human talent assessment purposes. It is not permitted to: share access credentials, manipulate assessment results, or use the platform for illegal discrimination.',
+    'terms.section3.content': 'The use of Reclu must be exclusively for legitimate human talent assessment purposes. It is not permitted to: share access credentials, manipulate assessment results, or use the platform for illegal discrimination.',
     'terms.section4.title': '4. Privacy and Data',
     'terms.section4.content': 'Assessment data is treated with strict confidentiality. Only authorized administrators can access the results. For more information, see our Privacy Policy.',
     'terms.section5.title': '5. Assessments',
-    'terms.section5.content': 'Assessments must be completed honestly and without external help. Results are valid only for the individual being assessed. MotivaIQ does not guarantee specific outcomes based on assessments.',
+    'terms.section5.content': 'Assessments must be completed honestly and without external help. Results are valid only for the individual being assessed. Reclu does not guarantee specific outcomes based on assessments.',
     'terms.section6.title': '6. Limitations',
-    'terms.section6.content': 'MotivaIQ provides assessment tools to support decision-making. Results should not be the sole factor in hiring, promotion, or termination decisions.',
+    'terms.section6.content': 'Reclu provides assessment tools to support decision-making. Results should not be the sole factor in hiring, promotion, or termination decisions.',
     'terms.section7.title': '7. Intellectual Property',
-    'terms.section7.content': 'All platform content, including assessment methodologies, reports, and algorithms, are the exclusive property of MotivaIQ and are protected by copyright.',
+    'terms.section7.content': 'All platform content, including assessment methodologies, reports, and algorithms, are the exclusive property of Reclu and are protected by copyright.',
     'terms.section8.title': '8. Modifications',
     'terms.section8.content': 'We reserve the right to modify these terms at any time. Users will be notified of significant changes through the registered email address.',
     'terms.backHome': 'Back to home',
@@ -3789,14 +3789,14 @@ export const translations = {
     'auth.login.password': 'Password',
     'auth.login.termsLabel': 'By signing in, I confirm that I have read and accept the',
     'auth.login.termsLink': 'Terms and Conditions',
-    'auth.login.ofMotivaIQ': 'of MotivaIQ.',
+    'auth.login.ofReclu': 'of Reclu.',
     'auth.login.dataProtected': 'Your data is protected',
     'auth.login.submit': 'Access Portal',
     'auth.login.submitting': 'Signing in...',
     'auth.login.noAccount': "Don't have an account?",
     'auth.login.signupFree': 'Sign up free',
     'auth.login.termsFooter': 'Terms and Conditions',
-    'auth.login.copyright': '© 2026 MotivaIQ. Enterprise talent assessment platform.',
+    'auth.login.copyright': '© 2026 Reclu. Enterprise talent assessment platform.',
     'auth.login.welcomeBack': 'Welcome back',
     'auth.login.welcomeDesc': 'Continue managing your organization\'s talent with science-based assessments.',
     'auth.login.errorTerms': 'You must accept the Terms and Conditions to continue',
@@ -3826,13 +3826,13 @@ export const translations = {
     'auth.signup.termsLink': 'Terms and Conditions',
     'auth.signup.andThe': 'and the',
     'auth.signup.privacyLink': 'Privacy Policy',
-    'auth.signup.ofMotivaIQ': 'of MotivaIQ.',
+    'auth.signup.ofReclu': 'of Reclu.',
     'auth.signup.dataProtected': 'Your data will be treated confidentially.',
     'auth.signup.submit': 'Create Free Account',
     'auth.signup.submitting': 'Creating account...',
     'auth.signup.hasAccount': 'Already have an account?',
     'auth.signup.login': 'Log in',
-    'auth.signup.copyright': '© 2026 MotivaIQ. Enterprise talent assessment platform.',
+    'auth.signup.copyright': '© 2026 Reclu. Enterprise talent assessment platform.',
     'auth.signup.heroTitle': 'Boost your talent management',
     'auth.signup.heroSubtitle': 'Join leading companies that make science-based talent decisions.',
     'auth.signup.feature1': 'Validated Methodology',
@@ -3871,7 +3871,7 @@ export const translations = {
     'auth.eval.technicalDesc': '+225 specialized positions',
     
     // Logged-in Area - Sidebar
-    'sidebar.logo.title': 'MotivaIQ',
+    'sidebar.logo.title': 'Reclu',
     'sidebar.logo.subtitle': 'Business Portal',
     'sidebar.general.dashboard': 'Dashboard',
     'sidebar.general.analytics': 'Advanced Analytics',
@@ -3948,7 +3948,7 @@ export const translations = {
     'technicalEval.results.strengths': 'Strengths',
     'technicalEval.results.areasToImprove': 'Areas to Improve',
     'technicalEval.results.createAccount': 'Want to send evaluations?',
-    'technicalEval.results.createAccountDesc': 'Create an account to evaluate candidates with MotivaIQ',
+    'technicalEval.results.createAccountDesc': 'Create an account to evaluate candidates with Reclu',
     'technicalEval.results.signUp': 'Sign Up',
     
     // Technical Evaluation - Management
@@ -4025,7 +4025,7 @@ export const translations = {
     'notification.evalName.TECHNICAL': 'Technical Test',
     
     // Dashboard
-    'dashboard.welcome': 'Welcome to MotivaIQ!',
+    'dashboard.welcome': 'Welcome to Reclu!',
     'dashboard.whatToDo': 'What would you like to do today?',
     'dashboard.mainAction': 'Main Action',
     'dashboard.sendTests': 'Send Tests',
@@ -4048,7 +4048,7 @@ export const translations = {
     'dashboard.campaigns.autoComparison': 'Auto Comparison',
     'dashboard.campaigns.autoComparison.desc': 'Candidate ranking by compatibility',
     'dashboard.campaigns.allModules': 'All Modules',
-    'dashboard.campaigns.allModules.desc': 'Apply all 7 MotivaIQ evaluations',
+    'dashboard.campaigns.allModules.desc': 'Apply all 7 Reclu evaluations',
     'dashboard.campaigns.cta': 'Create my first campaign',
     'dashboard.campaigns.viewAll': 'View all campaigns',
     'dashboard.tipOfDay': 'Tip of the Day',
@@ -4100,12 +4100,12 @@ export const translations = {
     'analytics.noPeople': 'No people evaluated',
     'analytics.noPeople.desc': 'Send evaluations to see results here',
     'analytics.noEvaluations': 'No completed evaluations',
-    'analytics.noEvaluations.desc': 'Send the 7 MotivaIQ evaluations to your team to see detailed and integrated analysis.',
+    'analytics.noEvaluations.desc': 'Send the 7 Reclu evaluations to your team to see detailed and integrated analysis.',
     'analytics.selectPerson': 'Select a person',
     'analytics.selectPerson.desc': 'Choose someone from the list to see their full profile',
     'analytics.profile': 'Profile',
     'analytics.modules': 'modules completed',
-    'analytics.fullProfile': 'Complete MotivaIQ Profile',
+    'analytics.fullProfile': 'Complete Reclu Profile',
     'analytics.partialProfile': 'Partial Profile',
     'analytics.missingModules': 'Missing modules for complete profile',
     'analytics.tabs.individual': 'Individual',
@@ -4119,7 +4119,7 @@ export const translations = {
     'analytics.stats.avgEQ': 'Average EQ',
     // Empty State
     'analytics.empty.title': 'Select a person to begin',
-    'analytics.empty.description': 'Use the search bar above to find someone and explore their complete MotivaIQ profile with all 7 evaluation dimensions.',
+    'analytics.empty.description': 'Use the search bar above to find someone and explore their complete Reclu profile with all 7 evaluation dimensions.',
     'analytics.empty.whatYouSee': 'What will you see in the analysis?',
     'analytics.empty.disc': 'DISC',
     'analytics.empty.disc.desc': 'Behavioral style',
@@ -4267,7 +4267,7 @@ export const translations = {
     'analytics.upTo4People': 'Up to 4 people',
     'analytics.sideComparison': 'Side by side comparison',
     'analytics.7dimensions': '7 Dimensions',
-    'analytics.fullMotivaIQAnalysis': 'Complete MotivaIQ Analysis',
+    'analytics.fullRecluAnalysis': 'Complete Reclu Analysis',
     'analytics.teamDynamics': 'Team Dynamics',
     'analytics.compatibilityInsights': 'Compatibility insights',
     'analytics.selectMin2': 'Select at least 2 people',
@@ -4386,11 +4386,11 @@ export const translations = {
     'analytics.dna.comp.collaboration': 'Collaboration',
     
     // Integrated Analysis - Main titles
-    'analytics.integrated.title': 'MotivaIQ Integrated Analysis',
+    'analytics.integrated.title': 'Reclu Integrated Analysis',
     'analytics.integrated.subtitle': 'Behavior + Motivators',
     'analytics.integrated.completeProfile': 'Complete Profile',
     'analytics.integrated.notAvailable': 'Integrated Analysis Not Available',
-    'analytics.integrated.notAvailableDesc': 'Complete at least one DISC evaluation and one Driving Forces evaluation to obtain the MotivaIQ integrated analysis.',
+    'analytics.integrated.notAvailableDesc': 'Complete at least one DISC evaluation and one Driving Forces evaluation to obtain the Reclu integrated analysis.',
     'analytics.integrated.profileSummary': 'Profile Summary',
     'analytics.integrated.workStyle': 'Work Style',
     'analytics.integrated.communicationStyle': 'Communication Style',
@@ -4403,7 +4403,7 @@ export const translations = {
     'analytics.integrated.acumenIntegrated': 'Integrated Acumen Capacity',
     'analytics.integrated.valuesIntegrated': 'Integrated Values and Integrity',
     'analytics.integrated.stressIntegrated': 'Integrated Stress and Resilience',
-    'analytics.integrated.executiveSummary': 'Complete MotivaIQ Executive Summary',
+    'analytics.integrated.executiveSummary': 'Complete Reclu Executive Summary',
     'analytics.integrated.resilience': 'Resilience',
     'analytics.integrated.generalStress': 'General Stress',
     'analytics.integrated.adaptation': 'Adaptation',
@@ -5024,7 +5024,7 @@ export const translations = {
     'tip.sendPackages.desc': "Use 'Send Tests' to apply all 8 modules to a person in one step.",
     'tip.analyzeTeam.title': 'Analyze your team',
     'tip.analyzeTeam.desc': 'In Analytics you can compare profiles and discover patterns in your team.',
-    'tip.fullProfile.title': 'Complete MotivaIQ Profile',
+    'tip.fullProfile.title': 'Complete Reclu Profile',
     'tip.fullProfile.desc': 'A person with all 8 modules completed has a unique comprehensive profile.',
     'tip.quickEvals.title': 'Quick evaluations',
     'tip.quickEvals.desc': 'Evaluations are completed in 10-15 minutes on average.',
@@ -5281,7 +5281,7 @@ export const translations = {
     'team.description': 'Manage your company facilitators. Facilitators can send evaluations using credits from your main account.',
     'team.inviteFacilitator': 'Invite Facilitator',
     'team.inviteNewFacilitator': 'Invite New Facilitator',
-    'team.inviteDescription': 'Send an invitation for a team member to access MotivaIQ.',
+    'team.inviteDescription': 'Send an invitation for a team member to access Reclu.',
     'team.fullName': 'Full name',
     'team.email': 'Email',
     'team.jobTitle': 'Job title',
@@ -5337,7 +5337,7 @@ export const translations = {
     'team.jobTitlePlaceholder': 'HR Manager',
 
     // Evaluations Guide
-    'guide.title': 'MotivaIQ Evaluations Guide',
+    'guide.title': 'Reclu Evaluations Guide',
     'guide.subtitle': 'Learn about each of the 8 evaluations in the system',
     'guide.duration': 'Duration',
     'guide.questions': 'questions',
@@ -5354,10 +5354,10 @@ export const translations = {
     'guide.sendEvaluation': 'Send a {name} evaluation to your team',
     'guide.send': 'Send',
     'guide.sendEvaluationBtn': 'Send Evaluation',
-    'guide.completeProfile': 'Complete MotivaIQ Profile',
+    'guide.completeProfile': 'Complete Reclu Profile',
     'guide.completeProfileDescription': 'Get the most complete analysis by combining all 8 evaluations',
     'guide.viewAdvancedAnalysis': 'View Advanced Analysis',
-    'guide.allEvaluations': 'All MotivaIQ Evaluations',
+    'guide.allEvaluations': 'All Reclu Evaluations',
 
     // DISC Evaluation Guide Content
     'guide.disc.name': 'DISC',
@@ -5382,7 +5382,7 @@ export const translations = {
     'guide.disc.useCase4.description': 'Facilitate effective communication by understanding how each person prefers to receive information.',
     'guide.disc.tip1': 'There are no "good" or "bad" styles, each has unique strengths',
     'guide.disc.tip2': 'People can adapt their behavior according to the situation',
-    'guide.disc.tip3': 'It is more effective when combined with other MotivaIQ evaluations',
+    'guide.disc.tip3': 'It is more effective when combined with other Reclu evaluations',
     'guide.disc.tip4': 'Results should be used as a starting point for conversations, not as fixed labels',
     'guide.disc.example1.scenario': 'A manager with high D',
     'guide.disc.example1.insight': 'Prefers direct and concise communication. Responds well to challenges and ambitious goals. May need to develop patience with long processes.',
@@ -5501,7 +5501,7 @@ export const translations = {
     'guide.technical.name': 'Technical Tests',
     'guide.technical.fullName': 'Position-Based Technical Assessment',
     'guide.technical.description': 'Evaluates specific technical knowledge for 225+ positions with questions classified by difficulty level.',
-    'guide.technical.longDescription': 'MotivaIQ Technical Tests evaluate position-specific knowledge objectively and in a standardized way. With over 13,700 questions distributed across more than 225 different positions, our system automatically selects the most relevant questions for the position you are evaluating.\n\nQuestions are classified into three difficulty levels: Basic (15%), Intermediate (25%), and Advanced (60%), allowing for precise assessment of the candidate\'s expertise level.',
+    'guide.technical.longDescription': 'Reclu Technical Tests evaluate position-specific knowledge objectively and in a standardized way. With over 13,700 questions distributed across more than 225 different positions, our system automatically selects the most relevant questions for the position you are evaluating.\n\nQuestions are classified into three difficulty levels: Basic (15%), Intermediate (25%), and Advanced (60%), allowing for precise assessment of the candidate\'s expertise level.',
     'guide.technical.dim1.name': 'Basic Level',
     'guide.technical.dim1.description': 'Fundamental concepts of the area (15% of questions)',
     'guide.technical.dim2.name': 'Intermediate Level',
@@ -5751,13 +5751,13 @@ export const translations = {
     'branding.results': 'Results',
     'branding.ctaTitle': 'Interested in evaluating your team?',
     'branding.ctaDesc': 'Discover your organization\'s potential with DISC, Driving Forces, and Emotional Intelligence evaluations',
-    'branding.ctaDescFull': 'Discover your organization\'s potential with all 7 MotivaIQ evaluations',
-    'branding.learnMore': 'Learn about MotivaIQ',
+    'branding.ctaDescFull': 'Discover your organization\'s potential with all 7 Reclu evaluations',
+    'branding.learnMore': 'Learn about Reclu',
     'branding.createAccount': 'Create free account',
     'branding.confidential': '100% confidential data',
     'branding.certified': 'Certified methodology',
     'branding.evaluations': '+10,000 evaluations',
-    'branding.copyright': '© 2025 MotivaIQ. Enterprise talent evaluation platform.',
+    'branding.copyright': '© 2025 Reclu. Enterprise talent evaluation platform.',
     
     // DISC Results specific
     'extResults.disc.title': 'DISC Results',
@@ -5858,10 +5858,10 @@ export const translations = {
     'profile.repeatPassword': 'Repeat password',
     'profile.update': 'Update',
     'profile.saving': 'Saving...',
-    'profile.facilitatorMotivaIQ': 'MotivaIQ Facilitator',
-    'profile.motivaIQPro': 'MotivaIQ Pro',
+    'profile.facilitatorReclu': 'Reclu Facilitator',
+    'profile.recluPro': 'Reclu Pro',
     'profile.facilitatorAccessDesc': 'You have access to team evaluations based on your permission level. Credits are managed by the account owner.',
-    'profile.proAccessDesc': 'Your account has access to all 7 MotivaIQ system evaluations for comprehensive talent analysis.',
+    'profile.proAccessDesc': 'Your account has access to all 7 Reclu system evaluations for comprehensive talent analysis.',
     'profile.accountInfo': 'Account Information',
     'profile.userId': 'User ID',
     'profile.role': 'Role',
@@ -5942,7 +5942,7 @@ export const translations = {
     
     // Settings Page
     'settings.title': 'Settings',
-    'settings.subtitle': 'Customize your MotivaIQ experience',
+    'settings.subtitle': 'Customize your Reclu experience',
     'settings.myCredits': 'My Credits',
     'settings.creditsHistory': 'Credit usage and recharge history',
     'settings.currentBalance': 'Current balance',
@@ -6055,7 +6055,7 @@ export const translations = {
     'search.action.sendTechnical': 'Send Technical',
     
     // App Tour
-    'tour.title': 'MotivaIQ Tour',
+    'tour.title': 'Reclu Tour',
     'tour.step': 'Step {current} of {total}',
     'tour.importantStep': 'Important step',
     'tour.previous': 'Previous',
@@ -6066,7 +6066,7 @@ export const translations = {
     'tour.helpButtonAria': 'Start application tour',
     
     // Tour Steps
-    'tour.welcome.title': 'Welcome to MotivaIQ!',
+    'tour.welcome.title': 'Welcome to Reclu!',
     'tour.welcome.description': 'Discover how to evaluate your team\'s talent with 8 scientific modules: DISC, Driving Forces, EQ, DNA-25, Acumen, Values, Stress, and Technical Tests. We\'ll guide you step by step.',
     
     'tour.globalSearch.title': '⭐ Global Search',
@@ -6115,7 +6115,7 @@ export const translations = {
     'tour.settings.description': 'Access the credit transaction history to see a detailed record of each evaluation sent and credits consumed.',
     
     'tour.finish.title': '🎉 Ready to start!',
-    'tour.finish.description': 'You now know MotivaIQ. The next step: go to "Send Tests" and send your first evaluation. If you need help, remember you can check the complete guide at any time.',
+    'tour.finish.description': 'You now know Reclu. The next step: go to "Send Tests" and send your first evaluation. If you need help, remember you can check the complete guide at any time.',
     
     // Results - Common
     'results.loading': 'Loading results...',
@@ -6156,12 +6156,12 @@ export const translations = {
     'results.brand.stressResults': 'Stress & Resilience',
     'results.footer.interestedTitle': 'Interested in evaluating your team?',
     'results.footer.interestedSubtitle': 'Discover your organization\'s potential with DISC, Driving Forces, and Emotional Intelligence assessments',
-    'results.footer.learnMore': 'Learn about MotivaIQ',
+    'results.footer.learnMore': 'Learn about Reclu',
     'results.footer.createAccount': 'Create free account',
     'results.footer.confidential': '100% confidential data',
     'results.footer.certified': 'Certified methodology',
     'results.footer.evaluationsCount': '+10,000 evaluations',
-    'results.footer.copyright': '© 2025 MotivaIQ. Enterprise talent evaluation platform.',
+    'results.footer.copyright': '© 2025 Reclu. Enterprise talent evaluation platform.',
     
     // DISC Results
     'results.disc.title': 'DISC Results',
@@ -6509,7 +6509,7 @@ export const translations = {
     'results.eq.percentile': 'Percentile',
     'results.eq.topPercentile': 'Top',
     'results.eq.note': 'Note',
-    'results.eq.noteText': 'This evaluation provides an overview of emotional competencies. For a deeper analysis, it is recommended to combine these results with other MotivaIQ system evaluations.',
+    'results.eq.noteText': 'This evaluation provides an overview of emotional competencies. For a deeper analysis, it is recommended to combine these results with other Reclu system evaluations.',
     
     // Technical Results
     'results.technical.title': 'Technical Evaluation Results',
@@ -6650,7 +6650,7 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
   // Only access localStorage after component mounts (client-side only)
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem('motivaiq-language') as Language;
+    const saved = localStorage.getItem('reclu-language') as Language;
     if (saved && (saved === 'es' || saved === 'en')) {
       // Use localStorage - this is the user's current/recent preference
       setLanguageState(saved);
@@ -6665,16 +6665,16 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
     } else if (initialLanguage) {
       // No localStorage, use profile language and save to localStorage
       setLanguageState(initialLanguage);
-      localStorage.setItem('motivaiq-language', initialLanguage);
+      localStorage.setItem('reclu-language', initialLanguage);
     } else {
       // No localStorage and no initialLanguage, save default
-      localStorage.setItem('motivaiq-language', 'es');
+      localStorage.setItem('reclu-language', 'es');
     }
   }, [initialLanguage]);
 
   const setLanguage = async (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('motivaiq-language', lang);
+    localStorage.setItem('reclu-language', lang);
     
     // Try to save to user profile if logged in
     try {

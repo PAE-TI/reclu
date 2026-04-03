@@ -115,8 +115,8 @@ export async function POST(request: NextRequest) {
       await emailService.sendDNAEvaluationInvitation({
         recipientEmail,
         recipientName,
-        senderName: `${session.user.firstName || ''} ${session.user.lastName || ''}`.trim() || session.user.email || 'MotivaIQ',
-        companyName: session.user.company || 'MotivaIQ',
+        senderName: `${session.user.firstName || ''} ${session.user.lastName || ''}`.trim() || session.user.email || 'Reclu',
+        companyName: session.user.company || 'Reclu',
         evaluationToken: token,
       });
     } catch (emailError) {

@@ -61,7 +61,7 @@ interface DashboardStats {
   totalExpired: number;
   totalPeopleEvaluated: number;
   completionRate: number;
-  peopleWithFullMotivaIQ: number;
+  peopleWithFullReclu: number;
   recentActivity: Array<{
     type: string;
     name: string;
@@ -351,7 +351,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                     <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                       {language === 'es' ? 'Perfiles 360°' : '360° Profiles'}
                     </p>
-                    <p className="text-3xl font-bold text-purple-600 mt-1">{stats.peopleWithFullMotivaIQ}</p>
+                    <p className="text-3xl font-bold text-purple-600 mt-1">{stats.peopleWithFullReclu}</p>
                   </div>
                   <div className="p-3 bg-purple-100 rounded-xl">
                     <Award className="w-6 h-6 text-purple-600" />
@@ -670,7 +670,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                   <Link href="/guia-plataforma" className="block">
                     <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
                       <HelpCircle className="w-4 h-4 text-purple-400" />
-                      <span className="text-sm">{language === 'es' ? 'Cómo usar MotivaIQ' : 'How to use MotivaIQ'}</span>
+                      <span className="text-sm">{language === 'es' ? 'Cómo usar Reclu' : 'How to use Reclu'}</span>
                       <ArrowUpRight className="w-4 h-4 ml-auto text-indigo-400" />
                     </div>
                   </Link>

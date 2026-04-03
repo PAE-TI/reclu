@@ -54,7 +54,7 @@ export default function ExternalEvaluationClient({ token }: ExternalEvaluationCl
 
   // Load language from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('motivaiq-language') as Language;
+    const saved = localStorage.getItem('reclu-language') as Language;
     if (saved && (saved === 'es' || saved === 'en')) {
       setLanguage(saved);
     }
@@ -62,7 +62,7 @@ export default function ExternalEvaluationClient({ token }: ExternalEvaluationCl
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
-    localStorage.setItem('motivaiq-language', lang);
+    localStorage.setItem('reclu-language', lang);
   };
 
   const t = (key: string) => translations[language][key as keyof typeof translations['es']] || key;
