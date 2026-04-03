@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/auth-guard";
 
 const stats = [
   { label: "Candidatos", value: "10", sub: "Total evaluados", tone: "from-blue-500 to-cyan-500" },
@@ -31,7 +32,10 @@ const recentActivity = [
 
 const modules = ["DISC", "Fuerzas Motivadoras", "EQ", "DNA-25", "Acumen", "Valores", "Estres", "Tecnica"];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+  const displayName = user?.fullName ?? user?.email ?? "Bienvenido";
+  const companyName = user?.companyName ?? "Tu empresa";
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
       <div className="space-y-6">
@@ -42,8 +46,11 @@ export default function DashboardPage() {
                 Centro de Reclutamiento
               </span>
               <h2 className="mt-4 font-mono text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                Tu hub para seleccionar mejor talento
+                Hola, {displayName}
               </h2>
+              <p className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-slate-500">
+                {companyName}
+              </p>
               <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">
                 Una vista compacta y moderna para lanzar campanas, revisar estados y tomar
                 decisiones basadas en datos.

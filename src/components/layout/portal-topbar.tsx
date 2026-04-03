@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { moduleNav } from "@/lib/portal-navigation";
+import type { CurrentUser } from "@/lib/auth-types";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Centro de Reclutamiento",
@@ -14,19 +15,32 @@ const pageTitles: Record<string, string> = {
   "/settings": "Configuracion",
 };
 
-export function PortalTopbar() {
+type PortalTopbarProps = {
+  user: CurrentUser;
+};
+
+export function PortalTopbar({ user }: PortalTopbarProps) {
   const pathname = usePathname();
   const title =
     pageTitles[pathname] ||
     pageTitles[Object.keys(pageTitles).find((key) => pathname.startsWith(key)) ?? ""] ||
     "Reclu";
 
+  const displayName = user.fullName ?? user.email;
+  const companyName = user.companyName ?? "Tu empresa";
+  const initials = (displayName || "R")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/88 backdrop-blur-xl">
       <div className="flex min-h-16 items-center gap-4 px-4 py-3 md:px-6">
         <div className="min-w-0 flex-[0.9]">
           <p className="truncate text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-slate-400">
-            John Corp
+            {companyName}
           </p>
           <h1 className="truncate font-mono text-xl font-semibold text-slate-900">{title}</h1>
         </div>
@@ -47,7 +61,7 @@ export function PortalTopbar() {
           <span className="reclu-portal-chip">202 creditos</span>
           <span className="reclu-portal-chip">4 alertas</span>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#5f6af7_0%,#7b4ef9_100%)] text-xs font-bold text-white shadow-[0_12px_24px_rgba(95,106,247,.24)]">
-            J
+            {initials || "R"}
           </div>
         </div>
       </div>

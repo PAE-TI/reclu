@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getSessionFromCookies } from "@/lib/auth-session";
 import { findUserById } from "@/lib/auth-store";
+import type { CurrentUser } from "@/lib/auth-types";
 
 export async function getCurrentUser() {
   const cookieStore = await cookies();
@@ -21,7 +22,7 @@ export async function getCurrentUser() {
     email: user.email,
     fullName: user.full_name,
     companyName: user.company_name,
-  };
+  } satisfies CurrentUser;
 }
 
 export async function requireUser() {

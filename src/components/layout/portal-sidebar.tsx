@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { mainNav, moduleNav, supportNav, type NavItem } from "@/lib/portal-navigation";
+import type { CurrentUser } from "@/lib/auth-types";
 
 function NavList({
   title,
@@ -47,8 +48,20 @@ function NavList({
   );
 }
 
-export function PortalSidebar() {
+type PortalSidebarProps = {
+  user: CurrentUser;
+};
+
+export function PortalSidebar({ user }: PortalSidebarProps) {
   const pathname = usePathname();
+  const displayName = user.fullName ?? user.email;
+  const companyName = user.companyName ?? "Tu empresa";
+  const initials = (displayName || "R")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
   return (
     <aside className="reclu-portal-sidebar hidden w-[300px] shrink-0 xl:flex xl:flex-col">
       <div className="border-b border-slate-200 px-6 py-5">
@@ -67,11 +80,20 @@ export function PortalSidebar() {
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-slate-400">
             Cuenta activa
           </p>
-          <p className="mt-2 text-sm font-semibold text-slate-900">John Corp</p>
-          <p className="text-xs text-slate-500">john valencia</p>
+          <p className="mt-2 text-sm font-semibold text-slate-900">{companyName}</p>
+          <p className="text-xs text-slate-500">{displayName}</p>
           <div className="mt-3 flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             <p className="text-xs font-medium text-slate-500">Espacio empresarial sincronizado</p>
+          </div>
+          <div className="mt-4 flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#5f6af7_0%,#7b4ef9_100%)] text-sm font-bold text-white">
+              {initials || "R"}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-900">{displayName}</p>
+              <p className="truncate text-xs text-slate-500">{user.email}</p>
+            </div>
           </div>
         </div>
       </div>
