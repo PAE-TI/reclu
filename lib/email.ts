@@ -1,3 +1,4 @@
+import nodemailer from 'nodemailer';
 import { getAppBaseUrl } from '@/lib/site-url';
 interface EmailOptions {
   to: string;
@@ -9,34 +10,19 @@ interface EmailOptions {
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
     try {
-      const apiKey = process.env.RESEND_API_KEY;
-      if (!apiKey) {
-        console.error('Email configuration missing. Set RESEND_API_KEY in Vercel.');
+      const transporter = this.getTransporter();
+      if (!transporter) {
+        console.error('Email configuration missing. Set MAIL_SMTP_HOST, MAIL_SMTP_USER, MAIL_SMTP_PASS and MAIL_FROM_EMAIL in Vercel.');
         return false;
       }
 
-      const from = this.getFromAddress();
-
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from,
-          to,
-          subject,
-          html,
-          text: text || this.htmlToText(html),
-        }),
+      await transporter.sendMail({
+        from: this.getFromAddress(),
+        to,
+        subject,
+        html,
+        text: text || this.htmlToText(html),
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Failed to send email via Resend:', errorText);
-        return false;
-      }
 
       console.log('Email sent successfully to:', to);
       return true;
@@ -46,8 +32,35 @@ class EmailService {
     }
   }
 
+  private getTransporter() {
+    const host = process.env.MAIL_SMTP_HOST || 'smtp.mailgun.org';
+    const user = process.env.MAIL_SMTP_USER;
+    const password = process.env.MAIL_SMTP_PASS;
+    const port = Number(process.env.MAIL_SMTP_PORT || '587');
+
+    if (!user || !password) {
+      return null;
+    }
+
+    const secure = process.env.MAIL_SMTP_SECURE
+      ? process.env.MAIL_SMTP_SECURE === 'true'
+      : port === 465;
+
+    return nodemailer.createTransport({
+      host,
+      port,
+      secure,
+      auth: {
+        user,
+        pass: password,
+      },
+    });
+  }
+
   private getFromAddress() {
-    return process.env.RESEND_FROM || `Reclu <noreply@${new URL(getAppBaseUrl()).hostname}>`;
+    const email = process.env.MAIL_FROM_EMAIL || `noreply@${new URL(getAppBaseUrl()).hostname}`;
+    const name = process.env.MAIL_FROM_NAME || 'Reclu';
+    return `${name} <${email}>`;
   }
 
   private htmlToText(html: string): string {
