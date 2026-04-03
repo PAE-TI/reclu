@@ -161,7 +161,7 @@ export default function CreateExternalEvaluationForm() {
                   </span>
                 </div>
                 <div>
-                  <strong>Expira en:</strong> 24 horas
+                  <strong>Expira en:</strong> 7 días
                 </div>
               </div>
 
@@ -357,7 +357,7 @@ export default function CreateExternalEvaluationForm() {
         <ul className="text-sm text-blue-700 space-y-1">
           <li>• Un correo explicativo sobre qué es la evaluación DISC</li>
           <li>• Instrucciones claras sobre cómo completar la evaluación</li>
-          <li>• Un enlace seguro que expira en 24 horas</li>
+          <li>• Un enlace seguro que expira en 7 días</li>
           <li>• Información sobre el tiempo estimado (10-15 minutos)</li>
         </ul>
       </div>

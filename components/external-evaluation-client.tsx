@@ -380,7 +380,7 @@ export default function ExternalEvaluationClient({ token }: ExternalEvaluationCl
                   <div className="text-sm text-gray-600">{t('ext.minutes')}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">24h</div>
+                  <div className="text-2xl font-bold text-indigo-600">7d</div>
                   <div className="text-sm text-gray-600">{t('ext.validFor')}</div>
                 </div>
               </div>

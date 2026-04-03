@@ -9,10 +9,59 @@ interface EmailOptions {
 
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
+    // Try Mailgun HTTP API first (preferred, more reliable)
+    const mailgunApiKey = process.env.MAILGUN_API_KEY;
+    const mailgunDomain = process.env.MAILGUN_DOMAIN;
+    if (mailgunApiKey && mailgunDomain) {
+      return this.sendViaMailgunApi({ to, subject, html, text, apiKey: mailgunApiKey, domain: mailgunDomain });
+    }
+
+    // Fall back to SMTP
+    return this.sendViaSMTP({ to, subject, html, text });
+  }
+
+  private async sendViaMailgunApi({
+    to, subject, html, text, apiKey, domain
+  }: EmailOptions & { apiKey: string; domain: string }): Promise<boolean> {
+    try {
+      const from = this.getFromAddress();
+      const formData = new FormData();
+      formData.append('from', from);
+      formData.append('to', to);
+      formData.append('subject', subject);
+      formData.append('html', html);
+      formData.append('text', text || this.htmlToText(html));
+
+      const isEU = process.env.MAILGUN_REGION === 'eu';
+      const apiBase = isEU ? 'https://api.eu.mailgun.net' : 'https://api.mailgun.net';
+
+      const response = await fetch(`${apiBase}/v3/${domain}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${Buffer.from(`api:${apiKey}`).toString('base64')}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Mailgun API error:', response.status, errorText);
+        return false;
+      }
+
+      console.log('Email sent successfully via Mailgun API to:', to);
+      return true;
+    } catch (error) {
+      console.error('Error sending email via Mailgun API:', error);
+      return false;
+    }
+  }
+
+  private async sendViaSMTP({ to, subject, html, text }: EmailOptions): Promise<boolean> {
     try {
       const transporter = this.getTransporter();
       if (!transporter) {
-        console.error('Email configuration missing. Set MAIL_SMTP_HOST, MAIL_SMTP_USER, MAIL_SMTP_PASS and MAIL_FROM_EMAIL in Vercel.');
+        console.error('Email configuration missing. Set MAILGUN_API_KEY + MAILGUN_DOMAIN, or MAIL_SMTP_USER + MAIL_SMTP_PASS in Vercel.');
         return false;
       }
 
@@ -24,10 +73,10 @@ class EmailService {
         text: text || this.htmlToText(html),
       });
 
-      console.log('Email sent successfully to:', to);
+      console.log('Email sent successfully via SMTP to:', to);
       return true;
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending email via SMTP:', error);
       return false;
     }
   }
@@ -64,7 +113,6 @@ class EmailService {
   }
 
   private htmlToText(html: string): string {
-    // Simple HTML to text conversion
     return html
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;/g, ' ')
@@ -234,7 +282,7 @@ class EmailService {
     senderName: string,
     evaluationTitle: string,
     evaluationLink: string,
-    expiryHours: number = 24
+    expiryDays: number = 7
   ): { subject: string; html: string } {
     const subject = `Invitación para Evaluación DISC - ${evaluationTitle}`;
     
@@ -341,7 +389,7 @@ class EmailService {
           </div>
           
           <div class="warning">
-            ⚠️ <strong>Importante:</strong> Este enlace es personal e intransferible, y expirará en <strong>${expiryHours} horas</strong> por motivos de seguridad.
+            ⚠️ <strong>Importante:</strong> Este enlace es personal e intransferible, y expirará en <strong>${expiryDays} días</strong> por motivos de seguridad.
           </div>
           
           <p><strong>Instrucciones:</strong></p>

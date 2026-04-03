@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Generar token seguro y fecha de expiración
     const token = TokenUtils.generateSecureToken();
-    const tokenExpiry = TokenUtils.getTokenExpiry(24); // 24 horas
+    const tokenExpiry = TokenUtils.getTokenExpiry(7 * 24); // 7 días
 
     // Crear evaluación externa
     const externalEvaluation = await prisma.externalEvaluation.create({
