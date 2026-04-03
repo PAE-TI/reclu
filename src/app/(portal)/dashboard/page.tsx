@@ -175,7 +175,7 @@ export default function DashboardPage() {
               del fit real de cada candidato.
             </p>
             <Link
-              className="mt-5 inline-flex rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900"
+              className="mt-5 inline-flex rounded-xl bg-[linear-gradient(135deg,#5f6af7_0%,#7b4ef9_100%)] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(95,106,247,.2)]"
               href="/analytics"
             >
               Aplicar ahora
