@@ -25,27 +25,34 @@ class EmailService {
   }: EmailOptions & { apiKey: string; domain: string }): Promise<boolean> {
     try {
       const from = this.getFromAddress();
-      const formData = new FormData();
-      formData.append('from', from);
-      formData.append('to', to);
-      formData.append('subject', subject);
-      formData.append('html', html);
-      formData.append('text', text || this.htmlToText(html));
+      const cleanKey = apiKey.trim();
+      const cleanDomain = domain.trim();
 
       const isEU = process.env.MAILGUN_REGION === 'eu';
       const apiBase = isEU ? 'https://api.eu.mailgun.net' : 'https://api.mailgun.net';
+      const authHeader = `Basic ${Buffer.from(`api:${cleanKey}`).toString('base64')}`;
 
-      const response = await fetch(`${apiBase}/v3/${domain}/messages`, {
+      console.log(`Sending email via Mailgun API to domain: ${cleanDomain}, region: ${isEU ? 'EU' : 'US'}`);
+
+      const params = new URLSearchParams();
+      params.append('from', from);
+      params.append('to', to);
+      params.append('subject', subject);
+      params.append('html', html);
+      params.append('text', text || this.htmlToText(html));
+
+      const response = await fetch(`${apiBase}/v3/${cleanDomain}/messages`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${Buffer.from(`api:${apiKey}`).toString('base64')}`,
+          Authorization: authHeader,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formData,
+        body: params.toString(),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Mailgun API error:', response.status, errorText);
+        console.error(`Mailgun API error: ${response.status} ${response.statusText}`, errorText);
         return false;
       }
 
