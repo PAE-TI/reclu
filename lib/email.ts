@@ -9,55 +9,14 @@ interface EmailOptions {
 
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
-    // 1. Resend (simplest - set RESEND_API_KEY)
-    const resendKey = process.env.RESEND_API_KEY;
-    if (resendKey) {
-      return this.sendViaResend({ to, subject, html, text, apiKey: resendKey });
-    }
-
-    // 2. SMTP fallback (set MAIL_SMTP_HOST, MAIL_SMTP_USER, MAIL_SMTP_PASS)
     return this.sendViaSMTP({ to, subject, html, text });
-  }
-
-  private async sendViaResend({
-    to, subject, html, text, apiKey
-  }: EmailOptions & { apiKey: string }): Promise<boolean> {
-    try {
-      const from = this.getFromAddress();
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey.trim()}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from,
-          to,
-          subject,
-          html,
-          text: text || this.htmlToText(html),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Resend API error:', response.status, errorText);
-        return false;
-      }
-
-      console.log('Email sent successfully via Resend to:', to);
-      return true;
-    } catch (error) {
-      console.error('Error sending email via Resend:', error);
-      return false;
-    }
   }
 
   private async sendViaSMTP({ to, subject, html, text }: EmailOptions): Promise<boolean> {
     try {
       const transporter = this.getTransporter();
       if (!transporter) {
-        console.error('No email provider configured. Set RESEND_API_KEY or MAIL_SMTP_USER + MAIL_SMTP_PASS in Vercel.');
+      console.error('SMTP no configurado. Agrega MAIL_SMTP_HOST, MAIL_SMTP_USER y MAIL_SMTP_PASS en las variables de entorno.');
         return false;
       }
 
