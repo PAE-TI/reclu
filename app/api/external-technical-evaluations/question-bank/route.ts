@@ -20,6 +20,10 @@ export async function GET(request: NextRequest) {
       .split(',')
       .map(value => value.trim())
       .filter(Boolean);
+    const questionIds = (searchParams.get('questionIds') || '')
+      .split(',')
+      .map(value => value.trim())
+      .filter(Boolean);
     const difficulty = searchParams.get('difficulty') || '';
     const category = searchParams.get('category') || '';
     const search = searchParams.get('search') || '';
@@ -27,7 +31,9 @@ export async function GET(request: NextRequest) {
 
     const where: Record<string, unknown> = { isActive: true };
 
-    if (positionIds.length > 0) {
+    if (questionIds.length > 0) {
+      where.id = { in: questionIds };
+    } else if (positionIds.length > 0) {
       where.jobPositionId = { in: positionIds };
     } else if (positionId && positionId !== 'all') {
       where.jobPositionId = positionId;

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft,
   Target,
@@ -48,6 +49,15 @@ interface JobPosition {
   synonyms: string[];
 }
 
+interface TechnicalTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  basePositionId: string;
+  basePositionTitle: string;
+  questionCount: number;
+}
+
 const getEvaluationTypes = (t: (key: string) => string, language: string) => [
   { id: 'DISC', name: 'DISC', description: t('batchEval.disc.desc'), icon: Brain, color: 'text-indigo-600', bg: 'bg-indigo-100' },
   { id: 'DRIVING_FORCES', name: t('batchEval.drivingForces.name'), description: t('batchEval.drivingForces.desc'), icon: Zap, color: 'text-amber-600', bg: 'bg-amber-100' },
@@ -63,6 +73,8 @@ export default function NewCampaignPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const [loading, setLoading] = useState(false);
+  const [technicalTemplates, setTechnicalTemplates] = useState<TechnicalTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JobPosition[]>([]);
   const [searching, setSearching] = useState(false);
@@ -80,6 +92,7 @@ export default function NewCampaignPage() {
     evaluationTypes: ['DISC', 'DRIVING_FORCES', 'EQ'] as string[],
     isPrivate: true,
     allowTeamAddCandidates: false,
+    technicalTemplateId: '',
   });
 
   const [selectedPosition, setSelectedPosition] = useState<JobPosition | null>(null);
@@ -98,6 +111,25 @@ export default function NewCampaignPage() {
       }
     };
     fetchSettings();
+  }, []);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      setLoadingTemplates(true);
+      try {
+        const response = await fetch('/api/technical-question-templates');
+        if (response.ok) {
+          const data = await response.json();
+          setTechnicalTemplates(data.templates || []);
+        }
+      } catch (error) {
+        console.error('Error fetching technical templates:', error);
+      } finally {
+        setLoadingTemplates(false);
+      }
+    };
+
+    fetchTemplates();
   }, []);
 
   // Cerrar dropdown al hacer clic fuera
@@ -165,7 +197,11 @@ export default function NewCampaignPage() {
       const types = prev.evaluationTypes.includes(evalType)
         ? prev.evaluationTypes.filter(t => t !== evalType)
         : [...prev.evaluationTypes, evalType];
-      return { ...prev, evaluationTypes: types };
+      return {
+        ...prev,
+        evaluationTypes: types,
+        technicalTemplateId: evalType === 'TECHNICAL' && !types.includes('TECHNICAL') ? '' : prev.technicalTemplateId,
+      };
     });
   };
 
@@ -184,6 +220,11 @@ export default function NewCampaignPage() {
 
     if (formData.evaluationTypes.length === 0) {
       toast.error(t('campaigns.new.evalRequired'));
+      return;
+    }
+
+    if (formData.evaluationTypes.includes('TECHNICAL') && !formData.technicalTemplateId) {
+      toast.error(language === 'es' ? 'Selecciona una plantilla para la prueba técnica' : 'Select a template for the technical test');
       return;
     }
 
@@ -534,7 +575,7 @@ export default function NewCampaignPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: evaluationTypes.map(e => e.id) }))}
+                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: evaluationTypes.map(e => e.id), technicalTemplateId: prev.technicalTemplateId }))}
                 className="text-xs"
               >
                 {t('campaigns.new.selectAll')}
@@ -543,7 +584,7 @@ export default function NewCampaignPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: [] }))}
+                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: [], technicalTemplateId: '' }))}
                 className="text-xs"
               >
                 {t('campaigns.new.deselectAll')}
@@ -552,12 +593,73 @@ export default function NewCampaignPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: ['DISC', 'DRIVING_FORCES', 'EQ'] }))}
+                onClick={() => setFormData(prev => ({ ...prev, evaluationTypes: ['DISC', 'DRIVING_FORCES', 'EQ'], technicalTemplateId: '' }))}
                 className="text-xs"
               >
                 {t('campaigns.new.basic')}
               </Button>
             </div>
+
+            {formData.evaluationTypes.includes('TECHNICAL') && (
+              <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
+                      {language === 'es' ? 'Plantilla técnica' : 'Technical template'}
+                    </p>
+                    <p className="mt-1 text-sm text-sky-700">
+                      {language === 'es'
+                        ? 'Selecciona la plantilla que se enviará automáticamente en esta campaña.'
+                        : 'Select the template that will be sent automatically in this campaign.'}
+                    </p>
+                  </div>
+                  <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                    {technicalTemplates.length}
+                  </Badge>
+                </div>
+
+                <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
+                  <Select
+                    value={formData.technicalTemplateId || ''}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, technicalTemplateId: value }))}
+                    disabled={loadingTemplates || technicalTemplates.length === 0}
+                  >
+                    <SelectTrigger className="bg-white">
+                      <SelectValue placeholder={language === 'es' ? 'Selecciona una plantilla' : 'Select a template'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {technicalTemplates.map(template => (
+                        <SelectItem key={template.id} value={template.id}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{template.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {template.basePositionTitle} · {template.questionCount} preguntas
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="bg-white"
+                    onClick={() => router.push('/external-technical-evaluations')}
+                  >
+                    {language === 'es' ? 'Crear plantilla' : 'Create template'}
+                  </Button>
+                </div>
+
+                {technicalTemplates.length === 0 && !loadingTemplates && (
+                  <p className="text-xs text-sky-700">
+                    {language === 'es'
+                      ? 'No hay plantillas guardadas. Crea una primero para usarla en campañas.'
+                      : 'No saved templates yet. Create one first to use it in campaigns.'}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Resumen de costos */}
             <div className="mt-4 p-5 bg-gradient-to-r from-cyan-50 via-blue-50 to-indigo-50 border border-cyan-200 rounded-xl">
@@ -604,7 +706,11 @@ export default function NewCampaignPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={loading || formData.evaluationTypes.length === 0}
+                disabled={
+                  loading ||
+                  formData.evaluationTypes.length === 0 ||
+                  (formData.evaluationTypes.includes('TECHNICAL') && !formData.technicalTemplateId)
+                }
                 className="flex-1 sm:flex-none bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 shadow-lg text-white font-semibold px-6"
               >
                 {loading ? (

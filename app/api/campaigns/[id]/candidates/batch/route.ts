@@ -97,6 +97,17 @@ export async function POST(
     const creditsPerEvaluation = creditSettings.creditsPerEvaluation;
     const evaluationTypes = campaign.evaluationTypes as string[];
     const creditsPerCandidate = evaluationTypes.length * creditsPerEvaluation;
+    const technicalTemplate = campaign.technicalTemplateId
+      ? await prisma.technicalQuestionTemplate.findFirst({
+          where: { id: campaign.technicalTemplateId },
+          select: {
+            id: true,
+            basePositionId: true,
+            basePositionTitle: true,
+            questionSetConfig: true,
+          },
+        })
+      : null;
 
     // Verificar créditos suficientes para todos los candidatos
     const owner = await prisma.user.findUnique({
@@ -211,8 +222,10 @@ export async function POST(
               await prisma.externalTechnicalEvaluation.create({ 
                 data: {
                   ...evalData,
-                  jobPositionId: campaign.jobCategory || 'general',
-                  jobPositionTitle: campaign.jobTitle,
+                  jobPositionId: technicalTemplate?.basePositionId || campaign.jobCategory || 'general',
+                  jobPositionTitle: technicalTemplate?.basePositionTitle || campaign.jobTitle,
+                  technicalTemplateId: technicalTemplate?.id || null,
+                  questionSetConfig: technicalTemplate?.questionSetConfig || null,
                 }
               });
               break;

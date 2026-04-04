@@ -129,6 +129,13 @@ interface Campaign {
   description: string | null;
   status: string;
   evaluationTypes: string[];
+  technicalTemplateId?: string | null;
+  technicalTemplate?: {
+    id: string;
+    name: string;
+    basePositionId: string;
+    basePositionTitle: string;
+  } | null;
   isPrivate: boolean;
   allowTeamAddCandidates: boolean;
   createdAt: string;
@@ -1544,6 +1551,12 @@ export default function CampaignDetailPage() {
                   </Badge>
                 );
               })}
+              {campaign.technicalTemplate && campaign.evaluationTypes.includes('TECHNICAL') && (
+                <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-sky-200 text-sky-700">
+                  <FileCode className="w-4 h-4 text-sky-600" />
+                  <span className="font-medium">{campaign.technicalTemplate.name}</span>
+                </Badge>
+              )}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 bg-indigo-50 px-3 py-2 rounded-lg border border-indigo-200">
               <Coins className="w-4 h-4 text-indigo-600" />

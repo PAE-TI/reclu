@@ -74,6 +74,7 @@ model User {
   
   // Technical Evaluations Relations
   sentExternalTechnicalEvaluations ExternalTechnicalEvaluation[]
+  technicalQuestionTemplates TechnicalQuestionTemplate[]
   
   // Notifications
   notifications            Notification[]
@@ -2153,6 +2154,8 @@ model SelectionCampaign {
   // Campaign settings
   status          CampaignStatus        @default(ACTIVE)
   evaluationTypes String[]              // Array of evaluation types to send: ["DISC", "EQ", "DNA", etc.]
+  technicalTemplateId String?           // Plantilla técnica seleccionada para esta campaña
+  technicalTemplate   TechnicalQuestionTemplate? @relation("CampaignTechnicalTemplate", fields: [technicalTemplateId], references: [id], onDelete: SetNull)
   
   // Visibility & Permissions
   isPrivate             Boolean         @default(true)  // true = solo owner y full access, false = visible para todo el equipo
@@ -2303,6 +2306,8 @@ model ExternalTechnicalEvaluation {
   // Job position this evaluation is for
   jobPositionId   String
   jobPositionTitle String   // Store title for display
+  technicalTemplateId String?
+  technicalTemplate   TechnicalQuestionTemplate? @relation("ExternalTechnicalTemplate", fields: [technicalTemplateId], references: [id], onDelete: SetNull)
   questionSetConfig Json?    // Custom question set configuration and selected question IDs
   
   // Relations
@@ -2317,6 +2322,27 @@ model ExternalTechnicalEvaluation {
   @@index([recipientEmail])
   @@index([jobPositionId])
   @@map("external_technical_evaluations")
+}
+
+model TechnicalQuestionTemplate {
+  id               String   @id @default(cuid())
+  name             String
+  description      String?  @db.Text
+  ownerUserId      String
+  ownerUser        User     @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  basePositionId   String
+  basePositionTitle String
+  questionSetConfig Json
+
+  campaigns        SelectionCampaign[] @relation("CampaignTechnicalTemplate")
+  evaluations      ExternalTechnicalEvaluation[] @relation("ExternalTechnicalTemplate")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([ownerUserId, createdAt])
+  @@index([basePositionId])
+  @@map("technical_question_templates")
 }
 
 model ExternalTechnicalResponse {

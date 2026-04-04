@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { getTeamUserIds } from '@/lib/team';
 
 // Helper para obtener info de permisos del usuario
 async function getUserPermissions(userId: string) {
@@ -92,6 +93,7 @@ export async function GET(request: NextRequest) {
         description: campaign.description,
         status: campaign.status,
         evaluationTypes: campaign.evaluationTypes,
+        technicalTemplateId: campaign.technicalTemplateId,
         isPrivate: campaign.isPrivate,
         allowTeamAddCandidates: campaign.allowTeamAddCandidates,
         createdAt: campaign.createdAt,
@@ -145,7 +147,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, jobTitle, jobCategory, description, evaluationTypes, isPrivate, allowTeamAddCandidates } = body;
+    const { name, jobTitle, jobCategory, description, evaluationTypes, isPrivate, allowTeamAddCandidates, technicalTemplateId } = body;
 
     if (!name || !jobTitle) {
       return NextResponse.json(
@@ -154,13 +156,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const teamUserIds = await getTeamUserIds(session.user.id);
+    const selectedEvaluationTypes = Array.isArray(evaluationTypes) ? evaluationTypes : ['DISC', 'DRIVING_FORCES', 'EQ'];
+
+    let resolvedTechnicalTemplateId: string | null = null;
+    if (selectedEvaluationTypes.includes('TECHNICAL')) {
+      if (!technicalTemplateId) {
+        return NextResponse.json(
+          { error: 'Debes seleccionar una plantilla técnica para incluir la prueba técnica en la campaña' },
+          { status: 400 }
+        );
+      }
+
+      const template = await prisma.technicalQuestionTemplate.findFirst({
+        where: {
+          id: technicalTemplateId,
+          ownerUserId: { in: teamUserIds },
+        },
+        select: { id: true },
+      });
+
+      if (!template) {
+        return NextResponse.json(
+          { error: 'La plantilla técnica seleccionada no existe o no está disponible para tu equipo' },
+          { status: 404 }
+        );
+      }
+
+      resolvedTechnicalTemplateId = template.id;
+    }
+
     const campaign = await prisma.selectionCampaign.create({
       data: {
         name,
         jobTitle,
         jobCategory: jobCategory || null,
         description: description || null,
-        evaluationTypes: evaluationTypes || ['DISC', 'DRIVING_FORCES', 'EQ'],
+        evaluationTypes: selectedEvaluationTypes,
+        technicalTemplateId: resolvedTechnicalTemplateId,
         isPrivate: isPrivate !== false, // Default true
         allowTeamAddCandidates: allowTeamAddCandidates === true, // Default false
         userId: permissions.ownerId,

@@ -10,6 +10,14 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -39,6 +47,7 @@ import {
   Calendar,
   Eye,
   Copy,
+  Loader2,
   Trash2,
   RefreshCw,
   Briefcase,
@@ -51,6 +60,7 @@ import { EvaluationNotesButton } from '@/components/evaluation-notes';
 import { ExternalTechnicalQuestionBuilder } from '@/components/external-technical-question-builder';
 import { useLanguage } from '@/contexts/language-context';
 import { JOB_POSITIONS, JOB_CATEGORIES, JobCategory } from '@/lib/job-positions';
+import { Textarea } from '@/components/ui/textarea';
 
 interface TechnicalEvaluation {
   id: string;
@@ -98,6 +108,16 @@ interface QuestionSetConfig {
   questionIds: string[];
 }
 
+interface TechnicalTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  basePositionId: string;
+  basePositionTitle: string;
+  questionCount: number;
+  questionSetConfig: QuestionSetConfig;
+}
+
 export default function ExternalTechnicalEvaluationsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -123,6 +143,13 @@ export default function ExternalTechnicalEvaluationsPage() {
   const [selectedQuestions, setSelectedQuestions] = useState<QuestionBankQuestion[]>([]);
   const [questionSetConfig, setQuestionSetConfig] = useState<QuestionSetConfig | null>(null);
   const [questionsReady, setQuestionsReady] = useState(false);
+  const [technicalTemplates, setTechnicalTemplates] = useState<TechnicalTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('position');
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -132,6 +159,7 @@ export default function ExternalTechnicalEvaluationsPage() {
 
     if (status === 'authenticated') {
       fetchEvaluations();
+      fetchTemplates();
     }
   }, [status, router]);
 
@@ -146,6 +174,20 @@ export default function ExternalTechnicalEvaluationsPage() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTemplates = async () => {
+    setLoadingTemplates(true);
+    try {
+      const response = await fetch('/api/technical-question-templates');
+      if (!response.ok) return;
+      const data = await response.json();
+      setTechnicalTemplates(data.templates || []);
+    } catch (err) {
+      console.error('Error fetching technical templates:', err);
+    } finally {
+      setLoadingTemplates(false);
     }
   };
 
@@ -185,6 +227,7 @@ export default function ExternalTechnicalEvaluationsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          technicalTemplateId: selectedTemplateId === 'position' ? null : selectedTemplateId,
           questionIds: selectedQuestions.map(question => question.id),
           questionSetConfig,
         }),
@@ -201,6 +244,7 @@ export default function ExternalTechnicalEvaluationsPage() {
       setSelectedQuestions([]);
       setQuestionSetConfig(null);
       setQuestionsReady(false);
+      setSelectedTemplateId('position');
       fetchEvaluations();
       window.dispatchEvent(new Event('credits-updated'));
     } catch (err: any) {
@@ -220,6 +264,51 @@ export default function ExternalTechnicalEvaluationsPage() {
     setQuestionSetConfig(config);
     setQuestionsReady(ready && questionIds.length === 20);
   }, []);
+
+  const activeTemplate = selectedTemplateId === 'position'
+    ? null
+    : technicalTemplates.find(template => template.id === selectedTemplateId) || null;
+
+  const handleSaveTemplate = async () => {
+    if (!questionSetConfig || selectedQuestions.length !== 20 || !formData.jobPositionId) {
+      toast.error(language === 'es'
+        ? 'Completa las 20 preguntas antes de guardar la plantilla'
+        : 'Complete all 20 questions before saving the template');
+      return;
+    }
+
+    setSavingTemplate(true);
+    try {
+      const response = await fetch('/api/technical-question-templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: templateName.trim() || `${JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title || formData.jobPositionId} - ${language === 'es' ? 'Plantilla' : 'Template'}`,
+          description: templateDescription.trim() || null,
+          basePositionId: formData.jobPositionId,
+          basePositionTitle: JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title || formData.jobPositionId,
+          questionSetConfig,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || (language === 'es' ? 'No se pudo guardar la plantilla' : 'Could not save template'));
+      }
+
+      const data = await response.json();
+      toast.success(language === 'es' ? 'Plantilla guardada' : 'Template saved');
+      setSaveTemplateOpen(false);
+      setTemplateName('');
+      setTemplateDescription('');
+      await fetchTemplates();
+      setSelectedTemplateId(data.template?.id || 'position');
+    } catch (error: any) {
+      toast.error(error.message || (language === 'es' ? 'No se pudo guardar la plantilla' : 'Could not save template'));
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
 
   const copyInvitationLink = async (token: string) => {
     const link = `${window.location.origin}/external-technical-evaluation/${token}`;
@@ -580,10 +669,82 @@ export default function ExternalTechnicalEvaluationsPage() {
                       )}
                     </div>
 
+                    <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 space-y-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
+                            {language === 'es' ? 'Fuente de preguntas' : 'Question source'}
+                          </p>
+                          <p className="mt-1 text-sm text-sky-700">
+                            {language === 'es'
+                              ? 'Usa el cargo base o carga una plantilla guardada para esta evaluación.'
+                              : 'Use the base role or load a saved template for this evaluation.'}
+                          </p>
+                        </div>
+                        <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                          {technicalTemplates.length}
+                        </Badge>
+                      </div>
+
+                      <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
+                        <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId} disabled={loadingTemplates}>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder={language === 'es' ? 'Selecciona una plantilla' : 'Select a template'} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="position">
+                              {language === 'es' ? 'Usar cargo actual' : 'Use current role'}
+                            </SelectItem>
+                            {technicalTemplates.map(template => (
+                              <SelectItem key={template.id} value={template.id}>
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{template.name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {template.basePositionTitle} · {template.questionCount} preguntas
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="bg-white"
+                          onClick={() => setSaveTemplateOpen(true)}
+                          disabled={!questionsReady || selectedQuestions.length !== 20}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          {language === 'es' ? 'Guardar plantilla' : 'Save template'}
+                        </Button>
+                      </div>
+
+                      {selectedTemplateId !== 'position' && activeTemplate && (
+                        <div className="rounded-xl border border-sky-200 bg-white p-4">
+                          <p className="text-sm font-semibold text-sky-900">{activeTemplate.name}</p>
+                          <p className="mt-1 text-sm text-sky-700">
+                            {activeTemplate.description || (language === 'es'
+                              ? 'Plantilla guardada para reutilizar este set de preguntas.'
+                              : 'Saved template to reuse this question set.')}
+                          </p>
+                        </div>
+                      )}
+
+                      {technicalTemplates.length === 0 && !loadingTemplates && (
+                        <p className="text-xs text-sky-700">
+                          {language === 'es'
+                            ? 'Aún no tienes plantillas guardadas. Cuando completes un set, podrás guardarlo aquí.'
+                            : 'You do not have saved templates yet. Once you complete a set, you can save it here.'}
+                        </p>
+                      )}
+                    </div>
+
                     {formData.jobPositionId && (
                       <ExternalTechnicalQuestionBuilder
                         basePositionId={formData.jobPositionId}
                         language={language === 'es' ? 'es' : 'en'}
+                        template={activeTemplate}
                         onChange={handleQuestionBuilderChange}
                       />
                     )}
@@ -606,6 +767,71 @@ export default function ExternalTechnicalEvaluationsPage() {
                       )}
                     </Button>
                   </form>
+
+                  <Dialog open={saveTemplateOpen} onOpenChange={setSaveTemplateOpen}>
+                    <DialogContent className="sm:max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {language === 'es' ? 'Guardar como plantilla técnica' : 'Save as technical template'}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {language === 'es'
+                            ? 'Guarda este set de 20 preguntas para reutilizarlo en futuras evaluaciones o campañas.'
+                            : 'Save this 20-question set to reuse it in future evaluations or campaigns.'}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="template-name">
+                            {language === 'es' ? 'Nombre de la plantilla' : 'Template name'}
+                          </Label>
+                          <Input
+                            id="template-name"
+                            value={templateName}
+                            onChange={(e) => setTemplateName(e.target.value)}
+                            placeholder={language === 'es' ? 'Ej. Ventas Senior LATAM' : 'Ex. Senior Sales LATAM'}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="template-description">
+                            {language === 'es' ? 'Descripción' : 'Description'}
+                          </Label>
+                          <Textarea
+                            id="template-description"
+                            value={templateDescription}
+                            onChange={(e) => setTemplateDescription(e.target.value)}
+                            placeholder={language === 'es'
+                              ? 'Opcional. Explica cuándo usar esta plantilla.'
+                              : 'Optional. Explain when to use this template.'}
+                            rows={3}
+                          />
+                        </div>
+                        <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm text-sky-800">
+                          {language === 'es'
+                            ? `Se guardarán ${selectedQuestions.length} preguntas desde ${JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title || formData.jobPositionId}.`
+                            : `Saving ${selectedQuestions.length} questions from ${JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title || formData.jobPositionId}.`}
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setSaveTemplateOpen(false)} type="button">
+                          {language === 'es' ? 'Cancelar' : 'Cancel'}
+                        </Button>
+                        <Button onClick={handleSaveTemplate} disabled={savingTemplate} type="button">
+                          {savingTemplate ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              {language === 'es' ? 'Guardando...' : 'Saving...'}
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4 mr-2" />
+                              {language === 'es' ? 'Guardar plantilla' : 'Save template'}
+                            </>
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
 

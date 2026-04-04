@@ -234,6 +234,17 @@ export async function POST(
     // Verificar créditos suficientes (creditsPerEvaluation por cada evaluación)
     const evaluationTypes = campaign.evaluationTypes as string[];
     const requiredCredits = evaluationTypes.length * creditsPerEvaluation;
+    const technicalTemplate = campaign.technicalTemplateId
+      ? await prisma.technicalQuestionTemplate.findFirst({
+          where: { id: campaign.technicalTemplateId },
+          select: {
+            id: true,
+            basePositionId: true,
+            basePositionTitle: true,
+            questionSetConfig: true,
+          },
+        })
+      : null;
 
     if ((owner?.credits || 0) < requiredCredits) {
       return NextResponse.json(
@@ -289,12 +300,14 @@ export async function POST(
           await prisma.externalStressEvaluation.create({ data: evalData });
           break;
         case 'TECHNICAL':
-          // Para evaluaciones técnicas necesitamos el jobCategory de la campaña
+          // Para evaluaciones técnicas usamos la plantilla técnica si existe; si no, caemos al cargo de la campaña
           await prisma.externalTechnicalEvaluation.create({ 
             data: {
               ...evalData,
-              jobPositionId: campaign.jobCategory || 'general',
-              jobPositionTitle: campaign.jobTitle,
+              jobPositionId: technicalTemplate?.basePositionId || campaign.jobCategory || 'general',
+              jobPositionTitle: technicalTemplate?.basePositionTitle || campaign.jobTitle,
+              technicalTemplateId: technicalTemplate?.id || null,
+              questionSetConfig: technicalTemplate?.questionSetConfig || null,
             }
           });
           break;

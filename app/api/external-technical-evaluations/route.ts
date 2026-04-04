@@ -56,7 +56,9 @@ export async function POST(request: NextRequest) {
       sendEmail = true,
       questionIds = [],
       questionSetConfig = null,
+      technicalTemplateId = null,
     } = body;
+    const teamUserIds = await getTeamUserIds(session.user.id);
 
     if (!recipientName || !recipientEmail || !jobPositionId) {
       return NextResponse.json(
@@ -84,9 +86,41 @@ export async function POST(request: NextRequest) {
       data: { credits: { decrement: 2 } },
     });
 
+    const template = technicalTemplateId
+      ? await prisma.technicalQuestionTemplate.findFirst({
+          where: {
+            id: technicalTemplateId,
+            ownerUserId: { in: teamUserIds },
+          },
+        })
+      : null;
+
+    if (technicalTemplateId && !template) {
+      return NextResponse.json(
+        { error: 'La plantilla técnica seleccionada no existe o no está disponible para tu equipo' },
+        { status: 404 }
+      );
+    }
+
+    const resolvedJobPositionId = template?.basePositionId || jobPositionId;
+
     // Get job position title
-    const position = JOB_POSITIONS.find(p => p.id === jobPositionId);
-    const jobPositionTitle = position?.title || jobPositionId;
+    const position = JOB_POSITIONS.find(p => p.id === resolvedJobPositionId);
+    const jobPositionTitle = template?.basePositionTitle || position?.title || resolvedJobPositionId;
+
+    const resolvedQuestionSetConfig = template?.questionSetConfig || (Array.isArray(questionIds) && questionIds.length > 0
+      ? {
+          questionIds,
+          questionSetConfig,
+        }
+      : null);
+
+    if (template && (!template.questionSetConfig || !Array.isArray((template.questionSetConfig as any).questionIds) || (template.questionSetConfig as any).questionIds.length !== 20)) {
+      return NextResponse.json(
+        { error: 'La plantilla técnica seleccionada no tiene 20 preguntas válidas' },
+        { status: 400 }
+      );
+    }
 
     // Generate secure token
     const token = randomBytes(32).toString('hex');
@@ -101,14 +135,10 @@ export async function POST(request: NextRequest) {
         recipientName,
         recipientEmail: recipientEmail.toLowerCase(),
         senderUserId: session.user.id,
-        jobPositionId,
+        jobPositionId: resolvedJobPositionId,
         jobPositionTitle,
-        questionSetConfig: Array.isArray(questionIds) && questionIds.length > 0
-          ? {
-              questionIds,
-              questionSetConfig,
-            }
-          : null,
+        technicalTemplateId: template?.id || null,
+        questionSetConfig: resolvedQuestionSetConfig,
         token,
         tokenExpiry,
         status: 'PENDING',

@@ -47,6 +47,16 @@ interface QuestionSetConfig {
   questionIds: string[];
 }
 
+interface TechnicalQuestionTemplateSummary {
+  id: string;
+  name: string;
+  description: string | null;
+  basePositionId: string;
+  basePositionTitle: string;
+  questionSetConfig: QuestionSetConfig;
+  questionCount: number;
+}
+
 interface BuilderChangePayload {
   questionIds: string[];
   questionSetConfig: QuestionSetConfig;
@@ -57,6 +67,7 @@ interface BuilderChangePayload {
 interface ExternalTechnicalQuestionBuilderProps {
   basePositionId: string;
   language: 'es' | 'en';
+  template: TechnicalQuestionTemplateSummary | null;
   onChange: (payload: BuilderChangePayload) => void;
 }
 
@@ -65,6 +76,7 @@ const QUESTION_TARGET = 20;
 export function ExternalTechnicalQuestionBuilder({
   basePositionId,
   language,
+  template,
   onChange,
 }: ExternalTechnicalQuestionBuilderProps) {
   const [loading, setLoading] = useState(false);
@@ -138,16 +150,55 @@ export function ExternalTechnicalQuestionBuilder({
     if (!basePositionId) return;
     setLoading(true);
     try {
+      setSearch('');
+      setCategory('all');
+      setDifficulty('all');
+      setSourcePositionId('all');
       const data = await fetchBank({ positionId: basePositionId });
       const defaults = (data.questions || []).slice(0, QUESTION_TARGET);
       setSelectedQuestions(defaults);
       setAvailableQuestions(data.questions || []);
       setCategories(data.categories || []);
       setReplaceIndex(null);
-      setSourcePositionId('all');
     } catch (error) {
       console.error(error);
       toast.error(language === 'es' ? 'No se pudo cargar el set base' : 'Could not load the base set');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadTemplateSet = async (selectedTemplate: TechnicalQuestionTemplateSummary) => {
+    setLoading(true);
+    try {
+      const config = selectedTemplate.questionSetConfig;
+      const selectedResponse = await fetchBank({
+        questionIds: config.questionIds.join(','),
+      });
+      const bankResponse = await fetchBank({
+        positionId: config.sourcePositionId === 'all' ? '' : config.sourcePositionId,
+        search: config.filters.search,
+        category: config.filters.category === 'all' ? '' : config.filters.category,
+        difficulty: config.filters.difficulty,
+      });
+
+      const orderedSelectedQuestions = (selectedResponse.questions || []).sort((a: QuestionBankQuestion, b: QuestionBankQuestion) =>
+        config.questionIds.indexOf(a.id) - config.questionIds.indexOf(b.id)
+      );
+
+      setSearch(config.filters.search || '');
+      setCategory(config.filters.category || 'all');
+      setDifficulty(config.filters.difficulty || 'all');
+      setSourcePositionId(config.sourcePositionId || 'all');
+      setSelectedQuestions(orderedSelectedQuestions.slice(0, QUESTION_TARGET));
+      setAvailableQuestions(bankResponse.questions || orderedSelectedQuestions);
+      setCategories(bankResponse.categories || []);
+      setReplaceIndex(null);
+      setDraggedIndex(null);
+      setDropIndex(null);
+    } catch (error) {
+      console.error(error);
+      toast.error(language === 'es' ? 'No se pudo cargar la plantilla' : 'Could not load the template');
     } finally {
       setLoading(false);
     }
@@ -185,10 +236,16 @@ export function ExternalTechnicalQuestionBuilder({
   };
 
   useEffect(() => {
-    loadDefaultSet();
     loadCategories();
+
+    if (template) {
+      loadTemplateSet(template);
+      return;
+    }
+
+    loadDefaultSet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [basePositionId]);
+  }, [basePositionId, template?.id]);
 
   useEffect(() => {
     setSourcePositionId('all');

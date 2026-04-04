@@ -122,6 +122,14 @@ export async function GET(
         userId: permissions.ownerId,
       },
       include: {
+        technicalTemplate: {
+          select: {
+            id: true,
+            name: true,
+            basePositionId: true,
+            basePositionTitle: true,
+          },
+        },
         candidates: {
           orderBy: [
             { rankPosition: 'asc' },
@@ -211,7 +219,7 @@ export async function PUT(
 
     const { id } = params;
     const body = await request.json();
-    const { name, jobTitle, jobCategory, description, evaluationTypes, status, hiredCandidateId, hiredCandidateName, completionNotes } = body;
+    const { name, jobTitle, jobCategory, description, evaluationTypes, status, hiredCandidateId, hiredCandidateName, completionNotes, technicalTemplateId } = body;
 
     // Obtener el dueño real si es facilitador
     const user = await prisma.user.findUnique({
@@ -230,6 +238,20 @@ export async function PUT(
       return NextResponse.json({ error: 'Campaña no encontrada' }, { status: 404 });
     }
 
+    let resolvedTechnicalTemplateId = existingCampaign.technicalTemplateId;
+    if (technicalTemplateId !== undefined) {
+      resolvedTechnicalTemplateId = technicalTemplateId || null;
+    }
+
+    if (Array.isArray(evaluationTypes) ? evaluationTypes.includes('TECHNICAL') : existingCampaign.evaluationTypes.includes('TECHNICAL')) {
+      if (!resolvedTechnicalTemplateId) {
+        return NextResponse.json(
+          { error: 'Debes seleccionar una plantilla técnica para incluir la prueba técnica en la campaña' },
+          { status: 400 }
+        );
+      }
+    }
+
     const campaign = await prisma.selectionCampaign.update({
       where: { id },
       data: {
@@ -238,6 +260,7 @@ export async function PUT(
         ...(jobCategory !== undefined && { jobCategory }),
         ...(description !== undefined && { description }),
         ...(evaluationTypes && { evaluationTypes }),
+        ...(technicalTemplateId !== undefined && { technicalTemplateId: resolvedTechnicalTemplateId }),
         ...(status && { status }),
         ...(status === 'COMPLETED' && { closedAt: new Date() }),
         ...(status === 'ARCHIVED' && { archivedAt: new Date() }),
