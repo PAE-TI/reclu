@@ -19,21 +19,13 @@ const publicPrefixes = ['/evaluaciones'];
 const externalEvaluationRoutes = [
   '/external-evaluation/',
   '/external-driving-forces-evaluation/',
-  '/external-driving-forces-evaluation-results/',
-  '/external-evaluation-results/',
   '/external-eq-evaluation/',
   '/team/invite/', // Team invitation (public)
-  '/external-eq-evaluation-results/',
   '/external-dna-evaluation/',
-  '/external-dna-evaluation-results/',
   '/external-acumen-evaluation/',
-  '/external-acumen-evaluation-results/',
   '/external-values-evaluation/',
-  '/external-values-evaluation-results/',
   '/external-stress-evaluation/',
-  '/external-stress-evaluation-results/',
   '/external-technical-evaluation/',
-  '/external-technical-evaluation-results/',
 ];
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
@@ -85,11 +77,15 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="flex h-screen">
         {/* Sidebar */}
-        <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+        <div className="print:hidden">
+          <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+        </div>
         
         {/* Main content */}
         <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
-          <Header onToggleSidebar={toggleSidebar} />
+          <div className="print:hidden">
+            <Header onToggleSidebar={toggleSidebar} />
+          </div>
           
           {/* Page content */}
           <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950">
@@ -99,7 +95,9 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
       </div>
       
       {/* Tour de la aplicación */}
-      <AppTour />
+      <div className="print:hidden">
+        <AppTour />
+      </div>
     </div>
   );
 }

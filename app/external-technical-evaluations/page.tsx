@@ -58,6 +58,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { EvaluationNotesButton } from '@/components/evaluation-notes';
+import { ExternalResultsExportButton } from '@/components/external-results-export-button';
 import { ExternalTechnicalQuestionBuilder } from '@/components/external-technical-question-builder';
 import { useLanguage } from '@/contexts/language-context';
 import { JOB_POSITIONS, JOB_CATEGORIES, JobCategory } from '@/lib/job-positions';
@@ -1085,12 +1086,20 @@ export default function ExternalTechnicalEvaluationsPage() {
                                 <span className="ml-1 hidden sm:inline">{language === 'es' ? 'Copiar' : 'Copy'}</span>
                               </Button>
                               {evaluation.status === 'COMPLETED' && (
-                                <Link href={`/external-technical-evaluation-results/${evaluation.token}`}>
-                                  <Button variant="outline" size="sm" className="bg-white text-green-600 border-green-200 hover:bg-green-50">
-                                    <Eye className="h-4 w-4" />
-                                    <span className="ml-1 hidden sm:inline">{language === 'es' ? 'Ver' : 'View'}</span>
-                                  </Button>
-                                </Link>
+                                <>
+                                  <Link href={`/external-technical-evaluation-results/${evaluation.token}`} className="flex-1 sm:flex-none">
+                                    <Button variant="outline" size="sm" className="bg-white text-green-600 border-green-200 hover:bg-green-50 w-full">
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      <span className="hidden sm:inline">{language === 'es' ? 'Ver Resultados' : 'View Results'}</span>
+                                      <span className="sm:hidden">{language === 'es' ? 'Ver' : 'View'}</span>
+                                    </Button>
+                                  </Link>
+                                  <ExternalResultsExportButton
+                                    type="technical"
+                                    token={evaluation.token}
+                                    recipientName={evaluation.recipientName}
+                                  />
+                                </>
                               )}
                               <EvaluationNotesButton
                                 evaluationType="TECHNICAL"
