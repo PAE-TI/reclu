@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ResultSummaryCard } from '@/components/result-summary-card';
 import {
   Heart,
   AlertCircle,
@@ -348,37 +349,17 @@ export default function ExternalEQEvaluationResultsPage() {
           {t('results.backToEvaluations')}
         </Button>
 
-        <Card className="shadow-xl border-0 overflow-hidden">
-          <div className="bg-gradient-to-r from-rose-500 to-pink-600 p-6 text-white">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                <Heart className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{t('results.eq.title')}</h1>
-                <p className="text-rose-100">Reclu</p>
-              </div>
-            </div>
-          </div>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-rose-600" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900">{evaluation.recipientName}</h2>
-                  <p className="text-sm text-gray-500">{evaluation.recipientEmail}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <Badge className={getEQLevelBadgeColor(result.eqLevel)}>
-                  {t('results.eq.level')}: {eqLevelLabels[result.eqLevel as keyof typeof eqLevelLabels] || result.eqLevel}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ResultSummaryCard
+          accentClassName="bg-gradient-to-r from-rose-500 to-pink-600"
+          icon={<Heart className="w-8 h-8 text-white" />}
+          title={t('results.eq.title')}
+          subtitle={evaluation.recipientName}
+          right={
+            <Badge className={getEQLevelBadgeColor(result.eqLevel)}>
+              {t('results.eq.level')}: {eqLevelLabels[result.eqLevel as keyof typeof eqLevelLabels] || result.eqLevel}
+            </Badge>
+          }
+        />
 
         <Card className="shadow-lg border-0">
           <CardHeader>

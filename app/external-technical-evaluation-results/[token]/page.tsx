@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ResultSummaryCard } from '@/components/result-summary-card';
 import {
   FileCode,
   AlertCircle,
@@ -456,55 +457,41 @@ export default function ExternalTechnicalEvaluationResultsPage() {
         </Button>
 
         {/* Header Card */}
-        <Card className="shadow-xl border-0 overflow-hidden">
-          <div className="bg-gradient-to-r from-sky-500 to-cyan-600 p-6 text-white">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                <FileCode className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{t('results.technical.title')}</h1>
-                <p className="text-sky-100">Reclu</p>
-              </div>
-            </div>
-          </div>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-sky-600" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900">{evaluation.recipientName}</h2>
-                  <p className="text-sm text-gray-500">{evaluation.recipientEmail}</p>
-                </div>
-              </div>
-              <div className="text-right space-y-1">
-                <Badge className="bg-sky-100 text-sky-700 border-sky-200">
-                  <Briefcase className="w-3 h-3 mr-1" />
-                  {evaluation.jobPositionTitle}
-                </Badge>
-                <div>
-                  <Badge
-                    className={
-                      analysis.tone === 'emerald'
-                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                        : analysis.tone === 'sky'
-                          ? 'bg-sky-100 text-sky-700 border-sky-200'
-                          : analysis.tone === 'amber'
-                            ? 'bg-amber-100 text-amber-700 border-amber-200'
-                            : analysis.tone === 'orange'
-                              ? 'bg-orange-100 text-orange-700 border-orange-200'
-                              : 'bg-red-100 text-red-700 border-red-200'
-                    }
-                  >
-                    {analysis.label}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ResultSummaryCard
+          accentClassName="bg-gradient-to-r from-sky-500 to-cyan-600"
+          icon={<FileCode className="w-8 h-8 text-white" />}
+          title={t('results.technical.title')}
+          subtitle={
+            <>
+              <span>{evaluation.recipientName}</span>
+              <span className="mx-2 text-white/50">•</span>
+              <span>{evaluation.jobPositionTitle}</span>
+            </>
+          }
+          right={
+            <>
+              <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                <Briefcase className="w-3 h-3 mr-1" />
+                {evaluation.jobPositionTitle}
+              </Badge>
+              <Badge
+                className={
+                  analysis.tone === 'emerald'
+                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                    : analysis.tone === 'sky'
+                      ? 'bg-sky-100 text-sky-700 border-sky-200'
+                      : analysis.tone === 'amber'
+                        ? 'bg-amber-100 text-amber-700 border-amber-200'
+                        : analysis.tone === 'orange'
+                          ? 'bg-orange-100 text-orange-700 border-orange-200'
+                          : 'bg-red-100 text-red-700 border-red-200'
+                }
+              >
+                {analysis.label}
+              </Badge>
+            </>
+          }
+        />
 
         {/* Executive Analysis */}
         <Card className="overflow-hidden border-0 shadow-lg">

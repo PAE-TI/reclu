@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ResultSummaryCard } from '@/components/result-summary-card';
 import { 
   Activity, 
   Sparkles, 
@@ -266,18 +267,25 @@ export default function ExternalStressResults() {
             </div>
           )}
 
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-rose-600 to-orange-600 rounded-2xl shadow-lg">
-                <Activity className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('results.stress.title')}</h1>
-            <p className="text-lg text-gray-600">{evaluation?.recipientName}</p>
-            {evaluation?.completedAt && (
-              <p className="text-sm text-gray-500 mt-1">{t('results.completedOn')} {formatDate(evaluation.completedAt)}</p>
-            )}
-          </div>
+          <ResultSummaryCard
+            accentClassName="bg-gradient-to-r from-rose-600 to-orange-600"
+            icon={<Activity className="w-8 h-8 text-white" />}
+            title={t('results.stress.title')}
+            subtitle={evaluation?.recipientName}
+            right={
+              <>
+                <Badge className={getStressLevelColor(result.stressLevel)}>
+                  {stressLevelLabels[result.stressLevel as keyof typeof stressLevelLabels] || result.stressLevel}
+                </Badge>
+                <Badge className={getResilienceLevelColor(result.resilienceLevel)}>
+                  {resilienceLevelLabels[result.resilienceLevel as keyof typeof resilienceLevelLabels] || result.resilienceLevel}
+                </Badge>
+                {evaluation?.completedAt && (
+                  <p className="text-xs text-white/80">{t('results.completedOn')} {formatDate(evaluation.completedAt)}</p>
+                )}
+              </>
+            }
+          />
 
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl mb-6">
             <CardHeader className="bg-gradient-to-r from-rose-600 to-orange-600 text-white rounded-t-xl">

@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/language-context';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ResultSummaryCard } from '@/components/result-summary-card';
 import {
   Brain,
   Star,
@@ -390,43 +391,25 @@ export default function ExternalEvaluationResultsPage() {
           </Button>
 
           {/* Header Card */}
-          <Card className="shadow-xl border-0 overflow-hidden">
-            <div className="bg-gradient-to-r from-indigo-500 to-blue-600 p-6 text-white">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                  <Brain className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold">{t('results.disc.title')}</h1>
-                  <p className="text-indigo-100">{evaluation.title}</p>
-                </div>
-              </div>
-            </div>
-            <CardContent className="p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <div>
-                    <h2 className="font-semibold text-gray-900">{evaluation.recipientName}</h2>
-                    <p className="text-sm text-gray-500">{evaluation.recipientEmail}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <Badge className={`${primaryColor.bg} ${primaryColor.text} ${primaryColor.border}`}>
-                    {result.personalityType}
-                  </Badge>
-                  {evaluation.completedAt && (
-                    <p className="text-xs text-gray-500 mt-2 flex items-center justify-end gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(evaluation.completedAt)}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ResultSummaryCard
+            accentClassName="bg-gradient-to-r from-indigo-500 to-blue-600"
+            icon={<Brain className="w-8 h-8 text-white" />}
+            title={t('results.disc.title')}
+            subtitle={evaluation.title}
+            right={
+              <>
+                <Badge className={`${primaryColor.bg} ${primaryColor.text} ${primaryColor.border}`}>
+                  {result.personalityType}
+                </Badge>
+                {evaluation.completedAt && (
+                  <p className="text-xs text-white/80 flex items-center justify-end gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {formatDate(evaluation.completedAt)}
+                  </p>
+                )}
+              </>
+            }
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Results */}

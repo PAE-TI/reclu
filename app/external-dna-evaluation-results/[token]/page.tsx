@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ResultSummaryCard } from '@/components/result-summary-card';
 import { Progress } from '@/components/ui/progress';
 import {
   Dna,
@@ -292,27 +293,20 @@ export default function ExternalDNAEvaluationResults() {
           <ArrowLeft className="w-4 h-4 mr-2" /> {t('results.backToEvaluations')}
         </Button>
 
-        <Card className="border-0 shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Dna className="w-9 h-9 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold">{t('results.dna.title')}</h1>
-                  <p className="text-indigo-100">{evaluation.recipientName}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <Badge className={`${getLevelColor(result.dnaLevel)} text-white px-3 py-1`}>
-                  {levelLabels[result.dnaLevel as keyof typeof levelLabels] || result.dnaLevel}
-                </Badge>
-                <p className="text-sm text-indigo-100 mt-2">{t('results.completedOn')}: {formatDate(evaluation.completedAt)}</p>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <ResultSummaryCard
+          accentClassName="bg-gradient-to-r from-indigo-600 to-violet-600"
+          icon={<Dna className="w-9 h-9 text-white" />}
+          title={t('results.dna.title')}
+          subtitle={evaluation.recipientName}
+          right={
+            <>
+              <Badge className={`${getLevelColor(result.dnaLevel)} text-white px-3 py-1`}>
+                {levelLabels[result.dnaLevel as keyof typeof levelLabels] || result.dnaLevel}
+              </Badge>
+              <p className="text-sm text-white/80">{t('results.completedOn')}: {formatDate(evaluation.completedAt)}</p>
+            </>
+          }
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="border-0 shadow-lg">
