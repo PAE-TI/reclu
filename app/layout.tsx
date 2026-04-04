@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: 'Reclu - Plataforma de Evaluación de Talento',
   description: 'Plataforma empresarial de evaluaciones DISC y Fuerzas Motivadoras para análisis de talento y desarrollo organizacional',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/logo.svg',
     apple: '/logo.svg',
   },
 };
