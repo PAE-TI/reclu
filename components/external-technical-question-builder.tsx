@@ -690,7 +690,7 @@ export function ExternalTechnicalQuestionBuilder({
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
             <div
-              className={`mt-3 rounded-2xl border px-4 py-3 text-sm shadow-sm ${
+              className={`mt-3 max-w-full overflow-hidden rounded-2xl border px-3 py-2 text-xs shadow-sm ${
                 bankMode === 'replace'
                   ? 'border-indigo-200 bg-indigo-50 text-indigo-800'
                   : bankMode === 'full'
@@ -698,15 +698,15 @@ export function ExternalTechnicalQuestionBuilder({
                     : 'border-sky-200 bg-sky-50 text-sky-800'
               }`}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2">
                 {bankMode === 'replace' ? (
-                  <Shuffle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <Shuffle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 ) : bankMode === 'full' ? (
-                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 ) : (
-                  <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 rotate-45" />
+                  <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 rotate-45" />
                 )}
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 leading-5">
                   <p className="font-medium">
                     {bankMode === 'replace'
                       ? (language === 'es' ? 'Modo reemplazo activo' : 'Replace mode active')
@@ -728,12 +728,12 @@ export function ExternalTechnicalQuestionBuilder({
                             : 'Select bank questions to complete the technical set.')}
                   </p>
                   {bankMode === 'replace' && replacementQuestion && (
-                    <div className="mt-2 inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-xs font-medium text-indigo-800">
-                      <span>
+                    <div className="mt-1 flex max-w-full items-center gap-2 overflow-hidden rounded-full border border-indigo-200 bg-white/80 px-2.5 py-1 text-[11px] font-medium text-indigo-800">
+                      <span className="shrink-0">
                         {language === 'es' ? 'Reemplazando' : 'Replacing'} #{replaceIndex + 1}
                       </span>
                       <span className="h-1 w-1 rounded-full bg-indigo-400" />
-                      <span className="max-w-[460px] truncate">
+                      <span className="min-w-0 flex-1 truncate">
                         {replacementQuestion.questionText}
                       </span>
                     </div>
@@ -798,19 +798,20 @@ export function ExternalTechnicalQuestionBuilder({
                 </Button>
               )}
               {isReplaceModeActive && (
-                <>
-                  <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200 px-3 py-2">
+                <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs text-indigo-800">
+                  <Shuffle className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate font-medium">
                     {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
-                  </Badge>
+                  </span>
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setReplaceIndex(null)}
-                    className="h-9 rounded-full px-4 text-sm text-indigo-700 hover:bg-indigo-50"
+                    className="h-7 rounded-full px-3 text-xs text-indigo-700 hover:bg-indigo-100"
                   >
                     {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
                   </Button>
-                </>
+                </div>
               )}
             </div>
           </CardHeader>
