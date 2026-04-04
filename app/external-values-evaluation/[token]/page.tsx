@@ -200,7 +200,17 @@ export default function ExternalValuesEvaluation() {
 
       if (res.status === 400 && data.error?.includes('completada')) {
         setAlreadyCompleted(true);
-        setEvaluation(data.evaluation);
+        if (data.evaluation) {
+          setEvaluation(data.evaluation);
+        } else {
+          const evalRes = await fetch(`/api/external-values-evaluations/${token}`);
+          if (evalRes.ok) {
+            const evalData = await evalRes.json();
+            setEvaluation(evalData);
+          } else {
+            setError(data.error || 'Error al cargar la evaluación');
+          }
+        }
         return;
       }
 
@@ -352,6 +362,15 @@ export default function ExternalValuesEvaluation() {
                 <div className="text-sm text-violet-700 space-y-1 text-left">
                   <div><strong>Título:</strong> {evaluation.title}</div>
                   <div><strong>Evaluado:</strong> {evaluation.recipientName}</div>
+                  {evaluation.completedAt && (
+                    <div>
+                      <strong>Completada el:</strong>{' '}
+                      {new Date(evaluation.completedAt).toLocaleString('es-ES', {
+                        dateStyle: 'long',
+                        timeStyle: 'short',
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">

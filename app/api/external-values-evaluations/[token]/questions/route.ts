@@ -22,7 +22,18 @@ export async function GET(
 
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
-        { error: 'Esta evaluación ya fue completada' },
+        {
+          error: 'Esta evaluación ya fue completada',
+          evaluation: {
+            id: evaluation.id,
+            title: evaluation.title,
+            recipientName: evaluation.recipientName,
+            recipientEmail: evaluation.recipientEmail,
+            tokenExpiry: evaluation.tokenExpiry,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
         { status: 400 }
       );
     }
