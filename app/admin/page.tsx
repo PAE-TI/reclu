@@ -48,6 +48,7 @@ import {
   Briefcase,
   Code,
   FileCode,
+  Trash2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PayPalSettingsCard } from '@/components/admin/paypal-settings';
@@ -165,6 +166,9 @@ export default function AdminPage() {
   const [toggleDialogOpen, setToggleDialogOpen] = useState(false);
   const [userToToggle, setUserToToggle] = useState<User | null>(null);
   const [toggling, setToggling] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [defaultUserActive, setDefaultUserActive] = useState(true);
   const [defaultCredits, setDefaultCredits] = useState(100);
   const [creditsPerEvaluation, setCreditsPerEvaluation] = useState(2);
@@ -329,6 +333,29 @@ export default function AdminPage() {
       setToggling(false);
       setToggleDialogOpen(false);
       setUserToToggle(null);
+    }
+  };
+
+  const deleteUser = async () => {
+    if (!userToDelete) return;
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userToDelete.id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error al eliminar');
+      }
+      toast.success(`Usuario ${userToDelete.firstName || userToDelete.email} eliminado correctamente`);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error instanceof Error ? error.message : 'Error al eliminar usuario');
+    } finally {
+      setDeleting(false);
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
     }
   };
 
@@ -932,6 +959,19 @@ export default function AdminPage() {
                     >
                       <Power className="w-4 h-4" />
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setUserToDelete(user);
+                        setDeleteDialogOpen(true);
+                      }}
+                      disabled={user.email === session?.user?.email}
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      title="Eliminar usuario"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               );
@@ -1189,6 +1229,44 @@ export default function AdminPage() {
               className={userToToggle?.isActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}
             >
               {toggling ? <Loader2 className="w-4 h-4 animate-spin" /> : (userToToggle?.isActive ? 'Desactivar' : 'Activar')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 className="text-red-500" />
+              Eliminar Usuario
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-2">
+                <p>
+                  ¿Estás seguro de que deseas eliminar a <strong>{userToDelete?.firstName ? `${userToDelete.firstName} ${userToDelete.lastName || ''}`.trim() : userToDelete?.email}</strong>?
+                </p>
+                <div className="flex items-start gap-2 rounded-md bg-red-50 border border-red-200 p-3 text-red-700 text-sm">
+                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <p>
+                    <strong>Esta acción no se puede deshacer.</strong> Se eliminarán permanentemente el usuario y <strong>todas las evaluaciones que ha enviado</strong>, notificaciones y datos relacionados.
+                  </p>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={deleteUser}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Eliminar Usuario
             </Button>
           </DialogFooter>
         </DialogContent>

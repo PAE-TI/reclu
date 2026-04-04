@@ -169,6 +169,71 @@ export async function GET(
   }
 }
 
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true, role: true }
+    });
+
+    if (currentUser?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 });
+    }
+
+    if (currentUser.id === params.id) {
+      return NextResponse.json({ error: 'No puedes eliminar tu propio usuario' }, { status: 400 });
+    }
+
+    await prisma.$transaction([
+      // DISC external evaluations (responses/results are Restrict)
+      prisma.externalEvaluationResponse.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalEvaluationResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Driving Forces (responses/results are Restrict)
+      prisma.externalDrivingForcesResponse.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalDrivingForcesResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalDrivingForcesEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // EQ (responses/results are Restrict)
+      prisma.externalEQResponse.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalEQResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalEQEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // DNA (responses/results are Restrict)
+      prisma.externalDNAResponse.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalDNAResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalDNAEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Acumen (responses Cascade, results Restrict)
+      prisma.externalAcumenResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalAcumenEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Values (responses Cascade, results Restrict)
+      prisma.externalValuesResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalValuesEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Stress (responses Cascade, results Restrict)
+      prisma.externalStressResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalStressEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Technical (responses/results are Restrict)
+      prisma.externalTechnicalResponse.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalTechnicalResult.deleteMany({ where: { externalEvaluation: { senderUserId: params.id } } }),
+      prisma.externalTechnicalEvaluation.deleteMany({ where: { senderUserId: params.id } }),
+      // Delete user (Account, Session, own evaluations, notifications, etc. cascade automatically)
+      prisma.user.delete({ where: { id: params.id } }),
+    ]);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
