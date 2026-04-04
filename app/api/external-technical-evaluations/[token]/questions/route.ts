@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { generateQuestionsForPosition } from '@/lib/technical-question-generator';
+import { AI_DEVELOPER_POSITION_IDS } from '@/lib/technical-questions';
 
 export async function GET(
   request: NextRequest,
@@ -158,13 +159,17 @@ export async function GET(
       console.log(`Generating questions for position: ${evaluation.jobPositionId} (current count: ${questions.length})`);
       
       try {
+        const needsLargeBank =
+          evaluation.jobPositionId === 'data_analyst' ||
+          AI_DEVELOPER_POSITION_IDS.has(evaluation.jobPositionId);
+
         const generatedQuestions = await generateQuestionsForPosition(
           evaluation.jobPositionId,
-          evaluation.jobPositionId === 'data_analyst' ? 100 : 20
+          needsLargeBank ? 100 : 20
         );
 
         // Delete old questions if regenerating
-        const targetCount = evaluation.jobPositionId === 'data_analyst' ? 100 : 20;
+        const targetCount = needsLargeBank ? 100 : 20;
         if (questions.length > 0 && questions.length < targetCount) {
           await prisma.technicalQuestion.deleteMany({
             where: { jobPositionId: evaluation.jobPositionId },

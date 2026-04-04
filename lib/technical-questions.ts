@@ -14,6 +14,15 @@ export interface TechnicalQuestionTemplate {
   category: string;
 }
 
+export const AI_DEVELOPER_POSITION_IDS = new Set([
+  'software_engineer',
+  'frontend_developer',
+  'backend_developer',
+  'fullstack_developer',
+  'mobile_developer',
+  'blockchain_developer',
+]);
+
 // Get questions for a specific job position
 export function getQuestionsForPosition(positionId: string): TechnicalQuestionTemplate[] {
   const position = JOB_POSITIONS.find(p => p.id === positionId);
@@ -21,6 +30,10 @@ export function getQuestionsForPosition(positionId: string): TechnicalQuestionTe
 
   if (position.id === 'data_analyst') {
     return getZohoDataAnalystQuestions();
+  }
+
+  if (AI_DEVELOPER_POSITION_IDS.has(position.id)) {
+    return getAIDeveloperQuestions();
   }
   
   // Check if we have specific questions for this category
@@ -592,6 +605,341 @@ export function getZohoDataAnalystQuestions(): TechnicalQuestionTemplate[] {
   return ZOHO_ANALYST_TOPICS.flatMap((topic, topicIndex) =>
     ZOHO_ANALYST_PROMPTS.map((promptFn, variantIndex) => {
       const difficulty = ZOHO_ANALYST_DIFFICULTIES[variantIndex];
+      const prompt = promptFn(topic);
+      const { optionA, optionB, optionC, optionD, correctAnswer } = rotateOptions(
+        topic.correctPractice,
+        topic.wrongPractices,
+        topicIndex + variantIndex
+      );
+
+      return {
+        questionText: prompt,
+        optionA,
+        optionB,
+        optionC,
+        optionD,
+        correctAnswer,
+        difficulty,
+        category: topic.category,
+      };
+    })
+  );
+}
+
+type AIDeveloperTopic = {
+  category: string;
+  focus: string;
+  goal: string;
+  problem: string;
+  outcome: string;
+  metric: string;
+  correctPractice: string;
+  wrongPractices: [string, string, string];
+};
+
+const AI_DEVELOPER_PROMPTS = [
+  (topic: AIDeveloperTopic) => `Cuando integras IA generativa en una aplicación, ¿qué práctica es más sólida para ${topic.focus}?`,
+  (topic: AIDeveloperTopic) => `Si el objetivo es ${topic.goal}, ¿qué decisión técnica es la más adecuada?`,
+  (topic: AIDeveloperTopic) => `Ante el problema de ${topic.problem}, ¿cuál es la respuesta más profesional?`,
+  (topic: AIDeveloperTopic) => `Para asegurar ${topic.outcome}, ¿qué arquitectura o control deberías priorizar?`,
+  (topic: AIDeveloperTopic) => `¿Qué acción protege mejor ${topic.metric} en un producto con IA?`,
+] as const;
+
+const AI_DEVELOPER_DURABILITIES: TechnicalQuestionTemplate['difficulty'][] = [
+  'EASY',
+  'MEDIUM',
+  'HARD',
+  'HARD',
+  'HARD',
+];
+
+const AI_DEVELOPER_TOPICS: AIDeveloperTopic[] = [
+  {
+    category: 'IA Generativa - Selección de enfoque',
+    focus: 'decidir entre RAG y fine-tuning',
+    goal: 'adaptar el comportamiento del modelo al negocio sin sobredimensionar costos',
+    problem: 'el caso de uso cambia con frecuencia y el conocimiento también',
+    outcome: 'mantener flexibilidad y precisión en el producto',
+    metric: 'la relación costo-impacto de la solución',
+    correctPractice: 'Elegir RAG cuando el conocimiento cambia a menudo y fine-tuning solo cuando el comportamiento requiere especialización estable.',
+    wrongPractices: [
+      'Fine-tunear siempre por defecto aunque la información cambie a diario.',
+      'Usar RAG solo para ocultar problemas de datos.',
+      'Entrenar un modelo desde cero para cada funcionalidad.',
+    ],
+  },
+  {
+    category: 'IA Generativa - Reducción de alucinaciones',
+    focus: 'reducir respuestas inventadas',
+    goal: 'mejorar la confiabilidad de un asistente',
+    problem: 'el modelo responde con seguridad aunque no tenga evidencia suficiente',
+    outcome: 'responder solo cuando exista soporte verificable',
+    metric: 'la tasa de alucinación y la precisión factual',
+    correctPractice: 'Usar grounding con fuentes, restricciones de contexto y validación posterior de respuestas.',
+    wrongPractices: [
+      'Aumentar el temperature para que las respuestas sean más creativas.',
+      'Confiar en que el modelo se corregirá solo con más tokens.',
+      'Ocultar el error sin revisar la causa.',
+    ],
+  },
+  {
+    category: 'Prompt Engineering',
+    focus: 'escribir prompts robustos con contexto y restricciones',
+    goal: 'obtener respuestas consistentes y útiles',
+    problem: 'el mismo prompt produce salidas muy distintas',
+    outcome: 'estandarizar el comportamiento del modelo',
+    metric: 'la repetibilidad y calidad de las respuestas',
+    correctPractice: 'Definir rol, contexto, ejemplos, formato esperado y límites de respuesta.',
+    wrongPractices: [
+      'Escribir instrucciones vagas y confiar en la intuición del modelo.',
+      'Mezclar varias tareas críticas en un solo prompt sin estructura.',
+      'Evitar ejemplos para no condicionar la salida.',
+    ],
+  },
+  {
+    category: 'Evaluación de IA',
+    focus: 'diseñar un conjunto de pruebas para prompts y modelos',
+    goal: 'medir calidad antes de poner en producción',
+    problem: 'no se sabe si el modelo falla en casos borde',
+    outcome: 'tener una evaluación reproducible y auditable',
+    metric: 'la cobertura de casos críticos y la tasa de error',
+    correctPractice: 'Construir un set de evaluación con casos reales, edge cases y criterios de aceptación claros.',
+    wrongPractices: [
+      'Validar solo con ejemplos felices.',
+      'Cambiar las métricas después de ver el resultado.',
+      'Confiar únicamente en opiniones subjetivas.',
+    ],
+  },
+  {
+    category: 'IA Generativa - Structured Output',
+    focus: 'generar salidas en JSON o esquemas estrictos',
+    goal: 'integrar el modelo con sistemas backend sin ambigüedad',
+    problem: 'la respuesta textual rompe el parser',
+    outcome: 'obtener datos confiables y parseables',
+    metric: 'la tasa de parseo exitoso',
+    correctPractice: 'Usar esquemas, function calling o validación de salida estructurada.',
+    wrongPractices: [
+      'Pedir al modelo que "intente" devolver JSON sin validarlo.',
+      'Parsar texto libre con reglas frágiles.',
+      'Aceptar cualquier salida aunque falten campos.',
+    ],
+  },
+  {
+    category: 'IA Agéntica - Orquestación',
+    focus: 'diseñar agentes con herramientas controladas',
+    goal: 'automatizar tareas sin perder supervisión',
+    problem: 'el agente toma acciones no deseadas o fuera de alcance',
+    outcome: 'tener pasos, permisos y límites bien definidos',
+    metric: 'la precisión de la ejecución y la seguridad operacional',
+    correctPractice: 'Limitar herramientas, validar pasos intermedios y exigir aprobación humana en acciones sensibles.',
+    wrongPractices: [
+      'Dar acceso ilimitado a todas las herramientas del sistema.',
+      'Dejar que el agente decida sin trazabilidad.',
+      'No registrar el razonamiento ni los pasos ejecutados.',
+    ],
+  },
+  {
+    category: 'Embeddings y Búsqueda Vectorial',
+    focus: 'elegir representaciones semánticas y recuperación',
+    goal: 'hacer búsquedas relevantes sobre conocimiento interno',
+    problem: 'los textos relacionados no aparecen en la búsqueda literal',
+    outcome: 'recuperar contexto semántico de forma precisa',
+    metric: 'la relevancia del top-k recuperado',
+    correctPractice: 'Usar embeddings, chunking adecuado y evaluación de recuperación semántica.',
+    wrongPractices: [
+      'Buscar solo por coincidencia exacta de palabras.',
+      'Usar chunks enormes que diluyen el contexto.',
+      'Ignorar la calidad de los embeddings por completo.',
+    ],
+  },
+  {
+    category: 'Versionado de IA',
+    focus: 'versionar prompts, modelos y datasets',
+    goal: 'reproducir comportamientos en el tiempo',
+    problem: 'nadie sabe qué cambió cuando el resultado empeoró',
+    outcome: 'tener trazabilidad de cada versión desplegada',
+    metric: 'la capacidad de rollback y auditoría',
+    correctPractice: 'Versionar prompts, modelos, parámetros y fuentes de datos en cada release.',
+    wrongPractices: [
+      'Sobrescribir el prompt en producción sin registrar cambios.',
+      'Usar modelos distintos con el mismo nombre interno.',
+      'Cambiar varios componentes a la vez sin trazabilidad.',
+    ],
+  },
+  {
+    category: 'Costos e Inferencia',
+    focus: 'optimizar latencia y costo de inferencia',
+    goal: 'escalar el producto sin disparar presupuesto',
+    problem: 'el uso crece y la factura del modelo se vuelve impredecible',
+    outcome: 'controlar consumo y experiencia de usuario',
+    metric: 'costo por interacción y tiempo de respuesta',
+    correctPractice: 'Aplicar caching, batching, streaming y modelos adecuados al nivel de complejidad.',
+    wrongPractices: [
+      'Usar siempre el modelo más grande disponible.',
+      'No medir tokens ni latencia por solicitud.',
+      'Repetir la misma consulta muchas veces sin cache.',
+    ],
+  },
+  {
+    category: 'Privacidad y Seguridad',
+    focus: 'proteger datos sensibles en prompts y respuestas',
+    goal: 'cumplir políticas internas y regulatorias',
+    problem: 'el usuario pega información confidencial en el prompt',
+    outcome: 'evitar exposición de datos y fugas',
+    metric: 'la exposición accidental de datos sensibles',
+    correctPractice: 'Redactar, filtrar y minimizar PII antes de enviar contexto al modelo.',
+    wrongPractices: [
+      'Enviar toda la información cruda para no perder detalle.',
+      'Guardar prompts sensibles en logs públicos.',
+      'Asumir que el proveedor resolverá la privacidad por defecto.',
+    ],
+  },
+  {
+    category: 'Human in the Loop',
+    focus: 'definir cuándo interviene una persona',
+    goal: 'controlar decisiones de alto riesgo',
+    problem: 'el sistema automatiza acciones que afectan clientes o dinero',
+    outcome: 'reducir riesgo operativo y reputacional',
+    metric: 'la proporción de decisiones críticas revisadas',
+    correctPractice: 'Diseñar revisión humana para decisiones sensibles, irreversibles o de impacto alto.',
+    wrongPractices: [
+      'Automatizar todas las decisiones por igual.',
+      'Agregar revisión humana solo después de un incidente.',
+      'Pedir aprobación manual para cada respuesta trivial.',
+    ],
+  },
+  {
+    category: 'Multimodal AI',
+    focus: 'trabajar con texto, imagen o audio',
+    goal: 'resolver casos de uso mixtos con una sola experiencia',
+    problem: 'la información importante está en un archivo visual o sonoro',
+    outcome: 'extraer señal útil de múltiples formatos',
+    metric: 'la precisión de interpretación multimodal',
+    correctPractice: 'Elegir modelos multimodales solo cuando el caso realmente requiera comprensión de distintos formatos.',
+    wrongPractices: [
+      'Convertir todo a texto aunque se pierda información esencial.',
+      'Asumir que cualquier modelo de texto sirve para imágenes.',
+      'Usar multimodalidad sin medir costo adicional.',
+    ],
+  },
+  {
+    category: 'Determinismo y Temperatura',
+    focus: 'controlar variabilidad de respuestas',
+    goal: 'obtener salidas consistentes para procesos automáticos',
+    problem: 'la misma entrada devuelve respuestas demasiado diferentes',
+    outcome: 'alinear creatividad con reproducibilidad',
+    metric: 'la varianza entre ejecuciones',
+    correctPractice: 'Ajustar temperatura, top-p y semillas de forma coherente con el caso de uso.',
+    wrongPractices: [
+      'Usar alta temperatura en tareas transaccionales.',
+      'Ignorar completamente los parámetros de muestreo.',
+      'Cambiar los parámetros cada vez sin criterio.',
+    ],
+  },
+  {
+    category: 'Prompt Injection',
+    focus: 'defenderse de instrucciones maliciosas en contexto',
+    goal: 'evitar que el modelo obedezca texto no confiable',
+    problem: 'el usuario o un documento intenta sobreescribir instrucciones',
+    outcome: 'separar instrucciones confiables de contenido no confiable',
+    metric: 'la resiliencia frente a inyección de prompts',
+    correctPractice: 'Delimitar contexto, priorizar instrucciones del sistema y sanitizar entradas externas.',
+    wrongPractices: [
+      'Pegar documentos externos dentro del prompt del sistema.',
+      'Tratar toda entrada como si fuera instrucción autorizada.',
+      'No segmentar roles ni límites de confianza.',
+    ],
+  },
+  {
+    category: 'IA en CI/CD',
+    focus: 'validar código y cambios asistidos por IA',
+    goal: 'reducir errores antes del merge',
+    problem: 'el código generado parece correcto pero introduce regresiones',
+    outcome: 'tener revisiones automatizadas y humanas',
+    metric: 'la tasa de defectos post-despliegue',
+    correctPractice: 'Combinar linters, tests, revisión humana y pruebas de regresión para cambios asistidos por IA.',
+    wrongPractices: [
+      'Fusionar directamente cualquier código sugerido por el modelo.',
+      'Desactivar tests para acelerar la entrega.',
+      'Confiar solo en el comentario del modelo sobre su propio código.',
+    ],
+  },
+  {
+    category: 'Context Window y Chunking',
+    focus: 'manejar el contexto de manera eficiente',
+    goal: 'mantener relevancia sin saturar el prompt',
+    problem: 'el documento es más largo que la ventana de contexto',
+    outcome: 'recuperar solo la información útil',
+    metric: 'la cobertura relevante y el uso de tokens',
+    correctPractice: 'Dividir por significado, priorizar chunks útiles y resumir contexto cuando aplique.',
+    wrongPractices: [
+      'Enviar documentos completos sin filtrar.',
+      'Partir siempre por número fijo de caracteres.',
+      'Ignorar la relación entre chunk y pregunta.',
+    ],
+  },
+  {
+    category: 'Observabilidad de IA',
+    focus: 'medir el comportamiento del sistema en producción',
+    goal: 'detectar degradación de calidad a tiempo',
+    problem: 'no se sabe cuándo el modelo comenzó a fallar más',
+    outcome: 'monitorear calidad, latencia y costo continuamente',
+    metric: 'la visibilidad del sistema y la detección temprana',
+    correctPractice: 'Registrar prompts, respuestas, métricas y feedback para análisis posterior.',
+    wrongPractices: [
+      'No guardar evidencias de las respuestas.',
+      'Mirar solo el uptime del servicio.',
+      'Analizar problemas únicamente cuando haya quejas graves.',
+    ],
+  },
+  {
+    category: 'Criterios de selección de modelo',
+    focus: 'elegir el modelo adecuado para cada caso',
+    goal: 'balancear capacidad, velocidad y costo',
+    problem: 'se usa un modelo sobredimensionado para tareas simples',
+    outcome: 'asignar el modelo correcto al nivel de complejidad',
+    metric: 'el costo por tarea y la calidad alcanzada',
+    correctPractice: 'Comparar modelos por latencia, costo, contexto y precisión antes de decidir.',
+    wrongPractices: [
+      'Elegir solo el modelo más nuevo.',
+      'Usar el modelo más caro para todo.',
+      'Cambiar de modelo sin pruebas comparativas.',
+    ],
+  },
+  {
+    category: 'Retrieval Quality',
+    focus: 'mejorar la precisión de recuperación en RAG',
+    goal: 'responder con más evidencia relevante',
+    problem: 'el sistema recupera documentos poco útiles',
+    outcome: 'aumentar la relevancia del contexto recuperado',
+    metric: 'la precisión y cobertura del retrieval',
+    correctPractice: 'Ajustar embeddings, filtros, reranking y consulta semántica según resultados medidos.',
+    wrongPractices: [
+      'Confiar en el primer documento recuperado.',
+      'Quitar filtros para recuperar más aunque sea ruido.',
+      'Evitar pruebas de recuperación porque "ya funciona".',
+    ],
+  },
+  {
+    category: 'IA en Producción',
+    focus: 'desplegar y dar rollback seguro',
+    goal: 'reducir el riesgo de cambios en modelos y prompts',
+    problem: 'una nueva versión empeora la experiencia',
+    outcome: 'volver rápidamente a una versión confiable',
+    metric: 'el tiempo de recuperación ante incidentes',
+    correctPractice: 'Desplegar por etapas, monitorear y mantener rollback claro para prompts, modelos y fuentes.',
+    wrongPractices: [
+      'Liberar cambios a toda la base sin monitoreo.',
+      'Eliminar la versión anterior después del despliegue.',
+      'Cambiar prompt, modelo y datos al mismo tiempo sin control.',
+    ],
+  },
+];
+
+function getAIDeveloperQuestions(): TechnicalQuestionTemplate[] {
+  return AI_DEVELOPER_TOPICS.flatMap((topic, topicIndex) =>
+    AI_DEVELOPER_PROMPTS.map((promptFn, variantIndex) => {
+      const difficulty = AI_DEVELOPER_DURABILITIES[variantIndex];
       const prompt = promptFn(topic);
       const { optionA, optionB, optionC, optionD, correctAnswer } = rotateOptions(
         topic.correctPractice,

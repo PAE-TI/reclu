@@ -1,5 +1,5 @@
 import { JOB_POSITIONS, JobPosition, JOB_CATEGORIES } from './job-positions';
-import { getZohoDataAnalystQuestions } from './technical-questions';
+import { AI_DEVELOPER_POSITION_IDS, getQuestionsForPosition, getZohoDataAnalystQuestions } from './technical-questions';
 
 export interface GeneratedQuestion {
   questionText: string;
@@ -30,6 +30,10 @@ export async function generateQuestionsForPosition(
 
   if (position.id === 'data_analyst') {
     return generateZohoDataAnalystQuestions(count);
+  }
+
+  if (AI_DEVELOPER_POSITION_IDS.has(position.id)) {
+    return generateAIDeveloperQuestions(position.id, count);
   }
 
   return generateFallbackQuestions(position, count);
@@ -81,6 +85,52 @@ function generateZohoDataAnalystQuestions(count: number): GeneratedQuestion[] {
       ...next,
       questionText: `${next.questionText} (variante ${questions.length + 1})`,
       questionTextEn: `${next.questionTextEn} (variant ${questions.length + 1})`,
+    });
+  }
+
+  return questions;
+}
+
+function generateAIDeveloperQuestions(positionId: string, count: number): GeneratedQuestion[] {
+  const baseQuestions = getQuestionsForPosition(positionId);
+  const questions = baseQuestions.slice(0, count).map(q => ({
+    questionText: q.questionText,
+    questionTextEn: q.questionText,
+    optionA: q.optionA,
+    optionB: q.optionB,
+    optionC: q.optionC,
+    optionD: q.optionD,
+    optionAEn: q.optionA,
+    optionBEn: q.optionB,
+    optionCEn: q.optionC,
+    optionDEn: q.optionD,
+    correctAnswer: q.correctAnswer,
+    difficulty: q.difficulty,
+    category: q.category,
+    categoryEn: q.category,
+  }));
+
+  if (questions.length === count) {
+    return questions;
+  }
+
+  while (questions.length < count) {
+    const next = baseQuestions[questions.length % baseQuestions.length];
+    questions.push({
+      questionText: `${next.questionText} (variante ${questions.length + 1})`,
+      questionTextEn: `${next.questionText} (variant ${questions.length + 1})`,
+      optionA: next.optionA,
+      optionB: next.optionB,
+      optionC: next.optionC,
+      optionD: next.optionD,
+      optionAEn: next.optionA,
+      optionBEn: next.optionB,
+      optionCEn: next.optionC,
+      optionDEn: next.optionD,
+      correctAnswer: next.correctAnswer,
+      difficulty: next.difficulty,
+      category: next.category,
+      categoryEn: next.category,
     });
   }
 
