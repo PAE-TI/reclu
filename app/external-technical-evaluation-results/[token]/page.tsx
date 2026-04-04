@@ -14,7 +14,6 @@ import {
   ArrowLeft,
   User,
   TrendingUp,
-  TrendingDown,
   Award,
   Target,
   CheckCircle,
@@ -160,25 +159,6 @@ export default function ExternalTechnicalEvaluationResultsPage() {
   const [requireAuth, setRequireAuth] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
 
-  // Translated performance levels
-  const performanceLevelLabels = useMemo(() => ({
-    'EXCELENTE': t('technical.level.excellent'),
-    'MUY_BUENO': t('technical.level.veryGood'),
-    'BUENO': t('technical.level.good'),
-    'ACEPTABLE': t('technical.level.acceptable'),
-    'NECESITA_MEJORA': t('technical.level.needsImprovement'),
-    'INSUFICIENTE': t('technical.level.insufficient')
-  }), [language, t]);
-
-  const performanceLevelDescriptions = useMemo(() => ({
-    'EXCELENTE': t('technical.level.excellent.desc'),
-    'MUY_BUENO': t('technical.level.veryGood.desc'),
-    'BUENO': t('technical.level.good.desc'),
-    'ACEPTABLE': t('technical.level.acceptable.desc'),
-    'NECESITA_MEJORA': t('technical.level.needsImprovement.desc'),
-    'INSUFICIENTE': t('technical.level.insufficient.desc')
-  }), [language, t]);
-
   useEffect(() => {
     if (sessionStatus === 'loading') return;
     if (sessionStatus === 'unauthenticated') {
@@ -214,30 +194,6 @@ export default function ExternalTechnicalEvaluationResultsPage() {
       setError(t('results.error'));
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getPerformanceLevelColor = (level: string) => {
-    switch (level) {
-      case 'EXCELENTE': return 'bg-emerald-500';
-      case 'MUY_BUENO': return 'bg-green-500';
-      case 'BUENO': return 'bg-blue-500';
-      case 'ACEPTABLE': return 'bg-amber-500';
-      case 'NECESITA_MEJORA': return 'bg-orange-500';
-      case 'INSUFICIENTE': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getPerformanceLevelBadgeColor = (level: string) => {
-    switch (level) {
-      case 'EXCELENTE': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'MUY_BUENO': return 'bg-green-100 text-green-700 border-green-200';
-      case 'BUENO': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'ACEPTABLE': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'NECESITA_MEJORA': return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'INSUFICIENTE': return 'bg-red-100 text-red-700 border-red-200';
-      default: return 'bg-gray-100 text-gray-700';
     }
   };
 
@@ -388,6 +344,93 @@ export default function ExternalTechnicalEvaluationResultsPage() {
     { key: 'medium', label: t('results.technical.medium'), data: result.difficultyBreakdown?.medium },
     { key: 'hard', label: t('results.technical.hard'), data: result.difficultyBreakdown?.hard },
   ];
+  const analysis = useMemo(() => {
+    const score = Math.round(result.totalScore);
+    const bestCategory = categoryEntries.length > 0 ? categoryEntries[0] : null;
+    const weakestCategory = categoryEntries.length > 0 ? categoryEntries[categoryEntries.length - 1] : null;
+    const easy = result.difficultyBreakdown?.easy;
+    const medium = result.difficultyBreakdown?.medium;
+    const hard = result.difficultyBreakdown?.hard;
+    const easyPct = easy && easy.total > 0 ? Math.round((easy.correct / easy.total) * 100) : null;
+    const mediumPct = medium && medium.total > 0 ? Math.round((medium.correct / medium.total) * 100) : null;
+    const hardPct = hard && hard.total > 0 ? Math.round((hard.correct / hard.total) * 100) : null;
+
+    let label = '';
+    let tone: 'emerald' | 'sky' | 'amber' | 'orange' | 'red' = 'sky';
+    let summary = '';
+    let recommendation = '';
+
+    if (score >= 85) {
+      label = language === 'es' ? 'Desempeño sobresaliente' : 'Outstanding performance';
+      tone = 'emerald';
+      summary = language === 'es'
+        ? 'La persona demuestra un dominio técnico muy sólido y consistente. El resultado indica que puede resolver con seguridad la mayor parte de los retos del cargo y, además, sostener un rendimiento alto en escenarios complejos.'
+        : 'The candidate shows very solid and consistent technical command. The result suggests they can handle most role challenges confidently and sustain high performance in complex scenarios.';
+      recommendation = language === 'es'
+        ? 'Es un perfil para avanzar con alta confianza. Conviene enfocarlo en profundidad técnica, impacto en negocio y ajuste con el equipo.'
+        : 'This is a profile to advance with high confidence. Focus the next step on technical depth, business impact, and team fit.';
+    } else if (score >= 70) {
+      label = language === 'es' ? 'Perfil sólido' : 'Solid profile';
+      tone = 'sky';
+      summary = language === 'es'
+        ? 'El desempeño es bueno y consistente. La base técnica está presente, aunque todavía hay áreas puntuales donde puede ganar precisión o velocidad de respuesta.'
+        : 'Performance is good and consistent. The technical base is present, although there are still specific areas where the candidate can gain precision or speed.';
+      recommendation = language === 'es'
+        ? 'Puede avanzar en el proceso, idealmente contrastando con una entrevista técnica enfocada en los temas de menor puntaje.'
+        : 'They can advance in the process, ideally paired with a technical interview focused on the lower-scoring topics.';
+    } else if (score >= 55) {
+      label = language === 'es' ? 'Base en desarrollo' : 'Developing base';
+      tone = 'amber';
+      summary = language === 'es'
+        ? 'Existe una base funcional, pero el dominio todavía es irregular. El resultado sugiere que puede desempeñarse mejor en contextos guiados que en escenarios técnicos exigentes.'
+        : 'There is a functional base, but mastery is still uneven. The result suggests the candidate may perform better in guided contexts than in demanding technical scenarios.';
+      recommendation = language === 'es'
+        ? 'Recomendado evaluar con preguntas prácticas adicionales o una prueba complementaria en los temas más débiles.'
+        : 'Recommended to assess with additional practical questions or a complementary test in the weakest topics.';
+    } else if (score >= 40) {
+      label = language === 'es' ? 'Requiere refuerzo' : 'Needs reinforcement';
+      tone = 'orange';
+      summary = language === 'es'
+        ? 'El resultado muestra brechas importantes en el dominio técnico. Hay señales de comprensión parcial, pero todavía no existe la consistencia necesaria para desempeñarse con autonomía total.'
+        : 'The result shows important gaps in technical command. There are signs of partial understanding, but not yet the consistency needed to perform fully autonomously.';
+      recommendation = language === 'es'
+        ? 'Lo más útil es revisar fundamentos, ejercicios prácticos y una segunda validación antes de tomar una decisión final.'
+        : 'The best next step is to review fundamentals, practical exercises, and a second validation before making a final decision.';
+    } else {
+      label = language === 'es' ? 'Alto riesgo técnico' : 'High technical risk';
+      tone = 'red';
+      summary = language === 'es'
+        ? 'El nivel observado indica una brecha muy amplia frente a lo esperado para el cargo. La persona aún no muestra la base mínima consistente para resolver con soltura la mayoría de las preguntas.'
+        : 'The observed level indicates a very wide gap versus the expected role requirements. The candidate has not yet shown a consistent minimum base to solve most questions comfortably.';
+      recommendation = language === 'es'
+        ? 'Conviene no avanzar sin una validación adicional o un plan claro de refuerzo, porque el riesgo de ejecución es alto.'
+        : 'It is advisable not to advance without additional validation or a clear upskilling plan, because the execution risk is high.';
+    }
+
+    const difficultyComparison =
+      easyPct !== null && hardPct !== null
+        ? (hardPct >= easyPct - 10
+            ? (language === 'es'
+                ? 'La curva de dificultad se mantiene bastante estable, lo que sugiere buena base para afrontar preguntas complejas.'
+                : 'Performance stays fairly stable across difficulty, suggesting a strong base for complex questions.')
+            : (language === 'es'
+                ? 'La caída en preguntas difíciles es visible, por lo que conviene reforzar el razonamiento avanzado y la toma de decisiones técnicas.'
+                : 'There is a visible drop in hard questions, so advanced reasoning and technical decision-making should be reinforced.'))
+        : null;
+
+    return {
+      label,
+      tone,
+      summary,
+      recommendation,
+      bestCategory: bestCategory ? { name: bestCategory[0], score: bestCategory[1] } : null,
+      weakestCategory: weakestCategory ? { name: weakestCategory[0], score: weakestCategory[1] } : null,
+      easyPct,
+      mediumPct,
+      hardPct,
+      difficultyComparison,
+    };
+  }, [categoryEntries, language, result]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50">
@@ -433,10 +476,145 @@ export default function ExternalTechnicalEvaluationResultsPage() {
                   {evaluation.jobPositionTitle}
                 </Badge>
                 <div>
-                  <Badge className={getPerformanceLevelBadgeColor(result.performanceLevel)}>
-                    {performanceLevelLabels[result.performanceLevel as keyof typeof performanceLevelLabels] || result.performanceLevel}
+                  <Badge
+                    className={
+                      analysis.tone === 'emerald'
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                        : analysis.tone === 'sky'
+                          ? 'bg-sky-100 text-sky-700 border-sky-200'
+                          : analysis.tone === 'amber'
+                            ? 'bg-amber-100 text-amber-700 border-amber-200'
+                            : analysis.tone === 'orange'
+                              ? 'bg-orange-100 text-orange-700 border-orange-200'
+                              : 'bg-red-100 text-red-700 border-red-200'
+                    }
+                  >
+                    {analysis.label}
                   </Badge>
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Executive Analysis */}
+        <Card className="overflow-hidden border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-slate-950 via-sky-950 to-indigo-950 text-white">
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-sky-300" />
+              {language === 'es' ? 'Análisis ejecutivo' : 'Executive analysis'}
+            </CardTitle>
+            <CardDescription className="text-slate-200">
+              {language === 'es'
+                ? 'Lectura profesional del rendimiento, enfocada en lo que significa el resultado para la toma de decisiones.'
+                : 'Professional reading of the score, focused on what the result means for decision-making.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 p-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className={`rounded-3xl border p-5 ${
+              analysis.tone === 'emerald'
+                ? 'border-emerald-200 bg-emerald-50'
+                : analysis.tone === 'sky'
+                  ? 'border-sky-200 bg-sky-50'
+                  : analysis.tone === 'amber'
+                    ? 'border-amber-200 bg-amber-50'
+                    : analysis.tone === 'orange'
+                      ? 'border-orange-200 bg-orange-50'
+                      : 'border-red-200 bg-red-50'
+            }`}>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
+                  <BarChart3 className={`h-5 w-5 ${
+                    analysis.tone === 'emerald'
+                      ? 'text-emerald-600'
+                      : analysis.tone === 'sky'
+                        ? 'text-sky-600'
+                        : analysis.tone === 'amber'
+                          ? 'text-amber-600'
+                          : analysis.tone === 'orange'
+                            ? 'text-orange-600'
+                            : 'text-red-600'
+                  }`} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {language === 'es' ? 'Lectura del resultado' : 'Result reading'}
+                  </p>
+                  <p className="mt-1 text-xl font-semibold text-slate-900">
+                    {analysis.label}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/70 bg-white px-4 py-2 text-right shadow-sm">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">
+                    {language === 'es' ? 'Puntaje' : 'Score'}
+                  </p>
+                  <p className={`text-3xl font-bold ${getScoreColor(result.totalScore)}`}>{Math.round(result.totalScore)}%</p>
+                </div>
+              </div>
+
+              <p className="mt-4 text-sm leading-6 text-slate-700">
+                {analysis.summary}
+              </p>
+              <div className="mt-4 rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {language === 'es' ? 'Recomendación para decisión' : 'Decision guidance'}
+                </p>
+                <p className="mt-1 text-sm leading-6 text-slate-700">
+                  {analysis.recommendation}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {language === 'es' ? 'Fortaleza principal' : 'Main strength'}
+                </p>
+                <p className="mt-2 text-base font-semibold text-slate-900">
+                  {analysis.bestCategory?.name || (language === 'es' ? 'No hay datos' : 'No data')}
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  {analysis.bestCategory
+                    ? `${Math.round(analysis.bestCategory.score)}% ${language === 'es' ? 'de acierto en esta área' : 'accuracy in this area'}`
+                    : (language === 'es' ? 'No se pudo identificar una fortaleza clara.' : 'No clear strength could be identified.')}
+                </p>
+              </div>
+              <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {language === 'es' ? 'Área prioritaria' : 'Priority area'}
+                </p>
+                <p className="mt-2 text-base font-semibold text-slate-900">
+                  {analysis.weakestCategory?.name || (language === 'es' ? 'No hay datos' : 'No data')}
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  {analysis.weakestCategory
+                    ? `${Math.round(analysis.weakestCategory.score)}% ${language === 'es' ? 'de acierto. Requiere atención prioritaria.' : 'accuracy. Requires priority attention.'}`
+                    : (language === 'es' ? 'No se detectaron brechas claras.' : 'No clear gaps detected.')}
+                </p>
+              </div>
+              <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {language === 'es' ? 'Lectura de dificultad' : 'Difficulty reading'}
+                </p>
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-600">{language === 'es' ? 'Fácil' : 'Easy'}</span>
+                    <span className="font-medium text-slate-900">{analysis.easyPct ?? '—'}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-600">{language === 'es' ? 'Media' : 'Medium'}</span>
+                    <span className="font-medium text-slate-900">{analysis.mediumPct ?? '—'}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-600">{language === 'es' ? 'Difícil' : 'Hard'}</span>
+                    <span className="font-medium text-slate-900">{analysis.hardPct ?? '—'}%</span>
+                  </div>
+                </div>
+                {analysis.difficultyComparison && (
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {analysis.difficultyComparison}
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -481,20 +659,30 @@ export default function ExternalTechnicalEvaluationResultsPage() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className={`text-4xl font-bold ${getScoreColor(result.totalScore)}`}>{Math.round(result.totalScore)}%</span>
-                  <span className="text-sm text-gray-500">{t('results.technical.percentile')}</span>
+                  <span className="text-sm text-gray-500">{language === 'es' ? 'Puntuación' : 'Score'}</span>
                 </div>
               </div>
 
               <div className="flex-1 text-center md:text-left">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {performanceLevelLabels[result.performanceLevel as keyof typeof performanceLevelLabels] || result.performanceLevel}
+                  {analysis.label}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {performanceLevelDescriptions[result.performanceLevel as keyof typeof performanceLevelDescriptions]}
+                  {analysis.summary}
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                  <Badge className={getPerformanceLevelBadgeColor(result.performanceLevel)}>
-                    {performanceLevelLabels[result.performanceLevel as keyof typeof performanceLevelLabels] || result.performanceLevel}
+                  <Badge className={
+                    analysis.tone === 'emerald'
+                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                      : analysis.tone === 'sky'
+                        ? 'bg-sky-100 text-sky-700 border-sky-200'
+                        : analysis.tone === 'amber'
+                          ? 'bg-amber-100 text-amber-700 border-amber-200'
+                          : analysis.tone === 'orange'
+                            ? 'bg-orange-100 text-orange-700 border-orange-200'
+                            : 'bg-red-100 text-red-700 border-red-200'
+                  }>
+                    {analysis.label}
                   </Badge>
                   <Badge variant="outline" className="border-sky-200 text-sky-700">
                     {result.correctAnswers} {t('results.technical.of')} {result.totalQuestions} {t('results.technical.questions')}
