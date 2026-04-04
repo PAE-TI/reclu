@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { AlertCircle, ArrowRight, Check, Loader2, RefreshCw, Search, Shuffle, Trash2, FileText, Layers3 } from 'lucide-react';
+import { AlertCircle, ArrowRight, Check, Loader2, RefreshCw, Search, Shuffle, Trash2, FileText, Layers3, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { JOB_POSITIONS } from '@/lib/job-positions';
 
@@ -430,7 +430,6 @@ export function ExternalTechnicalQuestionBuilder({
   const isSetComplete = selectedCount === QUESTION_TARGET;
   const isReplaceModeActive = replaceIndex !== null;
   const bankMode = isReplacing ? 'replace' : isSetComplete ? 'full' : 'ready';
-  const replacementQuestion = replaceIndex !== null ? selectedQuestions[replaceIndex] : null;
   const difficultyCounts = useMemo(() => {
     return selectedQuestions.reduce(
       (acc, question) => {
@@ -690,7 +689,7 @@ export function ExternalTechnicalQuestionBuilder({
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
             <div
-              className={`mt-3 max-w-full overflow-hidden rounded-2xl border px-3 py-2 text-xs shadow-sm ${
+              className={`mt-3 flex max-w-full items-center justify-between gap-2 overflow-hidden rounded-full border px-3 py-1.5 text-xs shadow-sm ${
                 bankMode === 'replace'
                   ? 'border-indigo-200 bg-indigo-50 text-indigo-800'
                   : bankMode === 'full'
@@ -698,48 +697,33 @@ export function ExternalTechnicalQuestionBuilder({
                     : 'border-sky-200 bg-sky-50 text-sky-800'
               }`}
             >
-              <div className="flex items-start gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 {bankMode === 'replace' ? (
-                  <Shuffle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <Shuffle className="h-3.5 w-3.5 shrink-0" />
                 ) : bankMode === 'full' ? (
-                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                 ) : (
-                  <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 rotate-45" />
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 rotate-45" />
                 )}
-                <div className="min-w-0 flex-1 leading-5">
-                  <p className="font-medium">
-                    {bankMode === 'replace'
-                      ? (language === 'es' ? 'Modo reemplazo activo' : 'Replace mode active')
-                      : bankMode === 'full'
-                        ? (language === 'es' ? 'El set está completo' : 'The set is full')
-                        : (language === 'es' ? 'Banco listo para agregar' : 'Bank ready to add')}
-                  </p>
-                  <p className="mt-1 text-sm opacity-90">
-                    {bankMode === 'replace'
-                      ? (language === 'es'
-                          ? 'Selecciona una pregunta del banco para sustituir la actual. Las flechas están habilitadas.'
-                          : 'Pick a bank question to swap in. The arrows are enabled.')
-                      : bankMode === 'full'
-                        ? (language === 'es'
-                            ? 'Usa Reemplazar o Vaciar selección para agregar otra pregunta.'
-                            : 'Use Replace or Clear selection to add another question.')
-                        : (language === 'es'
-                            ? 'Selecciona preguntas del banco para completar el set técnico.'
-                            : 'Select bank questions to complete the technical set.')}
-                  </p>
-                  {bankMode === 'replace' && replacementQuestion && (
-                    <div className="mt-1 flex max-w-full items-center gap-2 overflow-hidden rounded-full border border-indigo-200 bg-white/80 px-2.5 py-1 text-[11px] font-medium text-indigo-800">
-                      <span className="shrink-0">
-                        {language === 'es' ? 'Reemplazando' : 'Replacing'} #{replaceIndex + 1}
-                      </span>
-                      <span className="h-1 w-1 rounded-full bg-indigo-400" />
-                      <span className="min-w-0 flex-1 truncate">
-                        {replacementQuestion.questionText}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <span className="min-w-0 truncate font-medium">
+                  {bankMode === 'replace'
+                    ? (language === 'es' ? `Reemplazo activo #${replaceIndex + 1}` : `Replace active #${replaceIndex + 1}`)
+                    : bankMode === 'full'
+                      ? (language === 'es' ? 'Set completo' : 'Set full')
+                      : (language === 'es' ? 'Listo para agregar' : 'Ready to add')}
+                </span>
               </div>
+              {isReplaceModeActive && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setReplaceIndex(null)}
+                  className="h-6 shrink-0 rounded-full px-2 text-[11px] text-indigo-700 hover:bg-indigo-100"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  {language === 'es' ? 'Salir' : 'Exit'}
+                </Button>
+              )}
             </div>
             <div className="flex flex-wrap gap-2 pt-2">
               <Button
@@ -796,22 +780,6 @@ export function ExternalTechnicalQuestionBuilder({
                 >
                   {language === 'es' ? 'Quitar filtro' : 'Clear filter'}
                 </Button>
-              )}
-              {isReplaceModeActive && (
-                <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs text-indigo-800">
-                  <Shuffle className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate font-medium">
-                    {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setReplaceIndex(null)}
-                    className="h-7 rounded-full px-3 text-xs text-indigo-700 hover:bg-indigo-100"
-                  >
-                    {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
-                  </Button>
-                </div>
               )}
             </div>
           </CardHeader>
