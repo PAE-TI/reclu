@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,7 @@ import {
   Search,
   Target,
   TrendingUp,
+  FileText,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { EvaluationNotesButton } from '@/components/evaluation-notes';
@@ -121,6 +122,7 @@ interface TechnicalTemplate {
 export default function ExternalTechnicalEvaluationsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, language } = useLanguage();
 
   const [evaluations, setEvaluations] = useState<TechnicalEvaluation[]>([]);
@@ -162,6 +164,17 @@ export default function ExternalTechnicalEvaluationsPage() {
       fetchTemplates();
     }
   }, [status, router]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'templates') {
+      setActiveTab('templates');
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    setSelectedTemplateId('position');
+  }, [formData.jobPositionId]);
 
   const fetchEvaluations = async () => {
     try {
@@ -530,8 +543,9 @@ export default function ExternalTechnicalEvaluationsPage() {
 
         <div className="space-y-6">
           {/* Tab Navigation */}
-          <div className="grid w-full grid-cols-2 lg:w-[400px] bg-gray-100 p-1 rounded-md">
+          <div className="grid w-full grid-cols-3 lg:w-[520px] bg-gray-100 p-1 rounded-md">
             <Button
+              type="button"
               variant={activeTab === 'send' ? 'default' : 'ghost'}
               onClick={() => setActiveTab('send')}
               className={`flex items-center gap-2 ${activeTab === 'send' ? 'bg-sky-600 hover:bg-sky-700' : ''}`}
@@ -540,12 +554,22 @@ export default function ExternalTechnicalEvaluationsPage() {
               {t('extEval.tabs.send')}
             </Button>
             <Button
+              type="button"
               variant={activeTab === 'manage' ? 'default' : 'ghost'}
               onClick={() => setActiveTab('manage')}
               className={`flex items-center gap-2 ${activeTab === 'manage' ? 'bg-sky-600 hover:bg-sky-700' : ''}`}
             >
               <Users className="w-4 h-4" />
               {t('extEval.tabs.manage')} ({evaluations.length})
+            </Button>
+            <Button
+              type="button"
+              variant={activeTab === 'templates' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('templates')}
+              className={`flex items-center gap-2 ${activeTab === 'templates' ? 'bg-sky-600 hover:bg-sky-700' : ''}`}
+            >
+              <FileText className="w-4 h-4" />
+              {language === 'es' ? 'Plantillas' : 'Templates'}
             </Button>
           </div>
 
@@ -669,75 +693,46 @@ export default function ExternalTechnicalEvaluationsPage() {
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 space-y-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
+                    <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4">
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="space-y-1">
                           <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
                             {language === 'es' ? 'Fuente de preguntas' : 'Question source'}
                           </p>
-                          <p className="mt-1 text-sm text-sky-700">
+                          <p className="text-sm text-sky-700">
                             {language === 'es'
-                              ? 'Usa el cargo base o carga una plantilla guardada para esta evaluación.'
-                              : 'Use the base role or load a saved template for this evaluation.'}
+                              ? 'Elige una sola fuente: el cargo actual o una plantilla guardada.'
+                              : 'Choose one source: the current role or a saved template.'}
                           </p>
                         </div>
-                        <Badge className="bg-sky-100 text-sky-700 border-sky-200">
-                          {technicalTemplates.length}
-                        </Badge>
-                      </div>
-
-                      <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
-                        <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId} disabled={loadingTemplates}>
-                          <SelectTrigger className="bg-white">
-                            <SelectValue placeholder={language === 'es' ? 'Selecciona una plantilla' : 'Select a template'} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="position">
-                              {language === 'es' ? 'Usar cargo actual' : 'Use current role'}
-                            </SelectItem>
-                            {technicalTemplates.map(template => (
-                              <SelectItem key={template.id} value={template.id}>
-                                <div className="flex flex-col">
-                                  <span className="font-medium">{template.name}</span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {template.basePositionTitle} · {template.questionCount} preguntas
-                                  </span>
-                                </div>
+                        <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_auto] lg:items-end">
+                          <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId} disabled={loadingTemplates}>
+                            <SelectTrigger className="bg-white">
+                              <SelectValue placeholder={language === 'es' ? 'Selecciona una fuente' : 'Select a source'} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="position">
+                                {language === 'es' ? 'Usar cargo actual' : 'Use current role'}
                               </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="bg-white"
-                          onClick={() => setSaveTemplateOpen(true)}
-                          disabled={!questionsReady || selectedQuestions.length !== 20}
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          {language === 'es' ? 'Guardar plantilla' : 'Save template'}
-                        </Button>
-                      </div>
-
-                      {selectedTemplateId !== 'position' && activeTemplate && (
-                        <div className="rounded-xl border border-sky-200 bg-white p-4">
-                          <p className="text-sm font-semibold text-sky-900">{activeTemplate.name}</p>
-                          <p className="mt-1 text-sm text-sky-700">
-                            {activeTemplate.description || (language === 'es'
-                              ? 'Plantilla guardada para reutilizar este set de preguntas.'
-                              : 'Saved template to reuse this question set.')}
-                          </p>
+                              {technicalTemplates.map(template => (
+                                <SelectItem key={template.id} value={template.id}>
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{template.name}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {template.basePositionTitle} · {template.questionCount} preguntas
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Badge className="bg-sky-100 text-sky-700 border-sky-200 h-10 px-3">
+                            {selectedTemplateId === 'position'
+                              ? (language === 'es' ? 'Cargo actual' : 'Current role')
+                              : (activeTemplate?.name || (language === 'es' ? 'Plantilla' : 'Template'))}
+                          </Badge>
                         </div>
-                      )}
-
-                      {technicalTemplates.length === 0 && !loadingTemplates && (
-                        <p className="text-xs text-sky-700">
-                          {language === 'es'
-                            ? 'Aún no tienes plantillas guardadas. Cuando completes un set, podrás guardarlo aquí.'
-                            : 'You do not have saved templates yet. Once you complete a set, you can save it here.'}
-                        </p>
-                      )}
+                      </div>
                     </div>
 
                     {formData.jobPositionId && (
@@ -745,6 +740,7 @@ export default function ExternalTechnicalEvaluationsPage() {
                         basePositionId={formData.jobPositionId}
                         language={language === 'es' ? 'es' : 'en'}
                         template={activeTemplate}
+                        onSaveTemplate={() => setSaveTemplateOpen(true)}
                         onChange={handleQuestionBuilderChange}
                       />
                     )}
@@ -1014,6 +1010,73 @@ export default function ExternalTechnicalEvaluationsPage() {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'templates' && (
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-sky-600" />
+                  {language === 'es' ? 'Plantillas técnicas' : 'Technical templates'}
+                </CardTitle>
+                <CardDescription>
+                  {language === 'es'
+                    ? 'Reutiliza sets guardados para enviar pruebas más rápido.'
+                    : 'Reuse saved sets to send technical tests faster.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {technicalTemplates.length === 0 ? (
+                  <div className="text-center py-12">
+                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {language === 'es' ? 'Aún no hay plantillas' : 'No templates yet'}
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      {language === 'es'
+                        ? 'Arma una evaluación técnica y guárdala como plantilla desde la vista previa final.'
+                        : 'Build a technical evaluation and save it as a template from the final preview.'}
+                    </p>
+                    <Button onClick={() => setActiveTab('send')} className="bg-sky-600 hover:bg-sky-700">
+                      <Send className="w-4 h-4 mr-2" />
+                      {language === 'es' ? 'Ir a enviar' : 'Go to send'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {technicalTemplates.map(template => (
+                      <div key={template.id} className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sky-950 truncate">{template.name}</p>
+                            <p className="text-sm text-sky-700 truncate">{template.basePositionTitle}</p>
+                          </div>
+                          <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                            {template.questionCount}
+                          </Badge>
+                        </div>
+                        <p className="mt-3 text-sm text-sky-800">
+                          {template.description || (language === 'es' ? 'Sin descripción.' : 'No description.')}
+                        </p>
+                        <div className="mt-4 flex gap-2">
+                          <Button
+                            type="button"
+                            className="bg-sky-600 hover:bg-sky-700"
+                            onClick={() => {
+                              setFormData(prev => ({ ...prev, jobPositionId: template.basePositionId }));
+                              setSelectedTemplateId(template.id);
+                              setActiveTab('send');
+                            }}
+                          >
+                            {language === 'es' ? 'Usar plantilla' : 'Use template'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </CardContent>

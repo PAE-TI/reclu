@@ -29,6 +29,7 @@ import {
   Sparkles,
   Code,
   FileCode,
+  FileText,
   Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -150,6 +151,13 @@ const systemModules = [
         colorClass: 'text-sky-600',
         bgActiveClass: 'bg-sky-100',
       },
+      {
+        translationKey: 'sidebar.modules.technical.templates',
+        href: '/external-technical-evaluations?tab=templates',
+        icon: FileText,
+        colorClass: 'text-cyan-600',
+        bgActiveClass: 'bg-cyan-100',
+      },
     ],
     quickActions: [],
   },
@@ -182,7 +190,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   // Expandir automáticamente el módulo si la ruta actual está dentro de él
   useEffect(() => {
     systemModules.forEach(mod => {
-      const isInModule = mod.items.some(item => pathname === item.href) ||
+      const isInModule = mod.items.some(item => pathname === item.href.split('?')[0]) ||
                         mod.quickActions?.some(action => pathname === action.href);
       if (isInModule && !expandedModules[mod.id]) {
         setExpandedModules(prev => ({ ...prev, [mod.id]: true }));
@@ -273,7 +281,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 return null;
               }
               
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href.split('?')[0];
               const tourId = item.href === '/dashboard' ? 'dashboard' : 
                             item.href === '/analytics' ? 'analytics' : 
                             item.href === '/team' ? 'team' : 

@@ -590,6 +590,7 @@ export const translations = {
     'sidebar.modules.psychometric.guide': 'Guía de Evaluaciones',
     'sidebar.modules.technical.title': 'Pruebas Técnicas',
     'sidebar.modules.technical.evaluations': 'Evaluaciones Técnicas',
+    'sidebar.modules.technical.templates': 'Plantillas',
     
     // Technical Evaluation - External
     'technicalEval.external.title': 'Evaluación Técnica',
@@ -3901,6 +3902,7 @@ export const translations = {
     'sidebar.modules.psychometric.guide': 'Evaluations Guide',
     'sidebar.modules.technical.title': 'Technical Tests',
     'sidebar.modules.technical.evaluations': 'Technical Evaluations',
+    'sidebar.modules.technical.templates': 'Templates',
     
     // Technical Evaluation - External
     'technicalEval.external.title': 'Technical Evaluation',

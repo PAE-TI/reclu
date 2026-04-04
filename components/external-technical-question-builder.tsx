@@ -68,6 +68,7 @@ interface ExternalTechnicalQuestionBuilderProps {
   basePositionId: string;
   language: 'es' | 'en';
   template: TechnicalQuestionTemplateSummary | null;
+  onSaveTemplate: () => void;
   onChange: (payload: BuilderChangePayload) => void;
 }
 
@@ -77,6 +78,7 @@ export function ExternalTechnicalQuestionBuilder({
   basePositionId,
   language,
   template,
+  onSaveTemplate,
   onChange,
 }: ExternalTechnicalQuestionBuilderProps) {
   const [loading, setLoading] = useState(false);
@@ -402,7 +404,7 @@ export function ExternalTechnicalQuestionBuilder({
 
   return (
     <div className="space-y-6">
-      <Card className="border-sky-200 bg-sky-50/60">
+        <Card className="border-sky-200 bg-sky-50/60">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sky-900">
             <Layers3 className="w-5 h-5" />
@@ -607,7 +609,7 @@ export function ExternalTechnicalQuestionBuilder({
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-stretch">
-        <Card className="self-stretch flex flex-col border-slate-200 shadow-sm">
+        <Card className="self-stretch flex flex-col border-slate-200 shadow-sm max-h-[760px] lg:max-h-[calc(100vh-18rem)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Search className="w-4 h-4 text-sky-600" />
@@ -771,7 +773,7 @@ export function ExternalTechnicalQuestionBuilder({
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden self-stretch flex flex-col border-slate-200 shadow-sm">
+        <Card className="overflow-hidden self-stretch flex flex-col border-slate-200 shadow-sm max-h-[760px] lg:max-h-[calc(100vh-18rem)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Layers3 className="w-4 h-4 text-indigo-600" />
@@ -932,6 +934,24 @@ export function ExternalTechnicalQuestionBuilder({
                   : `You need exactly ${QUESTION_TARGET} questions before sending.`}
               </div>
             )}
+
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3">
+              <div className="text-sm text-sky-800">
+                {language === 'es'
+                  ? 'Puedes guardar el set actual como plantilla para reutilizarlo después.'
+                  : 'You can save the current set as a template to reuse later.'}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="bg-white"
+                onClick={onSaveTemplate}
+                disabled={!selectedQuestions.length || selectedQuestions.length !== QUESTION_TARGET}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                {language === 'es' ? 'Guardar plantilla' : 'Save template'}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
