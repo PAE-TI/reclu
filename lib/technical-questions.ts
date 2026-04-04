@@ -18,6 +18,10 @@ export interface TechnicalQuestionTemplate {
 export function getQuestionsForPosition(positionId: string): TechnicalQuestionTemplate[] {
   const position = JOB_POSITIONS.find(p => p.id === positionId);
   if (!position) return getGenericQuestions();
+
+  if (position.id === 'data_analyst') {
+    return getZohoDataAnalystQuestions();
+  }
   
   // Check if we have specific questions for this category
   const categoryQuestions = CATEGORY_QUESTIONS[position.category];
@@ -233,6 +237,380 @@ function getGenericQuestions(): TechnicalQuestionTemplate[] {
       category: 'Gestión de Proyectos',
     },
   ];
+}
+
+type ZohoAnalystTopic = {
+  category: string;
+  tool: string;
+  focus: string;
+  goal: string;
+  problem: string;
+  outcome: string;
+  metric: string;
+  correctPractice: string;
+  wrongPractices: [string, string, string];
+};
+
+const ZOHO_ANALYST_PROMPTS = [
+  (topic: ZohoAnalystTopic) => `En ${topic.tool}, ¿qué práctica es más correcta para ${topic.focus}?`,
+  (topic: ZohoAnalystTopic) => `Si el negocio necesita ${topic.goal}, ¿qué deberías priorizar en ${topic.tool}?`,
+  (topic: ZohoAnalystTopic) => `Cuando aparece el problema de ${topic.problem}, ¿cuál es la respuesta más profesional?`,
+  (topic: ZohoAnalystTopic) => `Para asegurar ${topic.outcome}, ¿qué configuración ofrece mejor gobernanza de datos?`,
+  (topic: ZohoAnalystTopic) => `¿Qué acción protege mejor ${topic.metric} en ${topic.tool} para un analista de datos?`,
+] as const;
+
+const ZOHO_ANALYST_DIFFICULTIES: TechnicalQuestionTemplate['difficulty'][] = [
+  'EASY',
+  'MEDIUM',
+  'HARD',
+  'HARD',
+  'HARD',
+];
+
+const ZOHO_ANALYST_TOPICS: ZohoAnalystTopic[] = [
+  {
+    category: 'Zoho CRM - Automatización',
+    tool: 'Zoho CRM',
+    focus: 'automatizar la asignación de leads por territorio y capacidad del equipo',
+    goal: 'reducir tiempos de respuesta sin perder trazabilidad comercial',
+    problem: 'los leads llegan duplicados desde varios canales',
+    outcome: 'mantener una sola fuente de verdad para ventas',
+    metric: 'la conversión y el SLA de primer contacto',
+    correctPractice: 'Configurar reglas de asignación, deduplicación y auditoría de cambios.',
+    wrongPractices: [
+      'Importar los leads en hojas separadas por vendedor.',
+      'Desactivar los workflows para evitar conflictos.',
+      'Reenviar manualmente cada lead por correo.',
+    ],
+  },
+  {
+    category: 'Zoho CRM - Blueprints',
+    tool: 'Zoho CRM',
+    focus: 'estandarizar etapas críticas con Blueprints',
+    goal: 'evitar saltos de etapa y capturas incompletas',
+    problem: 'cada vendedor usa un proceso distinto para el mismo flujo',
+    outcome: 'forzar controles de calidad en puntos clave del proceso',
+    metric: 'la consistencia del pipeline y la calidad de datos',
+    correctPractice: 'Modelar Blueprints con validaciones y transiciones obligatorias.',
+    wrongPractices: [
+      'Permitir que cada usuario cambie las etapas libremente.',
+      'Eliminar campos obligatorios para acelerar el registro.',
+      'Copiar el proceso en notas internas sin reglas.',
+    ],
+  },
+  {
+    category: 'Zoho CRM - Reporting',
+    tool: 'Zoho CRM',
+    focus: 'construir reportes y dashboards ejecutivos',
+    goal: 'resumir el estado comercial en una sola vista',
+    problem: 'la gerencia recibe datos dispersos y versiones distintas',
+    outcome: 'mostrar KPIs confiables y comparables',
+    metric: 'la exactitud del forecast y del embudo',
+    correctPractice: 'Definir métricas homogéneas, filtros estables y una capa de reporting validada.',
+    wrongPractices: [
+      'Usar métricas distintas para cada equipo.',
+      'Exportar manualmente hojas sin control de versión.',
+      'Ocultar los filtros para que nadie revise la lógica.',
+    ],
+  },
+  {
+    category: 'Zoho Analytics - Modelado de datos',
+    tool: 'Zoho Analytics',
+    focus: 'modelar fuentes con relaciones correctas',
+    goal: 'evitar duplicidades y sobreconteos en indicadores',
+    problem: 'las tablas tienen granularidades distintas y generan métricas inconsistentes',
+    outcome: 'construir un modelo confiable para análisis ejecutivo',
+    metric: 'la unicidad de registros y la precisión de agregados',
+    correctPractice: 'Definir claves, granularidad y joins antes de crear visualizaciones.',
+    wrongPractices: [
+      'Unir todo por nombre de contacto aunque no sea único.',
+      'Agregar tablas sin revisar cardinalidad.',
+      'Duplicar columnas para simplificar el dashboard.',
+    ],
+  },
+  {
+    category: 'Zoho Analytics - KPIs',
+    tool: 'Zoho Analytics',
+    focus: 'medir KPIs de ventas con lógica de negocio',
+    goal: 'comparar rendimiento por periodo y segmento',
+    problem: 'los dashboards muestran números que no coinciden con CRM',
+    outcome: 'alinear definiciones entre operación y dirección',
+    metric: 'la confianza en el tablero de gestión',
+    correctPractice: 'Documentar fórmulas, filtros y reglas de negocio para cada KPI.',
+    wrongPractices: [
+      'Cambiar la definición del KPI según la audiencia.',
+      'Sumar campos sin validar el tipo de dato.',
+      'Ocultar la fórmula para que el equipo no la cuestione.',
+    ],
+  },
+  {
+    category: 'Zoho DataPrep - Calidad de datos',
+    tool: 'Zoho DataPrep',
+    focus: 'limpiar, estandarizar y enriquecer datos',
+    goal: 'entregar datasets listos para análisis',
+    problem: 'hay formatos diferentes para país, teléfono y correo',
+    outcome: 'publicar una capa depurada y reutilizable',
+    metric: 'la tasa de error y el porcentaje de registros válidos',
+    correctPractice: 'Aplicar reglas de normalización, validación y enriquecimiento antes de analizar.',
+    wrongPractices: [
+      'Resolver cada error manualmente en el dashboard.',
+      'Eliminar filas problemáticas sin revisar impacto.',
+      'Mantener datos duplicados para no perder información.',
+    ],
+  },
+  {
+    category: 'Zoho Flow - Integraciones',
+    tool: 'Zoho Flow',
+    focus: 'orquestar integraciones entre aplicaciones',
+    goal: 'sincronizar eventos sin intervención manual',
+    problem: 'los datos llegan tarde o con fallas entre sistemas',
+    outcome: 'automatizar flujos confiables con monitoreo',
+    metric: 'la latencia de sincronización y la tasa de error',
+    correctPractice: 'Diseñar triggers, validaciones y manejo de errores con alertas.',
+    wrongPractices: [
+      'Confiar en copiar y pegar entre sistemas.',
+      'Ignorar los registros de error del flujo.',
+      'Duplicar el proceso en varios flujos sin control.',
+    ],
+  },
+  {
+    category: 'Zoho Books - Control financiero',
+    tool: 'Zoho Books',
+    focus: 'conciliar ventas, cobros y facturación',
+    goal: 'mantener consistencia entre ingresos y cartera',
+    problem: 'hay diferencias entre facturas, cobros y reportes',
+    outcome: 'tener visibilidad financiera confiable para análisis',
+    metric: 'la conciliación y el aging de cartera',
+    correctPractice: 'Cruzar estados de factura, cobro y asiento con criterios de conciliación.',
+    wrongPractices: [
+      'Tomar solo el total facturado como ingreso real.',
+      'Ignorar notas crédito y ajustes.',
+      'Cerrar el periodo sin revisar diferencias.',
+    ],
+  },
+  {
+    category: 'Zoho Desk - Servicio',
+    tool: 'Zoho Desk',
+    focus: 'medir desempeño del servicio al cliente',
+    goal: 'cumplir SLAs y reducir tiempos de resolución',
+    problem: 'los tickets se acumulan sin priorización adecuada',
+    outcome: 'ordenar la operación según criticidad y SLA',
+    metric: 'el tiempo de primera respuesta y resolución',
+    correctPractice: 'Usar colas, SLA, categorías y reglas de escalamiento.',
+    wrongPractices: [
+      'Atender tickets en el orden en que llegan sin prioridad.',
+      'Resolver solo los casos más fáciles.',
+      'Eliminar la clasificación de tickets para agilizar.',
+    ],
+  },
+  {
+    category: 'Zoho Campaigns - Marketing',
+    tool: 'Zoho Campaigns',
+    focus: 'segmentar audiencias y medir campañas',
+    goal: 'evaluar el impacto de campañas sobre leads y oportunidades',
+    problem: 'las aperturas no se traducen en conversiones claras',
+    outcome: 'atribuir correctamente el rendimiento de marketing',
+    metric: 'la conversión por segmento y canal',
+    correctPractice: 'Definir segmentos, UTMs y atribución consistente antes de comparar resultados.',
+    wrongPractices: [
+      'Medir solo clics sin revisar conversiones.',
+      'Enviar la misma campaña a toda la base.',
+      'Cambiar los segmentos después de enviada la campaña.',
+    ],
+  },
+  {
+    category: 'Zoho SalesIQ - Conversión',
+    tool: 'Zoho SalesIQ',
+    focus: 'capturar intención desde chat y visitas',
+    goal: 'convertir tráfico digital en oportunidades calificadas',
+    problem: 'no se sabe qué chats aportan valor real al pipeline',
+    outcome: 'medir origen, intención y conversión de cada interacción',
+    metric: 'la tasa de conversión del chat a lead',
+    correctPractice: 'Etiquetar eventos, enrutar chats y conectar la analítica con el CRM.',
+    wrongPractices: [
+      'Tratar todos los chats como oportunidades iguales.',
+      'Medir solo el volumen de mensajes.',
+      'Cerrar conversaciones sin registrar contexto.',
+    ],
+  },
+  {
+    category: 'Zoho Creator - Aplicaciones',
+    tool: 'Zoho Creator',
+    focus: 'diseñar formularios y apps con control de datos',
+    goal: 'recoger información estructurada para análisis',
+    problem: 'la captura libre genera campos incompletos',
+    outcome: 'tener validaciones y trazabilidad en cada registro',
+    metric: 'la completitud y calidad de captura',
+    correctPractice: 'Usar validaciones, catálogos y flujos de aprobación en la app.',
+    wrongPractices: [
+      'Permitir cualquier texto en campos críticos.',
+      'Duplicar formularios sin reglas.',
+      'Procesar los datos luego, fuera de la app, sin control.',
+    ],
+  },
+  {
+    category: 'Zoho CRM - API e integraciones',
+    tool: 'Zoho CRM',
+    focus: 'integrar APIs y webhooks con otros sistemas',
+    goal: 'mantener sincronización sin perder integridad',
+    problem: 'los datos cambian fuera del CRM y no quedan auditados',
+    outcome: 'trazar cada cambio con consistencia entre plataformas',
+    metric: 'la integridad del dato y la latencia de sincronización',
+    correctPractice: 'Usar APIs, webhooks y logs para sincronizar y auditar cambios.',
+    wrongPractices: [
+      'Actualizar solo cuando alguien lo note manualmente.',
+      'Hacer integraciones sin manejo de errores.',
+      'Sobrescribir campos críticos sin validación.',
+    ],
+  },
+  {
+    category: 'Zoho CRM - Forecast y pipeline',
+    tool: 'Zoho CRM',
+    focus: 'analizar forecast y salud del pipeline',
+    goal: 'detectar brechas de cobertura por etapa',
+    problem: 'la proyección comercial no refleja la realidad del embudo',
+    outcome: 'medir cobertura, probabilidad y riesgo de cierre',
+    metric: 'la precisión del forecast y la cobertura del pipeline',
+    correctPractice: 'Revisar probabilidades, aging y calidad de oportunidad por etapa.',
+    wrongPractices: [
+      'Tomar el valor total del pipeline como venta segura.',
+      'Asignar el mismo peso a todas las oportunidades.',
+      'Cambiar la fecha de cierre para mejorar el forecast.',
+    ],
+  },
+  {
+    category: 'Zoho CRM - Territorios y permisos',
+    tool: 'Zoho CRM',
+    focus: 'configurar territorios, perfiles y acceso',
+    goal: 'proteger la información sin frenar el trabajo',
+    problem: 'hay exceso o falta de visibilidad sobre cuentas y oportunidades',
+    outcome: 'equilibrar seguridad, gobierno y productividad',
+    metric: 'el acceso correcto según rol y territorio',
+    correctPractice: 'Definir perfiles, roles y reglas de compartición basadas en necesidad real.',
+    wrongPractices: [
+      'Dar acceso total a todos para evitar tickets.',
+      'Bloquear todo y compartir solo por correo.',
+      'Crear usuarios genéricos para todos los equipos.',
+    ],
+  },
+  {
+    category: 'Zoho Sign - Flujos documentales',
+    tool: 'Zoho Sign',
+    focus: 'asegurar la trazabilidad documental',
+    goal: 'controlar aprobaciones y firma sin perder evidencia',
+    problem: 'los documentos aprobados no quedan ligados al ciclo comercial',
+    outcome: 'tener historial auditable de versiones y firmas',
+    metric: 'el tiempo de aprobación y la trazabilidad del documento',
+    correctPractice: 'Vincular la firma con un flujo de aprobación y almacenamiento controlado.',
+    wrongPractices: [
+      'Enviar PDFs por correo sin control de versión.',
+      'Reusar el mismo archivo para múltiples contratos.',
+      'Guardar solo una captura de pantalla del acuerdo.',
+    ],
+  },
+  {
+    category: 'Zoho Inventory - Operación',
+    tool: 'Zoho Inventory',
+    focus: 'reconciliar inventario, ventas y facturación',
+    goal: 'entender la relación entre stock y demanda',
+    problem: 'los saldos físicos no coinciden con el sistema',
+    outcome: 'tener datos confiables para abastecimiento',
+    metric: 'la rotación y el quiebre de stock',
+    correctPractice: 'Cruzar movimientos, ajustes y ventas para explicar diferencias de inventario.',
+    wrongPractices: [
+      'Tomar el stock inicial como verdad permanente.',
+      'Ignorar devoluciones y ajustes.',
+      'Actualizar inventario solo al final del mes.',
+    ],
+  },
+  {
+    category: 'Zoho Projects - Operación',
+    tool: 'Zoho Projects',
+    focus: 'analizar avance operativo y productividad',
+    goal: 'medir hitos, dependencias y tiempos de entrega',
+    problem: 'los reportes no muestran desvíos a tiempo',
+    outcome: 'monitorear trabajo real versus plan',
+    metric: 'el cumplimiento de hitos y el ciclo de entrega',
+    correctPractice: 'Definir hitos, dependencias y reportes de avance con actualización frecuente.',
+    wrongPractices: [
+      'Revisar solo al final del proyecto.',
+      'Medir avance únicamente por horas cargadas.',
+      'Mover las fechas para aparentar cumplimiento.',
+    ],
+  },
+  {
+    category: 'Zoho WorkDrive - Gobierno de información',
+    tool: 'Zoho WorkDrive',
+    focus: 'controlar versiones y acceso a archivos críticos',
+    goal: 'evitar duplicidad de documentos y fuga de información',
+    problem: 'cada equipo mantiene su propia copia del mismo archivo',
+    outcome: 'centralizar fuentes y versiones aprobadas',
+    metric: 'la trazabilidad documental y el control de cambios',
+    correctPractice: 'Usar permisos, carpetas compartidas y versiones controladas.',
+    wrongPractices: [
+      'Descargar todo localmente y compartir por chat.',
+      'Sobrescribir archivos sin historial.',
+      'Dar permisos abiertos a toda la organización.',
+    ],
+  },
+  {
+    category: 'Zoho Ecosystem - Master data',
+    tool: 'Zoho CRM + Analytics + Flow',
+    focus: 'alinear identificadores maestros entre aplicaciones',
+    goal: 'garantizar una vista única del cliente',
+    problem: 'cada herramienta guarda el registro con claves distintas',
+    outcome: 'construir un modelo confiable de datos maestro',
+    metric: 'la consistencia de IDs y la calidad del join',
+    correctPractice: 'Definir clave maestra, reglas de sincronización y validación entre herramientas.',
+    wrongPractices: [
+      'Usar nombres libres como identificador único.',
+      'Permitir que cada sistema cree su propia clave sin mapeo.',
+      'Resolver las diferencias solo en reportes manuales.',
+    ],
+  },
+];
+
+function rotateOptions(
+  correct: string,
+  wrongs: [string, string, string],
+  rotation: number
+): { optionA: string; optionB: string; optionC: string; optionD: string; correctAnswer: 'A' | 'B' | 'C' | 'D' } {
+  const options = [correct, ...wrongs];
+  const normalized = rotation % options.length;
+  const rotated = [...options.slice(normalized), ...options.slice(0, normalized)];
+  const correctIndex = rotated.indexOf(correct);
+  return {
+    optionA: rotated[0],
+    optionB: rotated[1],
+    optionC: rotated[2],
+    optionD: rotated[3],
+    correctAnswer: ['A', 'B', 'C', 'D'][correctIndex] as 'A' | 'B' | 'C' | 'D',
+  };
+}
+
+export function getZohoDataAnalystQuestions(): TechnicalQuestionTemplate[] {
+  return ZOHO_ANALYST_TOPICS.flatMap((topic, topicIndex) =>
+    ZOHO_ANALYST_PROMPTS.map((promptFn, variantIndex) => {
+      const difficulty = ZOHO_ANALYST_DIFFICULTIES[variantIndex];
+      const prompt = promptFn(topic);
+      const { optionA, optionB, optionC, optionD, correctAnswer } = rotateOptions(
+        topic.correctPractice,
+        topic.wrongPractices,
+        topicIndex + variantIndex
+      );
+
+      return {
+        questionText: prompt,
+        optionA,
+        optionB,
+        optionC,
+        optionD,
+        correctAnswer,
+        difficulty,
+        category: topic.category,
+      };
+    })
+  );
 }
 
 // Questions by job category

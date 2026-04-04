@@ -1,4 +1,5 @@
 import { JOB_POSITIONS, JobPosition, JOB_CATEGORIES } from './job-positions';
+import { getZohoDataAnalystQuestions } from './technical-questions';
 
 export interface GeneratedQuestion {
   questionText: string;
@@ -27,7 +28,63 @@ export async function generateQuestionsForPosition(
     throw new Error(`Job position not found: ${jobPositionId}`);
   }
 
+  if (position.id === 'data_analyst') {
+    return generateZohoDataAnalystQuestions(count);
+  }
+
   return generateFallbackQuestions(position, count);
+}
+
+function generateZohoDataAnalystQuestions(count: number): GeneratedQuestion[] {
+  const baseQuestions = getZohoDataAnalystQuestions();
+  const questions = baseQuestions.slice(0, count).map(q => ({
+    questionText: q.questionText,
+    questionTextEn: q.questionText,
+    optionA: q.optionA,
+    optionB: q.optionB,
+    optionC: q.optionC,
+    optionD: q.optionD,
+    optionAEn: q.optionA,
+    optionBEn: q.optionB,
+    optionCEn: q.optionC,
+    optionDEn: q.optionD,
+    correctAnswer: q.correctAnswer,
+    difficulty: q.difficulty,
+    category: q.category,
+    categoryEn: q.category,
+  }));
+
+  if (questions.length === count) {
+    return questions;
+  }
+
+  const fallback = baseQuestions.map(q => ({
+    questionText: q.questionText,
+    questionTextEn: q.questionText,
+    optionA: q.optionA,
+    optionB: q.optionB,
+    optionC: q.optionC,
+    optionD: q.optionD,
+    optionAEn: q.optionA,
+    optionBEn: q.optionB,
+    optionCEn: q.optionC,
+    optionDEn: q.optionD,
+    correctAnswer: q.correctAnswer,
+    difficulty: q.difficulty,
+    category: q.category,
+    categoryEn: q.category,
+  }));
+
+  while (questions.length < count) {
+    const next = fallback[questions.length % fallback.length];
+    questions.push({
+      ...next,
+      questionText: `${next.questionText} (variante ${questions.length + 1})`,
+      questionTextEn: `${next.questionTextEn} (variant ${questions.length + 1})`,
+    });
+  }
+
+  return questions;
 }
 
 function generateFallbackQuestions(position: JobPosition, count: number): GeneratedQuestion[] {

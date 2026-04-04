@@ -160,11 +160,12 @@ export async function GET(
       try {
         const generatedQuestions = await generateQuestionsForPosition(
           evaluation.jobPositionId,
-          20
+          evaluation.jobPositionId === 'data_analyst' ? 100 : 20
         );
 
         // Delete old questions if regenerating
-        if (questions.length > 0 && questions.length < 20) {
+        const targetCount = evaluation.jobPositionId === 'data_analyst' ? 100 : 20;
+        if (questions.length > 0 && questions.length < targetCount) {
           await prisma.technicalQuestion.deleteMany({
             where: { jobPositionId: evaluation.jobPositionId },
           });
