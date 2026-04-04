@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -209,6 +209,17 @@ export default function ExternalTechnicalEvaluationsPage() {
       setSubmitting(false);
     }
   };
+
+  const handleQuestionBuilderChange = useCallback(({ questionIds, questionSetConfig: config, selectedQuestions: previewQuestions, ready }: {
+    questionIds: string[];
+    questionSetConfig: QuestionSetConfig;
+    selectedQuestions: QuestionBankQuestion[];
+    ready: boolean;
+  }) => {
+    setSelectedQuestions(previewQuestions);
+    setQuestionSetConfig(config);
+    setQuestionsReady(ready && questionIds.length === 20);
+  }, []);
 
   const copyInvitationLink = async (token: string) => {
     const link = `${window.location.origin}/external-technical-evaluation/${token}`;
@@ -574,11 +585,7 @@ export default function ExternalTechnicalEvaluationsPage() {
                         <ExternalTechnicalQuestionBuilder
                           basePositionId={formData.jobPositionId}
                           language={language === 'es' ? 'es' : 'en'}
-                          onChange={({ questionIds, questionSetConfig: config, selectedQuestions: previewQuestions, ready }) => {
-                            setSelectedQuestions(previewQuestions);
-                            setQuestionSetConfig(config);
-                            setQuestionsReady(ready && questionIds.length === 20);
-                          }}
+                          onChange={handleQuestionBuilderChange}
                         />
                       )}
 
