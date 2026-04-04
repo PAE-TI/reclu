@@ -81,6 +81,8 @@ import {
   Check,
   X,
   FileCode,
+  Copy,
+  Send,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -106,6 +108,14 @@ interface Candidate {
   evaluationProgress?: Record<string, EvaluationStatus>;
   completedEvaluations?: number;
   totalEvaluations?: number;
+  discToken?: string | null;
+  drivingForcesToken?: string | null;
+  eqToken?: string | null;
+  dnaToken?: string | null;
+  acumenToken?: string | null;
+  valuesToken?: string | null;
+  stressToken?: string | null;
+  technicalToken?: string | null;
 }
 
 interface Campaign {
@@ -218,6 +228,7 @@ export default function CampaignDetailPage() {
   const [archivingCampaign, setArchivingCampaign] = useState(false);
   const [selectedHiredCandidateId, setSelectedHiredCandidateId] = useState<string>('none');
   const [completionNotes, setCompletionNotes] = useState('');
+  const [resendingEval, setResendingEval] = useState<string | null>(null);
 
   // State for searching existing evaluations
   const [addMode, setAddMode] = useState<'manual' | 'existing'>('manual');
@@ -583,6 +594,64 @@ export default function CampaignDetailPage() {
       }
     } catch {
       toast.error('Error al restaurar la campaña');
+    }
+  };
+
+  const getEvalUrl = (type: string, token: string) => {
+    const pathMap: Record<string, string> = {
+      DISC: 'external-evaluation',
+      DRIVING_FORCES: 'external-driving-forces-evaluation',
+      EQ: 'external-eq-evaluation',
+      DNA: 'external-dna-evaluation',
+      ACUMEN: 'external-acumen-evaluation',
+      VALUES: 'external-values-evaluation',
+      STRESS: 'external-stress-evaluation',
+      TECHNICAL: 'external-technical-evaluation',
+    };
+    return `${window.location.origin}/${pathMap[type] || 'external-evaluation'}/${token}`;
+  };
+
+  const getTokenForType = (candidate: Candidate, type: string): string | null => {
+    const map: Record<string, string | null | undefined> = {
+      DISC: candidate.discToken,
+      DRIVING_FORCES: candidate.drivingForcesToken,
+      EQ: candidate.eqToken,
+      DNA: candidate.dnaToken,
+      ACUMEN: candidate.acumenToken,
+      VALUES: candidate.valuesToken,
+      STRESS: candidate.stressToken,
+      TECHNICAL: candidate.technicalToken,
+    };
+    return map[type] ?? null;
+  };
+
+  const handleCopyEvalLink = async (candidate: Candidate, type: string) => {
+    const token = getTokenForType(candidate, type);
+    if (!token) return;
+    await navigator.clipboard.writeText(getEvalUrl(type, token));
+    toast.success('Enlace copiado');
+  };
+
+  const handleResendEval = async (candidate: Candidate, type: string) => {
+    const token = getTokenForType(candidate, type);
+    if (!token) return;
+    const key = `${candidate.id}-${type}`;
+    setResendingEval(key);
+    try {
+      const response = await fetch('/api/external-evaluations/resend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, type }),
+      });
+      if (response.ok) {
+        toast.success(`Invitación reenviada a ${candidate.email}`);
+      } else {
+        toast.error('Error al reenviar la invitación');
+      }
+    } catch {
+      toast.error('Error al reenviar la invitación');
+    } finally {
+      setResendingEval(null);
     }
   };
 
@@ -1687,6 +1756,32 @@ export default function CampaignDetailPage() {
                     {/* Expanded Analysis */}
                     {isExpanded && analysis && (
                       <div className="border-t bg-gray-50 p-4 space-y-4">
+                        {/* Evaluation status summary */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Evaluaciones</p>
+                          <div className="flex flex-wrap gap-2">
+                            {campaign.evaluationTypes.map((evalType) => {
+                              const evalStatus = candidate.evaluationProgress?.[evalType];
+                              const isCompleted = evalStatus?.status === 'COMPLETED';
+                              const token = getTokenForType(candidate, evalType);
+                              const evalLabels: Record<string, string> = {
+                                DISC: 'DISC', DRIVING_FORCES: 'DF', EQ: 'EQ',
+                                DNA: 'DNA', ACUMEN: 'ACI', VALUES: 'Val', STRESS: 'Est', TECHNICAL: 'Téc',
+                              };
+                              return (
+                                <div key={evalType} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium border ${isCompleted ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-gray-200 text-gray-500'}`}>
+                                  {isCompleted ? <CheckCircle className="w-3 h-3" /> : <div className="w-3 h-3 rounded-full border border-gray-300" />}
+                                  {evalLabels[evalType] || evalType}
+                                  {token && (
+                                    <button onClick={() => handleCopyEvalLink(candidate, evalType)} className="ml-1 opacity-60 hover:opacity-100" title="Copiar enlace">
+                                      <Copy className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
                         {/* Dimension Scores */}
                         <div>
                           <h4 className="text-sm font-medium text-gray-700 mb-2">{t('campaigns.detail.ranking')}</h4>
@@ -1763,13 +1858,82 @@ export default function CampaignDetailPage() {
 
                     {/* Expanded but no analysis */}
                     {isExpanded && !analysis && (
-                      <div className="border-t bg-gray-50 p-4 text-center">
-                        <p className="text-gray-500 text-sm">
-                          {candidate.status === 'COMPLETED' 
-                            ? t('campaigns.detail.noCandidatesDesc')
-                            : t('campaigns.detail.noCandidatesDesc')
-                          }
-                        </p>
+                      <div className="border-t bg-gray-50 p-4 space-y-3">
+                        {/* Evaluation status per type */}
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado de evaluaciones</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {campaign.evaluationTypes.map((evalType) => {
+                            const evalStatus = candidate.evaluationProgress?.[evalType];
+                            const isCompleted = evalStatus?.status === 'COMPLETED';
+                            const token = getTokenForType(candidate, evalType);
+                            const key = `${candidate.id}-${evalType}`;
+                            const evalLabels: Record<string, string> = {
+                              DISC: 'DISC', DRIVING_FORCES: 'Driving Forces', EQ: 'Inteligencia Emocional',
+                              DNA: 'DNA', ACUMEN: 'Acumen', VALUES: 'Valores', STRESS: 'Estrés', TECHNICAL: 'Técnica',
+                            };
+                            return (
+                              <div key={evalType} className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border ${isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200'}`}>
+                                <div className="flex items-center gap-2 min-w-0">
+                                  {isCompleted
+                                    ? <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                                    : <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
+                                  }
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-medium text-gray-800 truncate">{evalLabels[evalType] || evalType}</p>
+                                    {isCompleted && evalStatus?.completedAt && (
+                                      <p className="text-xs text-emerald-600">{new Date(evalStatus.completedAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</p>
+                                    )}
+                                    {!isCompleted && <p className="text-xs text-gray-400">Pendiente</p>}
+                                  </div>
+                                </div>
+                                {token && (
+                                  <div className="flex items-center gap-1 flex-shrink-0">
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-7 px-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                      onClick={() => handleCopyEvalLink(candidate, evalType)}
+                                      title="Copiar enlace"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                    </Button>
+                                    {!isCompleted && !isLocked && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-7 px-2 text-amber-500 hover:text-amber-700 hover:bg-amber-50"
+                                        onClick={() => handleResendEval(candidate, evalType)}
+                                        disabled={resendingEval === key}
+                                        title="Reenviar invitación"
+                                      >
+                                        {resendingEval === key
+                                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                          : <Send className="w-3.5 h-3.5" />
+                                        }
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {candidate.status !== 'COMPLETED' && !isLocked && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full text-xs text-amber-700 border-amber-200 hover:bg-amber-50"
+                            onClick={async () => {
+                              const pending = campaign.evaluationTypes.filter(t => candidate.evaluationProgress?.[t]?.status !== 'COMPLETED');
+                              for (const evalType of pending) {
+                                await handleResendEval(candidate, evalType);
+                              }
+                            }}
+                          >
+                            <Send className="w-3.5 h-3.5 mr-1.5" />
+                            Reenviar todas las pendientes
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>
