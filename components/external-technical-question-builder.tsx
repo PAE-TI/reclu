@@ -277,106 +277,136 @@ export function ExternalTechnicalQuestionBuilder({
           </CardTitle>
           <CardDescription className="text-sky-700">
             {language === 'es'
-              ? 'Parte de un set base y personaliza cada pregunta antes de enviar la evaluación.'
-              : 'Start from a base set and personalize each question before sending the evaluation.'}
+              ? 'Busca, filtra y reemplaza preguntas para construir un set técnico más preciso antes de enviar.'
+              : 'Search, filter, and replace questions to build a more precise technical set before sending.'}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-4">
-            <div className="space-y-2 md:col-span-2">
-              <Label>{language === 'es' ? 'Buscar preguntas' : 'Search questions'}</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder={language === 'es' ? 'Tema, cargo, palabra clave...' : 'Topic, role, keyword...'}
-                  className="pl-10"
-                />
+        <CardContent className="space-y-5">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,0.9fr)]">
+            <div className="rounded-3xl border border-sky-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
+                    {language === 'es' ? 'Buscar preguntas' : 'Search questions'}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {language === 'es'
+                      ? 'Filtra por texto, tema, cargo origen y nivel para encontrar la pregunta exacta.'
+                      : 'Filter by text, theme, source role, and difficulty to find the exact question.'}
+                  </p>
+                </div>
+                <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                  {language === 'es' ? 'Banco activo' : 'Active bank'}
+                </Badge>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="space-y-2 md:col-span-2 xl:col-span-2">
+                  <Label>{language === 'es' ? 'Buscar preguntas' : 'Search questions'}</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      value={search}
+                      onChange={e => setSearch(e.target.value)}
+                      placeholder={language === 'es' ? 'zoho, api, RAG, ventas...' : 'zoho, api, RAG, sales...'}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === 'es' ? 'Tema' : 'Theme'}</Label>
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={language === 'es' ? 'Todos' : 'All'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{language === 'es' ? 'Todos' : 'All'}</SelectItem>
+                      {categories.map(item => (
+                        <SelectItem key={item.name} value={item.name}>
+                          {item.name} ({item.count})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === 'es' ? 'Cargo origen' : 'Source role'}</Label>
+                  <Select value={sourcePositionId} onValueChange={setSourcePositionId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={language === 'es' ? 'Cargo' : 'Role'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{language === 'es' ? 'Todos los cargos' : 'All roles'}</SelectItem>
+                      {JOB_POSITIONS.map(position => (
+                        <SelectItem key={position.id} value={position.id}>
+                          {language === 'es' ? position.title : position.titleEn || position.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === 'es' ? 'Nivel' : 'Difficulty'}</Label>
+                  <Select value={difficulty} onValueChange={(value: Difficulty) => setDifficulty(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{language === 'es' ? 'Todos' : 'All'}</SelectItem>
+                      <SelectItem value="EASY">{language === 'es' ? 'Fácil' : 'Easy'}</SelectItem>
+                      <SelectItem value="MEDIUM">{language === 'es' ? 'Media' : 'Medium'}</SelectItem>
+                      <SelectItem value="HARD">{language === 'es' ? 'Difícil' : 'Hard'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Button type="button" onClick={searchBank} disabled={loading} className="bg-sky-600 hover:bg-sky-700">
+                  {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
+                  {language === 'es' ? 'Buscar en banco' : 'Search bank'}
+                </Button>
+                <Badge className="bg-slate-50 text-slate-700 border-slate-200 px-3 py-2">
+                  <FileText className="w-3.5 h-3.5 mr-1" />
+                  {language === 'es' ? `${selectedCount}/${QUESTION_TARGET} seleccionadas` : `${selectedCount}/${QUESTION_TARGET} selected`}
+                </Badge>
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 px-3 py-2">
+                  {language === 'es' ? `Fácil: ${difficultyCounts.EASY}` : `Easy: ${difficultyCounts.EASY}`}
+                </Badge>
+                <Badge className="bg-amber-50 text-amber-700 border-amber-200 px-3 py-2">
+                  {language === 'es' ? `Media: ${difficultyCounts.MEDIUM}` : `Medium: ${difficultyCounts.MEDIUM}`}
+                </Badge>
+                <Badge className="bg-red-50 text-red-700 border-red-200 px-3 py-2">
+                  {language === 'es' ? `Difícil: ${difficultyCounts.HARD}` : `Hard: ${difficultyCounts.HARD}`}
+                </Badge>
+                {replaceIndex !== null && (
+                  <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
+                    {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
+                  </Badge>
+                )}
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>{language === 'es' ? 'Tema' : 'Theme'}</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder={language === 'es' ? 'Todos' : 'All'} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{language === 'es' ? 'Todos' : 'All'}</SelectItem>
-                  {categories.map(item => (
-                    <SelectItem key={item.name} value={item.name}>
-                      {item.name} ({item.count})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{language === 'es' ? 'Cargo origen' : 'Source role'}</Label>
-              <Select value={sourcePositionId} onValueChange={setSourcePositionId}>
-                <SelectTrigger>
-                  <SelectValue placeholder={language === 'es' ? 'Cargo' : 'Role'} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{language === 'es' ? 'Todos los cargos' : 'All roles'}</SelectItem>
-                  {JOB_POSITIONS.map(position => (
-                    <SelectItem key={position.id} value={position.id}>
-                      {language === 'es' ? position.title : position.titleEn || position.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{language === 'es' ? 'Nivel' : 'Difficulty'}</Label>
-              <Select value={difficulty} onValueChange={(value: Difficulty) => setDifficulty(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{language === 'es' ? 'Todos' : 'All'}</SelectItem>
-                  <SelectItem value="EASY">{language === 'es' ? 'Fácil' : 'Easy'}</SelectItem>
-                  <SelectItem value="MEDIUM">{language === 'es' ? 'Media' : 'Medium'}</SelectItem>
-                  <SelectItem value="HARD">{language === 'es' ? 'Difícil' : 'Hard'}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={searchBank} disabled={loading} className="bg-sky-600 hover:bg-sky-700">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
-              {language === 'es' ? 'Buscar en banco' : 'Search bank'}
-            </Button>
-            <Button type="button" variant="outline" onClick={loadDefaultSet} disabled={loading}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              {language === 'es' ? `Recargar set base: ${baseTitle}` : `Reload base set: ${baseTitle}`}
-            </Button>
-            <Button type="button" variant="outline" onClick={clearSelection} disabled={loading}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              {language === 'es' ? 'Vaciar selección' : 'Clear selection'}
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge className="bg-white border-sky-200 text-sky-700">
-              <FileText className="w-3.5 h-3.5 mr-1" />
-              {language === 'es' ? `${selectedCount}/${QUESTION_TARGET} seleccionadas` : `${selectedCount}/${QUESTION_TARGET} selected`}
-            </Badge>
-            <Badge className="bg-white border-emerald-200 text-emerald-700">
-              {language === 'es' ? `Fácil: ${difficultyCounts.EASY}` : `Easy: ${difficultyCounts.EASY}`}
-            </Badge>
-            <Badge className="bg-white border-amber-200 text-amber-700">
-              {language === 'es' ? `Media: ${difficultyCounts.MEDIUM}` : `Medium: ${difficultyCounts.MEDIUM}`}
-            </Badge>
-            <Badge className="bg-white border-red-200 text-red-700">
-              {language === 'es' ? `Difícil: ${difficultyCounts.HARD}` : `Hard: ${difficultyCounts.HARD}`}
-            </Badge>
-            {replaceIndex !== null && (
-              <Badge className="bg-amber-100 text-amber-700 border-amber-200">
-                {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
-              </Badge>
-            )}
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-wide text-slate-700">
+                {language === 'es' ? 'Acciones rápidas' : 'Quick actions'}
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                {language === 'es'
+                  ? 'Vuelve al set original o limpia por completo la selección actual.'
+                  : 'Go back to the original set or clear the current selection completely.'}
+              </p>
+              <div className="mt-4 space-y-3">
+                <Button type="button" variant="outline" onClick={loadDefaultSet} disabled={loading} className="w-full justify-start bg-white">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  {language === 'es' ? `Recargar base: ${baseTitle}` : `Reload base: ${baseTitle}`}
+                </Button>
+                <Button type="button" variant="outline" onClick={clearSelection} disabled={loading} className="w-full justify-start bg-white">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {language === 'es' ? 'Vaciar selección' : 'Clear selection'}
+                </Button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -625,15 +655,6 @@ export function ExternalTechnicalQuestionBuilder({
                   : `You need exactly ${QUESTION_TARGET} questions before sending.`}
               </div>
             )}
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button type="button" variant="outline" onClick={loadDefaultSet} disabled={loading}>
-                {language === 'es' ? 'Volver al set base' : 'Restore base set'}
-              </Button>
-              <Button type="button" variant="outline" onClick={searchBank} disabled={loading}>
-                {language === 'es' ? 'Actualizar banco' : 'Refresh bank'}
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
