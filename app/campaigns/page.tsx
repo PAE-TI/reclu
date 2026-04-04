@@ -75,6 +75,8 @@ interface Campaign {
   createdAt: string;
   updatedAt: string;
   closedAt: string | null;
+  hiredCandidateName?: string | null;
+  completionNotes?: string | null;
   createdBy?: string;
   stats: {
     totalCandidates: number;
@@ -614,6 +616,20 @@ export default function CampaignsPage() {
                     </div>
                   )}
 
+                  {/* Hired Candidate (for COMPLETED campaigns) */}
+                  {campaign.status === 'COMPLETED' && (
+                    <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-teal-50 border border-teal-200 rounded-lg">
+                      <Trophy className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+                      <p className="text-xs text-teal-700 truncate">
+                        {campaign.hiredCandidateName ? (
+                          <><span className="font-medium">Contratado:</span> {campaign.hiredCandidateName}</>
+                        ) : (
+                          <span className="text-teal-500">Sin candidato contratado registrado</span>
+                        )}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Footer */}
                   <div className="flex items-center justify-between mt-4 pt-4 border-t">
                     <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -767,6 +783,19 @@ export default function CampaignsPage() {
                               style={{ width: `${completionRate}%` }}
                             />
                           </div>
+                        </div>
+                      )}
+                      {/* Hired Candidate (list view) */}
+                      {campaign.status === 'COMPLETED' && (
+                        <div className="flex items-center gap-2 mt-3 px-3 py-1.5 bg-teal-50 border border-teal-200 rounded-lg">
+                          <Trophy className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+                          <p className="text-xs text-teal-700 truncate">
+                            {campaign.hiredCandidateName ? (
+                              <><span className="font-medium">Contratado:</span> {campaign.hiredCandidateName}</>
+                            ) : (
+                              <span className="text-teal-500">Sin candidato contratado registrado</span>
+                            )}
+                          </p>
                         </div>
                       )}
                     </div>

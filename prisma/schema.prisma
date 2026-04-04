@@ -2164,6 +2164,12 @@ model SelectionCampaign {
   // Candidates
   candidates      CampaignCandidate[]
   
+  // Completion data
+  hiredCandidateId   String?               // ID of the hired/selected candidate
+  hiredCandidateName String?               // Denormalized name for quick display
+  completionNotes    String?               @db.Text // Notes: salary, start date, etc.
+  archivedAt         DateTime?             // When campaign was archived
+  
   // Timestamps
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt

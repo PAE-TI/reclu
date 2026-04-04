@@ -119,6 +119,10 @@ interface Campaign {
   isPrivate: boolean;
   allowTeamAddCandidates: boolean;
   createdAt: string;
+  closedAt?: string | null;
+  hiredCandidateId?: string | null;
+  hiredCandidateName?: string | null;
+  completionNotes?: string | null;
   candidates: Candidate[];
 }
 
@@ -208,6 +212,12 @@ export default function CampaignDetailPage() {
   } | null>(null);
   const [deletingCampaign, setDeletingCampaign] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showCompleteDialog, setShowCompleteDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const [completingCampaign, setCompletingCampaign] = useState(false);
+  const [archivingCampaign, setArchivingCampaign] = useState(false);
+  const [selectedHiredCandidateId, setSelectedHiredCandidateId] = useState<string>('none');
+  const [completionNotes, setCompletionNotes] = useState('');
 
   // State for searching existing evaluations
   const [addMode, setAddMode] = useState<'manual' | 'existing'>('manual');
@@ -503,6 +513,60 @@ export default function CampaignDetailPage() {
     }
   };
 
+  const handleCompleteCampaign = async () => {
+    setCompletingCampaign(true);
+    try {
+      const hired = selectedHiredCandidateId !== 'none'
+        ? campaign?.candidates.find(c => c.id === selectedHiredCandidateId)
+        : null;
+      const response = await fetch(`/api/campaigns/${campaignId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'COMPLETED',
+          hiredCandidateId: hired?.id || null,
+          hiredCandidateName: hired?.name || null,
+          completionNotes: completionNotes || null,
+        }),
+      });
+      if (response.ok) {
+        toast.success('Campaña completada exitosamente');
+        setShowCompleteDialog(false);
+        fetchCampaign();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || 'Error al completar la campaña');
+      }
+    } catch {
+      toast.error('Error al completar la campaña');
+    } finally {
+      setCompletingCampaign(false);
+    }
+  };
+
+  const handleArchiveCampaign = async () => {
+    setArchivingCampaign(true);
+    try {
+      const response = await fetch(`/api/campaigns/${campaignId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ARCHIVED' }),
+      });
+      if (response.ok) {
+        toast.success('Campaña archivada');
+        setShowArchiveDialog(false);
+        fetchCampaign();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || 'Error al archivar la campaña');
+      }
+    } catch {
+      toast.error('Error al archivar la campaña');
+    } finally {
+      setArchivingCampaign(false);
+    }
+  };
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-600';
     if (score >= 65) return 'text-blue-600';
@@ -600,6 +664,31 @@ export default function CampaignDetailPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {campaign.status !== 'COMPLETED' && campaign.status !== 'ARCHIVED' && (
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedHiredCandidateId('none');
+                        setCompletionNotes(campaign.completionNotes || '');
+                        setShowCompleteDialog(true);
+                      }}
+                      className="text-teal-600 focus:text-teal-700 focus:bg-teal-50"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Completar campaña
+                    </DropdownMenuItem>
+                  )}
+                  {campaign.status !== 'ARCHIVED' && (
+                    <DropdownMenuItem
+                      onClick={() => setShowArchiveDialog(true)}
+                      className="text-gray-600 focus:text-gray-700 focus:bg-gray-50"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Archivar campaña
+                    </DropdownMenuItem>
+                  )}
+                  {(campaign.status !== 'COMPLETED' && campaign.status !== 'ARCHIVED') && (
+                    <DropdownMenuSeparator />
+                  )}
                   <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600 focus:text-red-600 focus:bg-red-50">
                     <Trash2 className="w-4 h-4 mr-2" />
                     {t('campaigns.detail.deleteCampaign')}
@@ -1081,6 +1170,161 @@ export default function CampaignDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Complete Campaign Dialog */}
+      <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-teal-600" />
+              Completar campaña
+            </DialogTitle>
+            <DialogDescription>
+              Registra el resultado final de esta búsqueda. Podrás indicar si se contrató a algún candidato y agregar notas de cierre.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 py-2">
+            {/* Hired candidate selector */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">¿Se contrató a algún candidato?</label>
+              <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedHiredCandidateId === 'none' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input
+                    type="radio"
+                    name="hiredCandidate"
+                    value="none"
+                    checked={selectedHiredCandidateId === 'none'}
+                    onChange={() => setSelectedHiredCandidateId('none')}
+                    className="accent-teal-600"
+                  />
+                  <span className="text-sm text-gray-600">No se contrató / posición no cubierta</span>
+                </label>
+                {campaign.candidates.filter(c => c.status === 'COMPLETED' || c.overallScore !== null).map(candidate => (
+                  <label key={candidate.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedHiredCandidateId === candidate.id ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <input
+                      type="radio"
+                      name="hiredCandidate"
+                      value={candidate.id}
+                      checked={selectedHiredCandidateId === candidate.id}
+                      onChange={() => setSelectedHiredCandidateId(candidate.id)}
+                      className="accent-teal-600"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{candidate.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{candidate.email}</p>
+                    </div>
+                    {candidate.overallScore !== null && (
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${getScoreBg(candidate.overallScore)} ${getScoreColor(candidate.overallScore)}`}>
+                        {Math.round(candidate.overallScore)}%
+                      </span>
+                    )}
+                    {candidate.rankPosition === 1 && (
+                      <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                    )}
+                  </label>
+                ))}
+                {campaign.candidates.filter(c => c.status !== 'COMPLETED' && c.overallScore === null).map(candidate => (
+                  <label key={candidate.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedHiredCandidateId === candidate.id ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <input
+                      type="radio"
+                      name="hiredCandidate"
+                      value={candidate.id}
+                      checked={selectedHiredCandidateId === candidate.id}
+                      onChange={() => setSelectedHiredCandidateId(candidate.id)}
+                      className="accent-teal-600"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{candidate.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{candidate.email}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+            {/* Completion notes */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Notas de cierre <span className="text-gray-400 font-normal">(opcional)</span></label>
+              <textarea
+                value={completionNotes}
+                onChange={e => setCompletionNotes(e.target.value)}
+                placeholder="Ej: Salario acordado $X, inicio el día Y, referencias positivas, etc."
+                rows={3}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCompleteDialog(false)} disabled={completingCampaign}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCompleteCampaign}
+              disabled={completingCampaign}
+              className="bg-teal-600 hover:bg-teal-700 text-white"
+            >
+              {completingCampaign ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+              Completar campaña
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Archive Campaign Dialog */}
+      <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Archive className="w-5 h-5 text-gray-500" />
+              Archivar campaña
+            </DialogTitle>
+            <DialogDescription>
+              La campaña <strong>{campaign.name}</strong> será archivada. Podrás consultarla pero no agregar candidatos ni hacer análisis nuevos. ¿Deseas continuar?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowArchiveDialog(false)} disabled={archivingCampaign}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleArchiveCampaign}
+              disabled={archivingCampaign}
+              className="bg-gray-700 hover:bg-gray-800 text-white"
+            >
+              {archivingCampaign ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Archive className="w-4 h-4 mr-2" />}
+              Archivar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Completion Banner */}
+      {campaign.status === 'COMPLETED' && (
+        <div className="rounded-2xl border border-teal-200 bg-gradient-to-r from-teal-50 to-emerald-50 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="p-2.5 bg-teal-100 rounded-xl">
+              <Trophy className="w-6 h-6 text-teal-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-teal-800 text-sm">Campaña completada</p>
+              {campaign.hiredCandidateName ? (
+                <p className="text-teal-700 text-sm mt-0.5">
+                  Candidato seleccionado: <span className="font-bold">{campaign.hiredCandidateName}</span>
+                </p>
+              ) : (
+                <p className="text-teal-600 text-sm mt-0.5">Sin candidato contratado registrado</p>
+              )}
+              {campaign.completionNotes && (
+                <p className="text-teal-600 text-xs mt-1 italic">{campaign.completionNotes}</p>
+              )}
+            </div>
+          </div>
+          {campaign.closedAt && (
+            <p className="text-teal-500 text-xs flex-shrink-0">
+              Cerrada el {new Date(campaign.closedAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Stats Cards Mejoradas */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow">
@@ -1288,6 +1532,12 @@ export default function CampaignDetailPage() {
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-gray-900">{candidate.name}</p>
                             <Badge className={status.color}>{status.label}</Badge>
+                            {campaign.hiredCandidateId === candidate.id && (
+                              <Badge className="bg-teal-600 text-white border-0 flex items-center gap-1">
+                                <Trophy className="w-3 h-3" />
+                                Contratado
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-sm text-gray-500">{candidate.email}</p>
                           

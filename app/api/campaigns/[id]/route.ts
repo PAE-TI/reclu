@@ -211,7 +211,7 @@ export async function PUT(
 
     const { id } = params;
     const body = await request.json();
-    const { name, jobTitle, jobCategory, description, evaluationTypes, status } = body;
+    const { name, jobTitle, jobCategory, description, evaluationTypes, status, hiredCandidateId, hiredCandidateName, completionNotes } = body;
 
     // Obtener el dueño real si es facilitador
     const user = await prisma.user.findUnique({
@@ -240,6 +240,10 @@ export async function PUT(
         ...(evaluationTypes && { evaluationTypes }),
         ...(status && { status }),
         ...(status === 'COMPLETED' && { closedAt: new Date() }),
+        ...(status === 'ARCHIVED' && { archivedAt: new Date() }),
+        ...(hiredCandidateId !== undefined && { hiredCandidateId: hiredCandidateId || null }),
+        ...(hiredCandidateName !== undefined && { hiredCandidateName: hiredCandidateName || null }),
+        ...(completionNotes !== undefined && { completionNotes: completionNotes || null }),
       },
     });
 

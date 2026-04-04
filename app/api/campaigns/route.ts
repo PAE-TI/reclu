@@ -97,6 +97,9 @@ export async function GET(request: NextRequest) {
         createdAt: campaign.createdAt,
         updatedAt: campaign.updatedAt,
         closedAt: campaign.closedAt,
+        hiredCandidateId: campaign.hiredCandidateId,
+        hiredCandidateName: campaign.hiredCandidateName,
+        completionNotes: campaign.completionNotes,
         createdBy: campaign.user?.company || campaign.user?.name,
         stats: {
           totalCandidates,
