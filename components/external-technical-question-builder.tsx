@@ -308,7 +308,19 @@ export function ExternalTechnicalQuestionBuilder({
   };
 
   const handleRemoveQuestion = (index: number) => {
-    setSelectedQuestions(prev => prev.filter((_, itemIndex) => itemIndex !== index));
+    setSelectedQuestions(prev => {
+      const next = prev.filter((_, itemIndex) => itemIndex !== index);
+      if (replaceIndex === null) return next;
+
+      setReplaceIndex(currentReplaceIndex => {
+        if (currentReplaceIndex === null) return null;
+        if (currentReplaceIndex === index) return null;
+        if (currentReplaceIndex > index) return currentReplaceIndex - 1;
+        return currentReplaceIndex;
+      });
+
+      return next;
+    });
   };
 
   const startReplace = (index: number) => {
@@ -343,6 +355,17 @@ export function ExternalTechnicalQuestionBuilder({
       const next = [...prev];
       const [moved] = next.splice(fromIndex, 1);
       next.splice(toIndex, 0, moved);
+
+      if (replaceIndex !== null) {
+        setReplaceIndex(currentReplaceIndex => {
+          if (currentReplaceIndex === null) return null;
+          if (currentReplaceIndex === fromIndex) return toIndex;
+          if (fromIndex < currentReplaceIndex && currentReplaceIndex <= toIndex) return currentReplaceIndex - 1;
+          if (toIndex <= currentReplaceIndex && currentReplaceIndex < fromIndex) return currentReplaceIndex + 1;
+          return currentReplaceIndex;
+        });
+      }
+
       return next;
     });
   };
@@ -371,9 +394,22 @@ export function ExternalTechnicalQuestionBuilder({
     setDropIndex(null);
   };
 
+  const getBankCardState = (question: QuestionBankQuestion) => {
+    const isSelected = selectedQuestions.some(item => item.id === question.id);
+    const isSelectedReplacementTarget = replaceIndex !== null && selectedQuestions[replaceIndex]?.id === question.id;
+
+    if (isSelectedReplacementTarget) return 'target';
+    if (isSelected) return 'selected';
+    if (isReplacing) return 'replace';
+    if (!canAddMoreQuestions) return 'locked';
+    return 'ready';
+  };
+
   const selectedCount = selectedQuestions.length;
   const isSetComplete = selectedCount === QUESTION_TARGET;
   const isReplaceModeActive = replaceIndex !== null;
+  const bankMode = isReplacing ? 'replace' : isSetComplete ? 'full' : 'ready';
+  const replacementQuestion = replaceIndex !== null ? selectedQuestions[replaceIndex] : null;
   const difficultyCounts = useMemo(() => {
     return selectedQuestions.reduce(
       (acc, question) => {
@@ -632,14 +668,58 @@ export function ExternalTechnicalQuestionBuilder({
                 ? 'Haz clic en una pregunta para agregarla o para reemplazar la seleccionada.'
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
-            {isSetComplete && !isReplaceModeActive && (
-              <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                <AlertCircle className="mr-2 inline-block h-4 w-4 align-text-bottom" />
-                {language === 'es'
-                  ? 'El set está completo. Usa Reemplazar o Vaciar selección para agregar otra pregunta.'
-                  : 'The set is full. Use Replace or Clear selection to add another question.'}
+            <div
+              className={`mt-3 rounded-2xl border px-4 py-3 text-sm shadow-sm ${
+                bankMode === 'replace'
+                  ? 'border-indigo-200 bg-indigo-50 text-indigo-800'
+                  : bankMode === 'full'
+                    ? 'border-amber-200 bg-amber-50 text-amber-800'
+                    : 'border-sky-200 bg-sky-50 text-sky-800'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                {bankMode === 'replace' ? (
+                  <Shuffle className="mt-0.5 h-4 w-4 shrink-0" />
+                ) : bankMode === 'full' ? (
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                ) : (
+                  <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 rotate-45" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">
+                    {bankMode === 'replace'
+                      ? (language === 'es' ? 'Modo reemplazo activo' : 'Replace mode active')
+                      : bankMode === 'full'
+                        ? (language === 'es' ? 'El set está completo' : 'The set is full')
+                        : (language === 'es' ? 'Banco listo para agregar' : 'Bank ready to add')}
+                  </p>
+                  <p className="mt-1 text-sm opacity-90">
+                    {bankMode === 'replace'
+                      ? (language === 'es'
+                          ? 'Selecciona una pregunta del banco para sustituir la actual. Las flechas están habilitadas.'
+                          : 'Pick a bank question to swap in. The arrows are enabled.')
+                      : bankMode === 'full'
+                        ? (language === 'es'
+                            ? 'Usa Reemplazar o Vaciar selección para agregar otra pregunta.'
+                            : 'Use Replace or Clear selection to add another question.')
+                        : (language === 'es'
+                            ? 'Selecciona preguntas del banco para completar el set técnico.'
+                            : 'Select bank questions to complete the technical set.')}
+                  </p>
+                  {bankMode === 'replace' && replacementQuestion && (
+                    <div className="mt-2 inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-xs font-medium text-indigo-800">
+                      <span>
+                        {language === 'es' ? 'Reemplazando' : 'Replacing'} #{replaceIndex + 1}
+                      </span>
+                      <span className="h-1 w-1 rounded-full bg-indigo-400" />
+                      <span className="max-w-[460px] truncate">
+                        {replacementQuestion.questionText}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
             <div className="flex flex-wrap gap-2 pt-2">
               <Button
                 type="button"
@@ -698,17 +778,17 @@ export function ExternalTechnicalQuestionBuilder({
               )}
               {isReplaceModeActive && (
                 <>
-                  <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
+                  <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200 px-3 py-2">
                     {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
                   </Badge>
                   <Button
                     type="button"
                     variant="ghost"
-                  onClick={() => setReplaceIndex(null)}
-                  className="h-9 rounded-full px-4 text-sm text-amber-700 hover:bg-amber-50"
-                >
-                  {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
-                </Button>
+                    onClick={() => setReplaceIndex(null)}
+                    className="h-9 rounded-full px-4 text-sm text-indigo-700 hover:bg-indigo-50"
+                  >
+                    {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
+                  </Button>
                 </>
               )}
             </div>
@@ -724,31 +804,32 @@ export function ExternalTechnicalQuestionBuilder({
                   </div>
                 ) : (
                   availableQuestions.map(question => {
-                    const isSelected = selectedQuestions.some(item => item.id === question.id);
-                    const isSelectedReplacementTarget = replaceIndex !== null && selectedQuestions[replaceIndex]?.id === question.id;
+                    const cardState = getBankCardState(question);
                     return (
                       <button
-                      key={question.id}
-                      type="button"
-                      onClick={() => {
-                        if (!isReplacing && !canAddMoreQuestions && !selectedQuestions.some(item => item.id === question.id)) {
-                          toast.error(
-                            language === 'es'
-                              ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
-                              : 'The set is already full. Replace or remove a question before adding another.'
+                        key={question.id}
+                        type="button"
+                        onClick={() => {
+                          if (cardState === 'locked') {
+                            toast.error(
+                              language === 'es'
+                                ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
+                                : 'The set is already full. Replace or remove a question before adding another.'
                             );
                             return;
                           }
                           handlePickQuestion(question);
                         }}
                         className={`w-full rounded-2xl border p-4 text-left transition-all ${
-                          isSelectedReplacementTarget
+                          cardState === 'target'
                             ? 'border-amber-300 bg-amber-50 ring-2 ring-amber-200'
-                            : isSelected
+                            : cardState === 'selected'
                             ? 'border-emerald-200 bg-emerald-50'
-                            : isReplaceModeActive
+                            : cardState === 'replace'
                               ? 'border-amber-200 hover:border-amber-300 hover:bg-amber-50'
-                              : 'border-slate-200 hover:border-sky-200 hover:bg-sky-50'
+                              : cardState === 'locked'
+                                ? 'border-slate-200 bg-slate-50/60 hover:border-amber-200 hover:bg-amber-50'
+                                : 'border-slate-200 hover:border-sky-200 hover:bg-sky-50'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -778,13 +859,13 @@ export function ExternalTechnicalQuestionBuilder({
                             </p>
                           </div>
                           <div className="flex-shrink-0 pt-1">
-                            {isSelectedReplacementTarget ? (
+                            {cardState === 'target' ? (
                               <Shuffle className="w-4 h-4 text-amber-600" />
-                            ) : isSelected ? (
+                            ) : cardState === 'selected' ? (
                               <Check className="w-4 h-4 text-emerald-600" />
-                            ) : isReplaceModeActive ? (
+                            ) : cardState === 'replace' ? (
                               <ArrowRight className="w-4 h-4 text-amber-600" />
-                            ) : !canAddMoreQuestions ? (
+                            ) : cardState === 'locked' ? (
                               <AlertCircle className="w-4 h-4 text-amber-600" />
                             ) : (
                               <ArrowRight className="w-4 h-4 text-sky-600" />
@@ -877,51 +958,69 @@ export function ExternalTechnicalQuestionBuilder({
                     {language === 'es' ? 'No hay preguntas seleccionadas.' : 'No questions selected.'}
                   </div>
                 ) : (
-                  selectedQuestions.map((question, index) => (
-                    <div
-                      key={`${question.id}-${index}`}
-                      draggable
-                      onDragStart={() => handleDragStart(index)}
-                      onDragOver={event => handleDragOver(event, index)}
-                      onDrop={event => handleDrop(event, index)}
-                      onDragEnd={handleDragEnd}
-                      className={`group rounded-3xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
-                        replaceIndex === index
-                          ? 'border-amber-300 bg-amber-50'
-                          : draggedIndex === index
-                            ? 'border-sky-300 bg-sky-50 opacity-80'
-                            : dropIndex === index && draggedIndex !== null
-                              ? 'border-sky-400 bg-sky-50 ring-2 ring-sky-200'
-                              : 'border-slate-200'
-                      }`}
-                    >
-                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="min-w-0 flex-1 space-y-4">
-                          <div className="flex items-start gap-4">
-                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold text-white shadow-sm">
-                              {index + 1}
-                            </div>
-                            <div className="min-w-0 flex-1 space-y-3">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Badge variant="outline" className="bg-white">
-                                  {question.jobPositionTitle}
-                                </Badge>
-                                <Badge variant="outline" className="bg-white">
-                                  {question.category || question.categoryEn || 'Tema'}
-                                </Badge>
-                                <Badge className={
-                                  question.difficulty === 'HARD'
-                                    ? 'bg-red-100 text-red-700 border-red-200'
-                                    : question.difficulty === 'MEDIUM'
-                                      ? 'bg-amber-100 text-amber-700 border-amber-200'
-                                      : 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                                }>
-                                  {question.difficulty}
-                                </Badge>
+                  selectedQuestions.map((question, index) => {
+                    const isMarkedForReplacement = replaceIndex === index;
+
+                    return (
+                      <div
+                        key={`${question.id}-${index}`}
+                        draggable
+                        onDragStart={() => handleDragStart(index)}
+                        onDragOver={event => handleDragOver(event, index)}
+                        onDrop={event => handleDrop(event, index)}
+                        onDragEnd={handleDragEnd}
+                        className={`group rounded-3xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+                          isMarkedForReplacement
+                            ? 'border-indigo-300 bg-indigo-50 ring-2 ring-indigo-200'
+                            : draggedIndex === index
+                              ? 'border-sky-300 bg-sky-50 opacity-80'
+                              : dropIndex === index && draggedIndex !== null
+                                ? 'border-sky-400 bg-sky-50 ring-2 ring-sky-200'
+                                : 'border-slate-200'
+                        }`}
+                      >
+                        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                          <div className="min-w-0 flex-1 space-y-4">
+                            <div className="flex items-start gap-4">
+                              <div
+                                className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-semibold text-white shadow-sm ${
+                                  isMarkedForReplacement ? 'bg-indigo-600' : 'bg-slate-900'
+                                }`}
+                              >
+                                {index + 1}
                               </div>
-                              <p className="text-[15px] leading-7 text-slate-900 md:text-[16px]">
-                                {question.questionText}
-                              </p>
+                              <div className="min-w-0 flex-1 space-y-3">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <Badge variant="outline" className="bg-white">
+                                    {question.jobPositionTitle}
+                                  </Badge>
+                                  <Badge variant="outline" className="bg-white">
+                                    {question.category || question.categoryEn || 'Tema'}
+                                  </Badge>
+                                  <Badge
+                                    className={
+                                      question.difficulty === 'HARD'
+                                        ? 'bg-red-100 text-red-700 border-red-200'
+                                        : question.difficulty === 'MEDIUM'
+                                          ? 'bg-amber-100 text-amber-700 border-amber-200'
+                                          : 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                    }
+                                  >
+                                    {question.difficulty}
+                                  </Badge>
+                                </div>
+                                <p className="text-[15px] leading-7 text-slate-900 md:text-[16px]">
+                                  {question.questionText}
+                                </p>
+                                {isMarkedForReplacement && (
+                                  <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-medium text-indigo-700">
+                                    <Shuffle className="h-3.5 w-3.5" />
+                                    {language === 'es'
+                                      ? 'Pregunta marcada para reemplazo'
+                                      : 'Question marked for replacement'}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
@@ -947,8 +1046,8 @@ export function ExternalTechnicalQuestionBuilder({
                           </Button>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </ScrollArea>
