@@ -217,7 +217,19 @@ export default function ExternalTechnicalEvaluationPage() {
       const questionsResponse = await fetch(`/api/external-technical-evaluations/${token}/questions?lang=${loadLang}`);
       if (questionsResponse.ok) {
         const questionsData = await questionsResponse.json();
-        setQuestions(questionsData);
+        const normalizedQuestions = Array.isArray(questionsData)
+          ? questionsData
+          : Array.isArray(questionsData?.questions)
+            ? questionsData.questions
+            : [];
+
+        if (normalizedQuestions.length === 0) {
+          toast.error(loadLang === 'es' ? 'No se pudieron cargar preguntas válidas' : 'Could not load valid questions');
+          return;
+        }
+
+        setQuestions(normalizedQuestions);
+        setCurrentQuestion(0);
         setHasStarted(true);
         setQuestionStartTime(Date.now());
       } else {
