@@ -462,156 +462,154 @@ export default function ExternalTechnicalEvaluationsPage() {
 
           {/* Send Form */}
           {activeTab === 'send' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Mail className="w-5 h-5 text-sky-600" />
-                      {language === 'es' ? 'Enviar Evaluación Técnica' : 'Send Technical Evaluation'}
-                    </CardTitle>
-                    <CardDescription>
-                      {language === 'es' 
-                        ? 'Las preguntas se generan automáticamente según el cargo seleccionado'
-                        : 'Questions are automatically generated based on the selected position'
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="recipientName">{t('extEval.form.fullNameRequired')}</Label>
-                          <Input
-                            id="recipientName"
-                            value={formData.recipientName}
-                            onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
-                            placeholder={t('extEval.form.namePlaceholder')}
-                            required
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="recipientEmail">{t('extEval.form.emailRequired')}</Label>
-                          <Input
-                            id="recipientEmail"
-                            type="email"
-                            value={formData.recipientEmail}
-                            onChange={(e) => setFormData({ ...formData, recipientEmail: e.target.value })}
-                            placeholder={t('extEval.form.emailPlaceholder')}
-                            required
-                          />
-                        </div>
+            <div className="space-y-6">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Mail className="w-5 h-5 text-sky-600" />
+                    {language === 'es' ? 'Enviar Evaluación Técnica' : 'Send Technical Evaluation'}
+                  </CardTitle>
+                  <CardDescription>
+                    {language === 'es'
+                      ? 'Las preguntas se generan automáticamente según el cargo seleccionado'
+                      : 'Questions are automatically generated based on the selected position'
+                    }
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="recipientName">{t('extEval.form.fullNameRequired')}</Label>
+                        <Input
+                          id="recipientName"
+                          value={formData.recipientName}
+                          onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
+                          placeholder={t('extEval.form.namePlaceholder')}
+                          required
+                        />
                       </div>
 
-                      {/* Job Position Selection */}
-                      <div className="space-y-4">
-                        <Label>{language === 'es' ? 'Cargo a Evaluar *' : 'Position to Evaluate *'}</Label>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                            <Input
-                              placeholder={language === 'es' ? 'Buscar cargo...' : 'Search position...'}
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                              className="pl-10"
-                            />
-                          </div>
-                          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <SelectTrigger>
-                              <SelectValue placeholder={language === 'es' ? 'Todas las categorías' : 'All categories'} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">{language === 'es' ? 'Todas las categorías' : 'All categories'}</SelectItem>
-                              {Object.entries(JOB_CATEGORIES).map(([key, value]) => (
-                                <SelectItem key={key} value={key}>{value.name}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                      <div className="space-y-2">
+                        <Label htmlFor="recipientEmail">{t('extEval.form.emailRequired')}</Label>
+                        <Input
+                          id="recipientEmail"
+                          type="email"
+                          value={formData.recipientEmail}
+                          onChange={(e) => setFormData({ ...formData, recipientEmail: e.target.value })}
+                          placeholder={t('extEval.form.emailPlaceholder')}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Job Position Selection */}
+                    <div className="space-y-4">
+                      <Label>{language === 'es' ? 'Cargo a Evaluar *' : 'Position to Evaluate *'}</Label>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                          <Input
+                            placeholder={language === 'es' ? 'Buscar cargo...' : 'Search position...'}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10"
+                          />
                         </div>
-
-                        {formData.jobPositionId && (
-                          <div className="p-3 bg-sky-50 border border-sky-200 rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Briefcase className="w-4 h-4 text-sky-600" />
-                                <span className="font-medium text-sky-800">
-                                  {JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title}
-                                </span>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setFormData({ ...formData, jobPositionId: '' })}
-                                className="text-sky-600 hover:text-sky-800"
-                              >
-                                {language === 'es' ? 'Cambiar' : 'Change'}
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-
-                        {!formData.jobPositionId && (
-                          <div className="max-h-48 overflow-y-auto border rounded-lg divide-y">
-                            {filteredPositions.length === 0 ? (
-                              <div className="p-4 text-center text-gray-500">
-                                {language === 'es' ? 'No se encontraron cargos' : 'No positions found'}
-                              </div>
-                            ) : (
-                              filteredPositions.map(pos => (
-                                <button
-                                  key={pos.id}
-                                  type="button"
-                                  onClick={() => setFormData({ ...formData, jobPositionId: pos.id })}
-                                  className="w-full p-3 text-left hover:bg-sky-50 transition-colors flex items-center justify-between"
-                                >
-                                  <div>
-                                    <p className="font-medium text-gray-900">{pos.title}</p>
-                                    <p className="text-sm text-gray-500">{JOB_CATEGORIES[pos.category].name}</p>
-                                  </div>
-                                  <Badge variant="outline" className="text-xs">
-                                    {pos.subcategory}
-                                  </Badge>
-                                </button>
-                              ))
-                            )}
-                          </div>
-                        )}
+                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={language === 'es' ? 'Todas las categorías' : 'All categories'} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{language === 'es' ? 'Todas las categorías' : 'All categories'}</SelectItem>
+                            {Object.entries(JOB_CATEGORIES).map(([key, value]) => (
+                              <SelectItem key={key} value={key}>{value.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       {formData.jobPositionId && (
-                        <ExternalTechnicalQuestionBuilder
-                          basePositionId={formData.jobPositionId}
-                          language={language === 'es' ? 'es' : 'en'}
-                          onChange={handleQuestionBuilderChange}
-                        />
+                        <div className="p-3 bg-sky-50 border border-sky-200 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Briefcase className="w-4 h-4 text-sky-600" />
+                              <span className="font-medium text-sky-800">
+                                {JOB_POSITIONS.find(p => p.id === formData.jobPositionId)?.title}
+                              </span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setFormData({ ...formData, jobPositionId: '' })}
+                              className="text-sky-600 hover:text-sky-800"
+                            >
+                              {language === 'es' ? 'Cambiar' : 'Change'}
+                            </Button>
+                          </div>
+                        </div>
                       )}
 
-                      <Button
-                        type="submit"
-                        disabled={submitting || !formData.jobPositionId || !questionsReady}
-                        className="w-full bg-sky-600 hover:bg-sky-700"
-                      >
-                        {submitting ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            {t('extEval.form.sending')}
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 mr-2" />
-                            {t('extEval.form.send')}
-                          </>
-                        )}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </div>
+                      {!formData.jobPositionId && (
+                        <div className="max-h-52 overflow-y-auto border rounded-xl divide-y bg-white">
+                          {filteredPositions.length === 0 ? (
+                            <div className="p-5 text-center text-gray-500">
+                              {language === 'es' ? 'No se encontraron cargos' : 'No positions found'}
+                            </div>
+                          ) : (
+                            filteredPositions.map(pos => (
+                              <button
+                                key={pos.id}
+                                type="button"
+                                onClick={() => setFormData({ ...formData, jobPositionId: pos.id })}
+                                className="w-full p-4 text-left hover:bg-sky-50 transition-colors flex items-center justify-between gap-4"
+                              >
+                                <div className="min-w-0">
+                                  <p className="font-medium text-gray-900">{pos.title}</p>
+                                  <p className="text-sm text-gray-500">{JOB_CATEGORIES[pos.category].name}</p>
+                                </div>
+                                <Badge variant="outline" className="text-xs shrink-0">
+                                  {pos.subcategory}
+                                </Badge>
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
 
-              <div className="space-y-6">
+                    {formData.jobPositionId && (
+                      <ExternalTechnicalQuestionBuilder
+                        basePositionId={formData.jobPositionId}
+                        language={language === 'es' ? 'es' : 'en'}
+                        onChange={handleQuestionBuilderChange}
+                      />
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={submitting || !formData.jobPositionId || !questionsReady}
+                      className="w-full bg-sky-600 hover:bg-sky-700"
+                    >
+                      {submitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          {t('extEval.form.sending')}
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          {t('extEval.form.send')}
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-6 lg:grid-cols-2">
                 <Card className="bg-sky-50 border-sky-200 border shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sky-800 text-lg">

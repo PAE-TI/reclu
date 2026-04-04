@@ -381,7 +381,7 @@ export function ExternalTechnicalQuestionBuilder({
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
         <Card className="border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -464,7 +464,7 @@ export function ExternalTechnicalQuestionBuilder({
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 shadow-sm">
+        <Card className="overflow-hidden border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Layers3 className="w-4 h-4 text-indigo-600" />
@@ -476,9 +476,9 @@ export function ExternalTechnicalQuestionBuilder({
                 : 'This is exactly the set the candidate will receive. You can also reorder it by dragging each card.'}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="mb-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
                 <p className="text-xs uppercase tracking-wide text-slate-500">
                   {language === 'es' ? 'Preguntas seleccionadas' : 'Selected questions'}
                 </p>
@@ -489,7 +489,7 @@ export function ExternalTechnicalQuestionBuilder({
                   {language === 'es' ? 'El set final debe quedar completo.' : 'The final set must be complete.'}
                 </p>
               </div>
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
                 <p className="text-xs uppercase tracking-wide text-emerald-700">
                   {language === 'es' ? 'Balance de dificultad' : 'Difficulty balance'}
                 </p>
@@ -517,7 +517,7 @@ export function ExternalTechnicalQuestionBuilder({
                   </div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+              <div className="rounded-3xl border border-indigo-200 bg-indigo-50 p-5 shadow-sm">
                 <p className="text-xs uppercase tracking-wide text-indigo-700">
                   {language === 'es' ? 'Fuente activa' : 'Active source'}
                 </p>
@@ -534,10 +534,10 @@ export function ExternalTechnicalQuestionBuilder({
               </div>
             </div>
 
-            <ScrollArea className="h-[560px] pr-3">
-              <div className="space-y-3">
+            <ScrollArea className="h-[600px] pr-2">
+              <div className="space-y-4">
                 {selectedQuestions.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-200 p-6 text-center text-sm text-gray-500">
+                  <div className="rounded-3xl border border-dashed border-slate-200 p-8 text-center text-sm text-gray-500">
                     {language === 'es' ? 'No hay preguntas seleccionadas.' : 'No questions selected.'}
                   </div>
                 ) : (
@@ -549,7 +549,7 @@ export function ExternalTechnicalQuestionBuilder({
                       onDragOver={event => handleDragOver(event, index)}
                       onDrop={event => handleDrop(event, index)}
                       onDragEnd={handleDragEnd}
-                      className={`group rounded-2xl border bg-white p-4 shadow-sm transition-all hover:shadow-md ${
+                      className={`group rounded-3xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
                         replaceIndex === index
                           ? 'border-amber-300 bg-amber-50'
                           : draggedIndex === index
@@ -559,29 +559,35 @@ export function ExternalTechnicalQuestionBuilder({
                               : 'border-slate-200'
                       }`}
                     >
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="min-w-0 flex-1 space-y-3">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge className="bg-slate-900 text-white">#{index + 1}</Badge>
-                            <Badge variant="outline" className="bg-white">
-                              {question.jobPositionTitle}
-                            </Badge>
-                            <Badge variant="outline" className="bg-white">
-                              {question.category || question.categoryEn || 'Tema'}
-                            </Badge>
-                            <Badge className={
-                              question.difficulty === 'HARD'
-                                ? 'bg-red-100 text-red-700 border-red-200'
-                                : question.difficulty === 'MEDIUM'
-                                  ? 'bg-amber-100 text-amber-700 border-amber-200'
-                                  : 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                            }>
-                              {question.difficulty}
-                            </Badge>
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1 space-y-4">
+                          <div className="flex items-start gap-4">
+                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold text-white shadow-sm">
+                              {index + 1}
+                            </div>
+                            <div className="min-w-0 flex-1 space-y-3">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline" className="bg-white">
+                                  {question.jobPositionTitle}
+                                </Badge>
+                                <Badge variant="outline" className="bg-white">
+                                  {question.category || question.categoryEn || 'Tema'}
+                                </Badge>
+                                <Badge className={
+                                  question.difficulty === 'HARD'
+                                    ? 'bg-red-100 text-red-700 border-red-200'
+                                    : question.difficulty === 'MEDIUM'
+                                      ? 'bg-amber-100 text-amber-700 border-amber-200'
+                                      : 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                }>
+                                  {question.difficulty}
+                                </Badge>
+                              </div>
+                              <p className="text-[15px] leading-7 text-slate-900 md:text-[16px]">
+                                {question.questionText}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-[15px] font-medium leading-6 text-slate-900">
-                            {question.questionText}
-                          </p>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                             <span>
                               {language === 'es' ? 'Arrastra para reordenar' : 'Drag to reorder'}
@@ -594,12 +600,12 @@ export function ExternalTechnicalQuestionBuilder({
                             </span>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2 lg:justify-end">
-                          <Button type="button" size="sm" variant="outline" onClick={() => startReplace(index)}>
+                        <div className="flex flex-wrap gap-2 lg:w-40 lg:flex-col lg:items-stretch lg:justify-start">
+                          <Button type="button" size="sm" variant="outline" onClick={() => startReplace(index)} className="justify-center">
                             <Shuffle className="w-3.5 h-3.5 mr-1" />
                             {language === 'es' ? 'Reemplazar' : 'Replace'}
                           </Button>
-                          <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveQuestion(index)}>
+                          <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveQuestion(index)} className="justify-center">
                             <Trash2 className="w-3.5 h-3.5 mr-1" />
                             {language === 'es' ? 'Quitar' : 'Remove'}
                           </Button>
