@@ -243,7 +243,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   };
 
   // Notifications dropdown content (shared between mobile and desktop)
-  const NotificationsDropdown = () => (
+  const renderNotificationsDropdown = () => (
     <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
       {/* Header del dropdown */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
@@ -509,7 +509,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            {isOpen && <NotificationsDropdown />}
+            {isOpen && renderNotificationsDropdown()}
           </div>
         </div>
       </div>
@@ -614,7 +614,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              {isOpen && <NotificationsDropdown />}
+              {isOpen && renderNotificationsDropdown()}
             </div>
           </div>
         </div>
