@@ -118,6 +118,7 @@ export default function ExternalDNAEvaluationResults() {
   const { data: session, status: sessionStatus } = useSession() || {};
   const { language, t } = useLanguage();
   const token = params.token as string;
+  const showBrandingShell = !session;
 
   const [evaluation, setEvaluation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -204,7 +205,7 @@ export default function ExternalDNAEvaluationResults() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="p-8 text-center">
@@ -213,7 +214,7 @@ export default function ExternalDNAEvaluationResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter showCTA={false} />
+        {showBrandingShell && <BrandingFooter showCTA={false} />}
       </div>
     );
   }
@@ -221,7 +222,7 @@ export default function ExternalDNAEvaluationResults() {
   if (requireAuth) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="p-8 text-center">
@@ -236,7 +237,7 @@ export default function ExternalDNAEvaluationResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -244,7 +245,7 @@ export default function ExternalDNAEvaluationResults() {
   if (error || !evaluation?.result) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-lg border-0 shadow-xl">
             <CardContent className="p-8 text-center">
@@ -257,7 +258,7 @@ export default function ExternalDNAEvaluationResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -284,7 +285,7 @@ export default function ExternalDNAEvaluationResults() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
-      <BrandingHeader />
+      {showBrandingShell && <BrandingHeader />}
       <main className="flex-1 py-8 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
         <Button variant="ghost" onClick={() => router.push('/external-dna-evaluations')} className="mb-4">
@@ -486,7 +487,7 @@ export default function ExternalDNAEvaluationResults() {
         </Card>
       </div>
       </main>
-      <BrandingFooter />
+      {showBrandingShell && <BrandingFooter />}
     </div>
   );
 }

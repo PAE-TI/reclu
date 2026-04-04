@@ -94,6 +94,7 @@ export default function ExternalAcumenResults() {
   const { data: session, status: sessionStatus } = useSession() || {};
   const { language, t } = useLanguage();
   const token = params.token as string;
+  const showBrandingShell = !session;
 
   const [evaluation, setEvaluation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -161,14 +162,14 @@ export default function ExternalAcumenResults() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-amber-500 mx-auto mb-4" />
             <p className="text-gray-600">{t('results.loading')}</p>
           </div>
         </main>
-        <BrandingFooter showCTA={false} />
+        {showBrandingShell && <BrandingFooter showCTA={false} />}
       </div>
     );
   }
@@ -176,7 +177,7 @@ export default function ExternalAcumenResults() {
   if (requireAuth) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -193,7 +194,7 @@ export default function ExternalAcumenResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -201,7 +202,7 @@ export default function ExternalAcumenResults() {
   if (error || !evaluation?.result) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-6 text-center">
@@ -211,7 +212,7 @@ export default function ExternalAcumenResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -220,7 +221,7 @@ export default function ExternalAcumenResults() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      <BrandingHeader />
+      {showBrandingShell && <BrandingHeader />}
       <main className="flex-1 py-8 px-4">
         <div className="max-w-7xl mx-auto space-y-6">
           <Button variant="ghost" onClick={() => router.push('/external-acumen-evaluations')} className="mb-4">
@@ -390,7 +391,7 @@ export default function ExternalAcumenResults() {
           </div>
         </div>
       </main>
-      <BrandingFooter />
+      {showBrandingShell && <BrandingFooter />}
     </div>
   );
 }

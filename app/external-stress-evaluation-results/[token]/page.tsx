@@ -141,6 +141,7 @@ export default function ExternalStressResults() {
   const { data: session } = useSession() || {};
   const { language, t } = useLanguage();
   const token = params.token as string;
+  const showBrandingShell = !session;
 
   const [evaluation, setEvaluation] = useState<EvaluationData | null>(null);
   const [result, setResult] = useState<StressResult | null>(null);
@@ -217,7 +218,7 @@ export default function ExternalStressResults() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center">
           <Card className="w-full max-w-md bg-white/80 backdrop-blur-sm border-0 shadow-xl">
             <CardContent className="p-8 text-center">
@@ -226,7 +227,7 @@ export default function ExternalStressResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -234,7 +235,7 @@ export default function ExternalStressResults() {
   if (error || !result) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="w-full max-w-2xl bg-white/80 backdrop-blur-sm border-0 shadow-xl">
             <CardContent className="p-8 text-center">
@@ -244,14 +245,14 @@ export default function ExternalStressResults() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
-      <BrandingHeader />
+      {showBrandingShell && <BrandingHeader />}
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {session && (
@@ -479,7 +480,7 @@ export default function ExternalStressResults() {
           </div>
         </div>
       </main>
-      <BrandingFooter />
+      {showBrandingShell && <BrandingFooter />}
     </div>
   );
 }

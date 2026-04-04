@@ -166,6 +166,7 @@ export default function ExternalDrivingForcesResultsPage() {
   const { data: session, status: sessionStatus } = useSession() || {};
   const { language, t } = useLanguage();
   const token = params.token as string;
+  const showBrandingShell = !session;
 
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -304,14 +305,14 @@ export default function ExternalDrivingForcesResultsPage() {
   if (isLoading || sessionStatus === 'loading') {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600">{t('results.loading')}</p>
           </div>
         </main>
-        <BrandingFooter showCTA={false} />
+        {showBrandingShell && <BrandingFooter showCTA={false} />}
       </div>
     );
   }
@@ -319,7 +320,7 @@ export default function ExternalDrivingForcesResultsPage() {
   if (requireAuth || (error && !session)) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -336,7 +337,7 @@ export default function ExternalDrivingForcesResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -344,7 +345,7 @@ export default function ExternalDrivingForcesResultsPage() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -354,7 +355,7 @@ export default function ExternalDrivingForcesResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -362,7 +363,7 @@ export default function ExternalDrivingForcesResultsPage() {
   if (!evaluation) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -372,7 +373,7 @@ export default function ExternalDrivingForcesResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -380,7 +381,7 @@ export default function ExternalDrivingForcesResultsPage() {
   if (evaluation.status === 'PENDING') {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -396,7 +397,7 @@ export default function ExternalDrivingForcesResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter showCTA={false} />
+        {showBrandingShell && <BrandingFooter showCTA={false} />}
       </div>
     );
   }
@@ -404,7 +405,7 @@ export default function ExternalDrivingForcesResultsPage() {
   if (!evaluation.result) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-        <BrandingHeader />
+        {showBrandingShell && <BrandingHeader />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -414,7 +415,7 @@ export default function ExternalDrivingForcesResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter />
+        {showBrandingShell && <BrandingFooter />}
       </div>
     );
   }
@@ -440,7 +441,7 @@ export default function ExternalDrivingForcesResultsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
-      <BrandingHeader />
+      {showBrandingShell && <BrandingHeader />}
       
       <main className="flex-1 py-8 px-4">
         <div className="max-w-7xl mx-auto space-y-6">
@@ -712,7 +713,7 @@ export default function ExternalDrivingForcesResultsPage() {
         </div>
       </main>
 
-      <BrandingFooter showCTA={false} />
+      {showBrandingShell && <BrandingFooter showCTA={false} />}
     </div>
   );
 }

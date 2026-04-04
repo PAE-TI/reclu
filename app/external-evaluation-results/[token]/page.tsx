@@ -158,6 +158,7 @@ export default function ExternalEvaluationResultsPage() {
   const { data: session, status: sessionStatus } = useSession() || {};
   const { language, setLanguage, t } = useLanguage();
   const token = params.token as string;
+  const showBrandingShell = !session;
 
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,14 +250,14 @@ export default function ExternalEvaluationResultsPage() {
   if (isLoading || sessionStatus === 'loading') {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
             <p className="text-gray-600">{t('results.loading')}</p>
           </div>
         </main>
-        <BrandingFooter showCTA={false} t={t} />
+        {showBrandingShell && <BrandingFooter showCTA={false} t={t} />}
       </div>
     );
   }
@@ -265,7 +266,7 @@ export default function ExternalEvaluationResultsPage() {
   if (requireAuth || (error && !session)) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -282,7 +283,7 @@ export default function ExternalEvaluationResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter t={t} />
+        {showBrandingShell && <BrandingFooter t={t} />}
       </div>
     );
   }
@@ -290,7 +291,7 @@ export default function ExternalEvaluationResultsPage() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -300,7 +301,7 @@ export default function ExternalEvaluationResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter t={t} />
+        {showBrandingShell && <BrandingFooter t={t} />}
       </div>
     );
   }
@@ -308,7 +309,7 @@ export default function ExternalEvaluationResultsPage() {
   if (!evaluation) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -318,7 +319,7 @@ export default function ExternalEvaluationResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter t={t} />
+        {showBrandingShell && <BrandingFooter t={t} />}
       </div>
     );
   }
@@ -327,7 +328,7 @@ export default function ExternalEvaluationResultsPage() {
   if (evaluation.status === 'PENDING') {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -343,7 +344,7 @@ export default function ExternalEvaluationResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter showCTA={false} t={t} />
+        {showBrandingShell && <BrandingFooter showCTA={false} t={t} />}
       </div>
     );
   }
@@ -352,7 +353,7 @@ export default function ExternalEvaluationResultsPage() {
   if (!evaluation.result) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+        {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full border-0 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
@@ -362,7 +363,7 @@ export default function ExternalEvaluationResultsPage() {
             </CardContent>
           </Card>
         </main>
-        <BrandingFooter t={t} />
+        {showBrandingShell && <BrandingFooter t={t} />}
       </div>
     );
   }
@@ -374,7 +375,7 @@ export default function ExternalEvaluationResultsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <BrandingHeader t={t} language={language} setLanguage={setLanguage} />
+      {showBrandingShell && <BrandingHeader t={t} language={language} setLanguage={setLanguage} />}
 
       <main className="flex-1 py-8 px-4">
         <div className="max-w-7xl mx-auto space-y-6">
@@ -649,7 +650,7 @@ export default function ExternalEvaluationResultsPage() {
         </div>
       </main>
 
-      <BrandingFooter showCTA={false} t={t} />
+      {showBrandingShell && <BrandingFooter showCTA={false} t={t} />}
     </div>
   );
 }
