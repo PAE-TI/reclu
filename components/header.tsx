@@ -59,6 +59,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const [credits, setCredits] = useState<number | null>(null);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefMobile = useRef<HTMLDivElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRefMobile = useRef<HTMLDivElement>(null);
   
@@ -114,7 +115,9 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const isOutsideDesktopNotif = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
+      const isOutsideMobileNotif = dropdownRefMobile.current && !dropdownRefMobile.current.contains(event.target as Node);
+      if (isOutsideDesktopNotif && isOutsideMobileNotif) {
         setIsOpen(false);
       }
       const isOutsideDesktop = langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node);
@@ -588,7 +591,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             )}
 
             {/* Notifications - Mobile */}
-            <div className="relative" ref={dropdownRef} data-tour="notifications">
+            <div className="relative" ref={dropdownRefMobile} data-tour="notifications">
               <TooltipProvider delayDuration={300}>
                 <Tooltip>
                   <TooltipTrigger asChild>
