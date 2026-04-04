@@ -32,6 +32,8 @@ const externalEvaluationRoutes = [
   '/external-values-evaluation-results/',
   '/external-stress-evaluation/',
   '/external-stress-evaluation-results/',
+  '/external-technical-evaluation/',
+  '/external-technical-evaluation-results/',
 ];
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
