@@ -307,6 +307,36 @@ export function ExternalTechnicalQuestionBuilder({
     );
   }, [selectedQuestions]);
 
+  const bankDifficultyCounts = useMemo(() => {
+    return availableQuestions.reduce(
+      (acc, question) => {
+        acc[question.difficulty] += 1;
+        return acc;
+      },
+      { EASY: 0, MEDIUM: 0, HARD: 0 }
+    );
+  }, [availableQuestions]);
+
+  const handleDifficultyChipClick = async (value: Difficulty) => {
+    const nextDifficulty = difficulty === value ? 'all' : value;
+    setDifficulty(nextDifficulty);
+    setLoading(true);
+    try {
+      const data = await fetchBank({
+        positionId: sourcePositionId === 'all' ? '' : sourcePositionId,
+        search,
+        category: category === 'all' ? '' : category,
+        difficulty: nextDifficulty,
+      });
+      setAvailableQuestions(data.questions || []);
+    } catch (error) {
+      console.error(error);
+      toast.error(language === 'es' ? 'Error al filtrar preguntas' : 'Error filtering questions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card className="border-sky-200 bg-sky-50/60">
@@ -526,19 +556,61 @@ export function ExternalTechnicalQuestionBuilder({
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
             <div className="flex flex-wrap gap-2 pt-2">
-              <Badge className="bg-slate-100 text-slate-800 border-slate-200 px-3 py-2">
-                <FileText className="w-3.5 h-3.5 mr-1" />
-                {language === 'es' ? `${selectedCount}/${QUESTION_TARGET} seleccionadas` : `${selectedCount}/${QUESTION_TARGET} selected`}
-              </Badge>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 px-3 py-2">
-                {language === 'es' ? `Fácil: ${difficultyCounts.EASY}` : `Easy: ${difficultyCounts.EASY}`}
-              </Badge>
-              <Badge className="bg-amber-50 text-amber-700 border-amber-200 px-3 py-2">
-                {language === 'es' ? `Media: ${difficultyCounts.MEDIUM}` : `Medium: ${difficultyCounts.MEDIUM}`}
-              </Badge>
-              <Badge className="bg-red-50 text-red-700 border-red-200 px-3 py-2">
-                {language === 'es' ? `Difícil: ${difficultyCounts.HARD}` : `Hard: ${difficultyCounts.HARD}`}
-              </Badge>
+              <Button
+                type="button"
+                variant={difficulty === 'EASY' ? 'default' : 'outline'}
+                onClick={() => handleDifficultyChipClick('EASY')}
+                className={`h-9 rounded-full px-4 text-sm ${
+                  difficulty === 'EASY'
+                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50'
+                }`}
+              >
+                {language === 'es' ? 'Fácil' : 'Easy'}
+                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-semibold">
+                  {bankDifficultyCounts.EASY}
+                </span>
+              </Button>
+              <Button
+                type="button"
+                variant={difficulty === 'MEDIUM' ? 'default' : 'outline'}
+                onClick={() => handleDifficultyChipClick('MEDIUM')}
+                className={`h-9 rounded-full px-4 text-sm ${
+                  difficulty === 'MEDIUM'
+                    ? 'bg-amber-600 text-white hover:bg-amber-700'
+                    : 'bg-white text-amber-700 border-amber-200 hover:bg-amber-50'
+                }`}
+              >
+                {language === 'es' ? 'Media' : 'Medium'}
+                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-semibold">
+                  {bankDifficultyCounts.MEDIUM}
+                </span>
+              </Button>
+              <Button
+                type="button"
+                variant={difficulty === 'HARD' ? 'default' : 'outline'}
+                onClick={() => handleDifficultyChipClick('HARD')}
+                className={`h-9 rounded-full px-4 text-sm ${
+                  difficulty === 'HARD'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-white text-red-700 border-red-200 hover:bg-red-50'
+                }`}
+              >
+                {language === 'es' ? 'Difícil' : 'Hard'}
+                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-semibold">
+                  {bankDifficultyCounts.HARD}
+                </span>
+              </Button>
+              {difficulty !== 'all' && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => handleDifficultyChipClick(difficulty)}
+                  className="h-9 rounded-full px-4 text-sm text-slate-600 hover:bg-slate-100"
+                >
+                  {language === 'es' ? 'Quitar filtro' : 'Clear filter'}
+                </Button>
+              )}
               {replaceIndex !== null && (
                 <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
                   {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
