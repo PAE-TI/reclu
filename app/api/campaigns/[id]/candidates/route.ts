@@ -205,6 +205,10 @@ export async function POST(
       return NextResponse.json({ error: 'Campaña no encontrada' }, { status: 404 });
     }
 
+    if (campaign.status === 'COMPLETED' || campaign.status === 'ARCHIVED') {
+      return NextResponse.json({ error: 'No se pueden agregar candidatos a una campaña completada o archivada' }, { status: 403 });
+    }
+
     // Verificar si el candidato ya existe en la campaña
     const existingCandidate = await prisma.campaignCandidate.findFirst({
       where: { campaignId: id, email: email.toLowerCase() },

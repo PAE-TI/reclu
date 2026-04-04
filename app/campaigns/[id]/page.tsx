@@ -567,6 +567,25 @@ export default function CampaignDetailPage() {
     }
   };
 
+  const handleUnarchiveCampaign = async () => {
+    try {
+      const response = await fetch(`/api/campaigns/${campaignId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ACTIVE' }),
+      });
+      if (response.ok) {
+        toast.success('Campaña restaurada a activa');
+        fetchCampaign();
+      } else {
+        const data = await response.json();
+        toast.error(data.error || 'Error al restaurar la campaña');
+      }
+    } catch {
+      toast.error('Error al restaurar la campaña');
+    }
+  };
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-600';
     if (score >= 65) return 'text-blue-600';
@@ -594,6 +613,7 @@ export default function CampaignDetailPage() {
   }
 
   const completedCandidates = campaign.candidates.filter(c => c.status === 'COMPLETED').length;
+  const isLocked = campaign.status === 'COMPLETED' || campaign.status === 'ARCHIVED';
   const completionRate = campaign.candidates.length > 0
     ? Math.round((completedCandidates / campaign.candidates.length) * 100)
     : 0;
@@ -677,7 +697,7 @@ export default function CampaignDetailPage() {
                       Completar campaña
                     </DropdownMenuItem>
                   )}
-                  {campaign.status !== 'ARCHIVED' && (
+                  {campaign.status !== 'ARCHIVED' && campaign.status !== 'COMPLETED' && (
                     <DropdownMenuItem
                       onClick={() => setShowArchiveDialog(true)}
                       className="text-gray-600 focus:text-gray-700 focus:bg-gray-50"
@@ -686,9 +706,25 @@ export default function CampaignDetailPage() {
                       Archivar campaña
                     </DropdownMenuItem>
                   )}
-                  {(campaign.status !== 'COMPLETED' && campaign.status !== 'ARCHIVED') && (
-                    <DropdownMenuSeparator />
+                  {campaign.status === 'COMPLETED' && (
+                    <DropdownMenuItem
+                      onClick={() => setShowArchiveDialog(true)}
+                      className="text-gray-600 focus:text-gray-700 focus:bg-gray-50"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Archivar campaña
+                    </DropdownMenuItem>
                   )}
+                  {campaign.status === 'ARCHIVED' && (
+                    <DropdownMenuItem
+                      onClick={handleUnarchiveCampaign}
+                      className="text-indigo-600 focus:text-indigo-700 focus:bg-indigo-50"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Restaurar campaña
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600 focus:text-red-600 focus:bg-red-50">
                     <Trash2 className="w-4 h-4 mr-2" />
                     {t('campaigns.detail.deleteCampaign')}
@@ -701,7 +737,7 @@ export default function CampaignDetailPage() {
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
           {/* Agregar Candidatos Dialog Unificado */}
-          {permissions.canAddCandidates && (
+          {permissions.canAddCandidates && !isLocked && (
           <Dialog open={showAddCandidate} onOpenChange={(open) => { if (!open) resetAddDialog(); else setShowAddCandidate(true); }}>
             <DialogTrigger asChild>
               <Button className="bg-white text-indigo-700 hover:bg-white/90 shadow-md font-semibold">
@@ -1484,16 +1520,29 @@ export default function CampaignDetailPage() {
         <CardHeader>
           <CardTitle>{t('campaigns.candidates')} ({campaign.candidates.length})</CardTitle>
           <CardDescription>{t('campaigns.detail.candidatesList')}</CardDescription>
+          {isLocked && (
+            <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
+              <Archive className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>
+                Esta campaña está <strong>{campaign.status === 'COMPLETED' ? 'completada' : 'archivada'}</strong>. No se pueden agregar ni eliminar candidatos.
+                {campaign.status === 'ARCHIVED' && (
+                  <button onClick={handleUnarchiveCampaign} className="ml-1 underline font-medium hover:text-amber-900">Restaurar campaña</button>
+                )}
+              </span>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {campaign.candidates.length === 0 ? (
             <div className="text-center py-8">
               <Users className="w-12 h-12 mx-auto text-gray-300 mb-3" />
               <p className="text-gray-500">{t('campaigns.detail.noCandidates')}</p>
+              {!isLocked && (
               <Button className="mt-4" onClick={() => setShowAddCandidate(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 {t('campaigns.detail.addCandidates')}
               </Button>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
@@ -1594,6 +1643,7 @@ export default function CampaignDetailPage() {
                         )}
 
                         <div className="flex items-center gap-2">
+                          {!isLocked && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -1623,6 +1673,7 @@ export default function CampaignDetailPage() {
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
+                          )}
 
                           {isExpanded ? (
                             <ChevronUp className="w-5 h-5 text-gray-400" />

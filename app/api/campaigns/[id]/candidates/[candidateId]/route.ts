@@ -189,6 +189,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Campaña no encontrada' }, { status: 404 });
     }
 
+    if (campaign.status === 'COMPLETED' || campaign.status === 'ARCHIVED') {
+      return NextResponse.json({ error: 'No se pueden eliminar candidatos de una campaña completada o archivada' }, { status: 403 });
+    }
+
     await prisma.campaignCandidate.delete({
       where: { id: candidateId },
     });

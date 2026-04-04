@@ -79,6 +79,10 @@ export async function POST(
       return NextResponse.json({ error: 'Campaña no encontrada' }, { status: 404 });
     }
 
+    if (campaign.status === 'COMPLETED' || campaign.status === 'ARCHIVED') {
+      return NextResponse.json({ error: 'No se pueden agregar candidatos a una campaña completada o archivada' }, { status: 403 });
+    }
+
     // Verificar permisos para agregar candidatos
     const canAddCandidates = isOwner || isFullAccess || campaign.allowTeamAddCandidates;
     if (!canAddCandidates) {
