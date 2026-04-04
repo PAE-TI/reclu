@@ -6,7 +6,7 @@ import { Download, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ExternalResultsExportButtonProps {
-  type: 'disc' | 'driving-forces' | 'eq' | 'dna' | 'acumen' | 'values' | 'stress';
+  type: 'disc' | 'driving-forces' | 'eq' | 'dna' | 'acumen' | 'values' | 'stress' | 'technical';
   token: string;
   recipientName: string;
   size?: 'sm' | 'default' | 'lg';
@@ -24,6 +24,7 @@ const getResultsPageUrl = (type: string, token: string): string => {
     'acumen': `/external-acumen-evaluation-results/${token}`,
     'values': `/external-values-evaluation-results/${token}`,
     'stress': `/external-stress-evaluation-results/${token}`,
+    'technical': `/external-technical-evaluation-results/${token}`,
   };
   return urlMap[type] || '';
 };

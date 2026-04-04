@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   ArrowLeft,
+  ArrowRight,
   Target,
   Users,
   Plus,
@@ -87,6 +89,7 @@ import {
 import { toast } from 'react-hot-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLanguage } from '@/contexts/language-context';
+import CampaignAnalysisDashboard from '@/components/campaign-analysis-dashboard';
 
 interface EvaluationStatus {
   status: string;
@@ -626,6 +629,20 @@ export default function CampaignDetailPage() {
     return map[type] ?? null;
   };
 
+  const getResultsUrlForType = (type: string, token: string) => {
+    const pathMap: Record<string, string> = {
+      DISC: 'external-evaluation-results',
+      DRIVING_FORCES: 'external-driving-forces-evaluation-results',
+      EQ: 'external-eq-evaluation-results',
+      DNA: 'external-dna-evaluation-results',
+      ACUMEN: 'external-acumen-evaluation-results',
+      VALUES: 'external-values-evaluation-results',
+      STRESS: 'external-stress-evaluation-results',
+      TECHNICAL: 'external-technical-evaluation-results',
+    };
+    return `${window.location.origin}/${pathMap[type] || 'external-evaluation-results'}/${token}`;
+  };
+
   const handleCopyEvalLink = async (candidate: Candidate, type: string) => {
     const token = getTokenForType(candidate, type);
     if (!token) return;
@@ -671,6 +688,17 @@ export default function CampaignDetailPage() {
     if (score >= 65) return 'bg-blue-100';
     if (score >= 50) return 'bg-amber-100';
     return 'bg-red-100';
+  };
+
+  const evaluationDisplayNames: Record<string, string> = {
+    DISC: 'DISC',
+    DRIVING_FORCES: t('batchEval.drivingForces.name'),
+    EQ: 'EQ',
+    DNA: 'DNA-25',
+    ACUMEN: 'Acumen',
+    VALUES: t('batchEval.values.name'),
+    STRESS: t('batchEval.stress.name'),
+    TECHNICAL: language === 'es' ? 'Técnica' : 'Technical',
   };
 
   if (loading) {
@@ -1527,65 +1555,13 @@ export default function CampaignDetailPage() {
 
       {/* Análisis de Resultados */}
       {analysisResult && analysisResult.summary.completedEvaluations > 0 && (
-        <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-amber-500" />
-              {t('campaigns.detail.summary')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Warning when analysis was done in different language */}
-            {analysisResult.analysisLanguage && analysisResult.analysisLanguage !== language && (
-              <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-700">{t('campaigns.detail.analysisInOtherLanguage')}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAnalyze}
-                  disabled={analyzing}
-                  className="border-amber-300 text-amber-700 hover:bg-amber-100"
-                >
-                  {analyzing ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCw className="w-4 h-4 mr-1" />}
-                  {t('campaigns.detail.reanalyze')}
-                </Button>
-              </div>
-            )}
-            <p className="text-gray-700">{analysisResult.summary.recommendationSummary}</p>
-            
-            {analysisResult.summary.topCandidate && (
-              <div className="flex items-center gap-4 p-4 bg-white/80 rounded-lg">
-                <Award className="w-10 h-10 text-amber-500" />
-                <div>
-                  <p className="text-sm text-gray-500">{t('campaigns.detail.topCandidate')}</p>
-                  <p className="text-lg font-bold text-gray-900">{analysisResult.summary.topCandidate.name}</p>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysisResult.summary.topCandidate.score)}`}>
-                    {analysisResult.summary.topCandidate.score}%
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-4 gap-4">
-              <div className="text-center p-3 bg-emerald-100 rounded-lg">
-                <p className="text-2xl font-bold text-emerald-700">{analysisResult.summary.scoreDistribution.excellent}</p>
-                <p className="text-xs text-emerald-600">{t('campaigns.detail.excellentFit')} (≥80)</p>
-              </div>
-              <div className="text-center p-3 bg-blue-100 rounded-lg">
-                <p className="text-2xl font-bold text-blue-700">{analysisResult.summary.scoreDistribution.good}</p>
-                <p className="text-xs text-blue-600">{t('campaigns.detail.goodFit')} (65-79)</p>
-              </div>
-              <div className="text-center p-3 bg-amber-100 rounded-lg">
-                <p className="text-2xl font-bold text-amber-700">{analysisResult.summary.scoreDistribution.moderate}</p>
-                <p className="text-xs text-amber-600">{t('campaigns.detail.moderateFit')} (50-64)</p>
-              </div>
-              <div className="text-center p-3 bg-red-100 rounded-lg">
-                <p className="text-2xl font-bold text-red-700">{analysisResult.summary.scoreDistribution.low}</p>
-                <p className="text-xs text-red-600">{t('campaigns.detail.lowFit')} (&lt;50)</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <CampaignAnalysisDashboard
+          analysisResult={analysisResult}
+          language={language}
+          t={t}
+          analyzing={analyzing}
+          onReanalyze={handleAnalyze}
+        />
       )}
 
       {/* Lista de Candidatos */}
@@ -1768,20 +1744,41 @@ export default function CampaignDetailPage() {
                               const evalStatus = candidate.evaluationProgress?.[evalType];
                               const isCompleted = evalStatus?.status === 'COMPLETED';
                               const token = getTokenForType(candidate, evalType);
-                              const evalLabels: Record<string, string> = {
-                                DISC: 'DISC', DRIVING_FORCES: 'DF', EQ: 'EQ',
-                                DNA: 'DNA', ACUMEN: 'ACI', VALUES: 'Val', STRESS: 'Est', TECHNICAL: 'Téc',
-                              };
                               return (
                                 <div key={evalType} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium border ${isCompleted ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-gray-200 text-gray-500'}`}>
                                   {isCompleted ? <CheckCircle className="w-3 h-3" /> : <div className="w-3 h-3 rounded-full border border-gray-300" />}
-                                  {evalLabels[evalType] || evalType}
+                                  {evaluationDisplayNames[evalType] || evalType}
                                   {token && (
                                     <button onClick={() => handleCopyEvalLink(candidate, evalType)} className={`ml-1 transition-colors ${copiedEval === `${candidate.id}-${evalType}` ? 'text-emerald-500' : 'opacity-60 hover:opacity-100'}`} title="Copiar enlace">
                                       {copiedEval === `${candidate.id}-${evalType}` ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                                     </button>
                                   )}
                                 </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+                            {campaign.evaluationTypes.map((evalType) => {
+                              const evalStatus = candidate.evaluationProgress?.[evalType];
+                              const isCompleted = evalStatus?.status === 'COMPLETED';
+                              const token = getTokenForType(candidate, evalType);
+                              if (!isCompleted || !token) return null;
+                              return (
+                                <Button
+                                  key={`${candidate.id}-${evalType}-result`}
+                                  asChild
+                                  size="sm"
+                                  variant="outline"
+                                  className="justify-between border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50"
+                                >
+                                  <Link href={getResultsUrlForType(evalType, token)} target="_blank" rel="noreferrer">
+                                    <span className="flex items-center gap-2">
+                                      <Eye className="w-3.5 h-3.5" />
+                                      Ver {evaluationDisplayNames[evalType] || evalType}
+                                    </span>
+                                    <ArrowRight className="w-3.5 h-3.5" />
+                                  </Link>
+                                </Button>
                               );
                             })}
                           </div>
@@ -1871,27 +1868,38 @@ export default function CampaignDetailPage() {
                             const isCompleted = evalStatus?.status === 'COMPLETED';
                             const token = getTokenForType(candidate, evalType);
                             const key = `${candidate.id}-${evalType}`;
-                            const evalLabels: Record<string, string> = {
-                              DISC: 'DISC', DRIVING_FORCES: 'Driving Forces', EQ: 'Inteligencia Emocional',
-                              DNA: 'DNA', ACUMEN: 'Acumen', VALUES: 'Valores', STRESS: 'Estrés', TECHNICAL: 'Técnica',
-                            };
                             return (
-                              <div key={evalType} className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border ${isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200'}`}>
-                                <div className="flex items-center gap-2 min-w-0">
-                                  {isCompleted
-                                    ? <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                    : <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
-                                  }
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-medium text-gray-800 truncate">{evalLabels[evalType] || evalType}</p>
-                                    {isCompleted && evalStatus?.completedAt && (
-                                      <p className="text-xs text-emerald-600">{new Date(evalStatus.completedAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</p>
-                                    )}
-                                    {!isCompleted && <p className="text-xs text-gray-400">Pendiente</p>}
+                              <div key={evalType} className={`flex flex-col gap-3 rounded-xl border p-3 ${isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-gray-200'}`}>
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    {isCompleted
+                                      ? <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                                      : <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
+                                    }
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-medium text-gray-800 truncate">{evaluationDisplayNames[evalType] || evalType}</p>
+                                      {isCompleted && evalStatus?.completedAt && (
+                                        <p className="text-xs text-emerald-600">{new Date(evalStatus.completedAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</p>
+                                      )}
+                                      {!isCompleted && <p className="text-xs text-gray-400">Pendiente</p>}
+                                    </div>
                                   </div>
+                                  {token && isCompleted && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 px-3 text-xs gap-1 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+                                      asChild
+                                    >
+                                      <Link href={getResultsUrlForType(evalType, token)} target="_blank" rel="noreferrer">
+                                        <Eye className="w-3.5 h-3.5" />
+                                        Ver resultados
+                                      </Link>
+                                    </Button>
+                                  )}
                                 </div>
-                                {token && (
-                                  <div className="flex items-center gap-1 flex-shrink-0">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  {token && (
                                     <Button
                                       size="sm"
                                       variant="outline"
@@ -1901,22 +1909,22 @@ export default function CampaignDetailPage() {
                                       {copiedEval === key ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                                       {copiedEval === key ? 'Copiado' : 'Copiar link'}
                                     </Button>
-                                    {!isLocked && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-7 px-2 text-xs gap-1 text-amber-600 border-amber-200 hover:bg-amber-50"
-                                        onClick={() => handleResendEval(candidate, evalType)}
-                                        disabled={resendingEval === key}
-                                      >
-                                        {resendingEval === key
-                                          ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Enviando...</>
-                                          : <><Send className="w-3.5 h-3.5" />Reenviar</>
-                                        }
-                                      </Button>
-                                    )}
-                                  </div>
-                                )}
+                                  )}
+                                  {!isLocked && token && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 px-2 text-xs gap-1 text-amber-600 border-amber-200 hover:bg-amber-50"
+                                      onClick={() => handleResendEval(candidate, evalType)}
+                                      disabled={resendingEval === key}
+                                    >
+                                      {resendingEval === key
+                                        ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Enviando...</>
+                                        : <><Send className="w-3.5 h-3.5" />Reenviar</>
+                                      }
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             );
                           })}
