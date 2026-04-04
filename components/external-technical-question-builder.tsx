@@ -372,6 +372,8 @@ export function ExternalTechnicalQuestionBuilder({
   };
 
   const selectedCount = selectedQuestions.length;
+  const isSetComplete = selectedCount === QUESTION_TARGET;
+  const isReplaceModeActive = replaceIndex !== null;
   const difficultyCounts = useMemo(() => {
     return selectedQuestions.reduce(
       (acc, question) => {
@@ -630,7 +632,7 @@ export function ExternalTechnicalQuestionBuilder({
                 ? 'Haz clic en una pregunta para agregarla o para reemplazar la seleccionada.'
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
-            {selectedCount === QUESTION_TARGET && replaceIndex === null && (
+            {isSetComplete && !isReplaceModeActive && (
               <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                 <AlertCircle className="mr-2 inline-block h-4 w-4 align-text-bottom" />
                 {language === 'es'
@@ -694,7 +696,7 @@ export function ExternalTechnicalQuestionBuilder({
                   {language === 'es' ? 'Quitar filtro' : 'Clear filter'}
                 </Button>
               )}
-              {replaceIndex !== null && (
+              {isReplaceModeActive && (
                 <>
                   <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
                     {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
@@ -702,11 +704,11 @@ export function ExternalTechnicalQuestionBuilder({
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => setReplaceIndex(null)}
-                    className="h-9 rounded-full px-4 text-sm text-amber-700 hover:bg-amber-50"
-                  >
-                    {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
-                  </Button>
+                  onClick={() => setReplaceIndex(null)}
+                  className="h-9 rounded-full px-4 text-sm text-amber-700 hover:bg-amber-50"
+                >
+                  {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
+                </Button>
                 </>
               )}
             </div>
@@ -723,6 +725,7 @@ export function ExternalTechnicalQuestionBuilder({
                 ) : (
                   availableQuestions.map(question => {
                     const isSelected = selectedQuestions.some(item => item.id === question.id);
+                    const isSelectedReplacementTarget = replaceIndex !== null && selectedQuestions[replaceIndex]?.id === question.id;
                     return (
                       <button
                       key={question.id}
@@ -739,9 +742,11 @@ export function ExternalTechnicalQuestionBuilder({
                           handlePickQuestion(question);
                         }}
                         className={`w-full rounded-2xl border p-4 text-left transition-all ${
-                          isSelected
+                          isSelectedReplacementTarget
+                            ? 'border-amber-300 bg-amber-50 ring-2 ring-amber-200'
+                            : isSelected
                             ? 'border-emerald-200 bg-emerald-50'
-                            : replaceIndex !== null
+                            : isReplaceModeActive
                               ? 'border-amber-200 hover:border-amber-300 hover:bg-amber-50'
                               : 'border-slate-200 hover:border-sky-200 hover:bg-sky-50'
                         }`}
@@ -773,12 +778,14 @@ export function ExternalTechnicalQuestionBuilder({
                             </p>
                           </div>
                           <div className="flex-shrink-0 pt-1">
-                            {isSelected ? (
+                            {isSelectedReplacementTarget ? (
+                              <Shuffle className="w-4 h-4 text-amber-600" />
+                            ) : isSelected ? (
                               <Check className="w-4 h-4 text-emerald-600" />
+                            ) : isReplaceModeActive ? (
+                              <ArrowRight className="w-4 h-4 text-amber-600" />
                             ) : !canAddMoreQuestions ? (
                               <AlertCircle className="w-4 h-4 text-amber-600" />
-                            ) : replaceIndex !== null ? (
-                              <Shuffle className="w-4 h-4 text-amber-600" />
                             ) : (
                               <ArrowRight className="w-4 h-4 text-sky-600" />
                             )}
