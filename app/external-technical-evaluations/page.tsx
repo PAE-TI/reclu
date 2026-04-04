@@ -693,44 +693,145 @@ export default function ExternalTechnicalEvaluationsPage() {
                       )}
                     </div>
 
-                    <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4">
-                      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-                        <div className="space-y-1">
-                          <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
-                            {language === 'es' ? 'Fuente de preguntas' : 'Question source'}
-                          </p>
-                          <p className="text-sm text-sky-700">
-                            {language === 'es'
-                              ? 'Elige una sola fuente: el cargo actual o una plantilla guardada.'
-                              : 'Choose one source: the current role or a saved template.'}
-                          </p>
-                        </div>
-                        <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_auto] lg:items-end">
-                          <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId} disabled={loadingTemplates}>
-                            <SelectTrigger className="bg-white">
-                              <SelectValue placeholder={language === 'es' ? 'Selecciona una fuente' : 'Select a source'} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="position">
-                                {language === 'es' ? 'Usar cargo actual' : 'Use current role'}
-                              </SelectItem>
-                              {technicalTemplates.map(template => (
-                                <SelectItem key={template.id} value={template.id}>
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">{template.name}</span>
-                                    <span className="text-xs text-muted-foreground">
-                                      {template.basePositionTitle} · {template.questionCount} preguntas
-                                    </span>
-                                  </div>
+                    <div className="overflow-hidden rounded-3xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-indigo-50 p-4 shadow-sm">
+                      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:items-stretch">
+                        <div className="rounded-2xl border border-sky-100 bg-white/90 p-4 shadow-sm">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">
+                                {language === 'es' ? 'Fuente de preguntas' : 'Question source'}
+                              </p>
+                              <p className="text-sm text-slate-600">
+                                {language === 'es'
+                                  ? 'Elige una sola fuente: el cargo actual o una plantilla guardada.'
+                                  : 'Choose one source: the current role or a saved template.'}
+                              </p>
+                            </div>
+                            <Badge className="border-sky-200 bg-sky-100 text-sky-700">
+                              {selectedTemplateId === 'position'
+                                ? (language === 'es' ? 'Cargo actual' : 'Current role')
+                                : (activeTemplate?.name || (language === 'es' ? 'Plantilla activa' : 'Active template'))}
+                            </Badge>
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <div className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700">
+                              {language === 'es'
+                                ? '1 fuente por evaluación'
+                                : '1 source per evaluation'}
+                            </div>
+                            <div className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700">
+                              {language === 'es'
+                                ? 'Plantilla reutilizable'
+                                : 'Reusable template'}
+                            </div>
+                            <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">
+                              {language === 'es'
+                                ? '20 preguntas exactas'
+                                : 'Exactly 20 questions'}
+                            </div>
+                          </div>
+
+                          <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                            <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId} disabled={loadingTemplates}>
+                              <SelectTrigger className="min-h-12 bg-white">
+                                <SelectValue placeholder={language === 'es' ? 'Selecciona una fuente' : 'Select a source'} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="position">
+                                  {language === 'es' ? 'Usar cargo actual' : 'Use current role'}
                                 </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Badge className="bg-sky-100 text-sky-700 border-sky-200 h-10 px-3">
-                            {selectedTemplateId === 'position'
-                              ? (language === 'es' ? 'Cargo actual' : 'Current role')
-                              : (activeTemplate?.name || (language === 'es' ? 'Plantilla' : 'Template'))}
-                          </Badge>
+                                {technicalTemplates.map(template => (
+                                  <SelectItem key={template.id} value={template.id}>
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">{template.name}</span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {template.basePositionTitle} · {template.questionCount} preguntas
+                                      </span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="min-h-12 justify-center bg-white"
+                              onClick={() => setActiveTab('templates')}
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              {language === 'es' ? 'Ver plantillas' : 'View templates'}
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 shadow-sm">
+                          {selectedTemplateId === 'position' ? (
+                            <div className="flex h-full flex-col justify-between">
+                              <div>
+                                <p className="text-sm font-semibold uppercase tracking-wide text-indigo-700">
+                                  {language === 'es' ? 'Cargo actual' : 'Current role'}
+                                </p>
+                                <p className="mt-1 text-lg font-semibold text-indigo-950">
+                                  {formData.jobPositionId
+                                    ? (JOB_POSITIONS.find(position => position.id === formData.jobPositionId)?.title || formData.jobPositionId)
+                                    : (language === 'es' ? 'Sin cargo seleccionado' : 'No role selected')}
+                                </p>
+                                <p className="mt-2 text-sm text-indigo-800">
+                                  {language === 'es'
+                                    ? 'Usarás el banco base asociado al cargo seleccionado y podrás personalizarlo antes de enviar.'
+                                    : 'You will use the base bank linked to the selected role and can still customize it before sending.'}
+                                </p>
+                              </div>
+                              <div className="mt-4 flex flex-wrap gap-2">
+                                <Badge className="border-indigo-200 bg-white text-indigo-700">
+                                  {language === 'es' ? 'Fuente dinámica' : 'Dynamic source'}
+                                </Badge>
+                                <Badge className="border-indigo-200 bg-white text-indigo-700">
+                                  {language === 'es' ? 'Editable' : 'Editable'}
+                                </Badge>
+                              </div>
+                            </div>
+                          ) : activeTemplate ? (
+                            <div className="flex h-full flex-col justify-between">
+                              <div>
+                                <p className="text-sm font-semibold uppercase tracking-wide text-indigo-700">
+                                  {language === 'es' ? 'Plantilla cargada' : 'Loaded template'}
+                                </p>
+                                <p className="mt-1 text-lg font-semibold text-indigo-950">
+                                  {activeTemplate.name}
+                                </p>
+                                <p className="mt-1 text-sm text-indigo-800">
+                                  {activeTemplate.description || (language === 'es' ? 'Sin descripción.' : 'No description.')}
+                                </p>
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                  <Badge className="border-indigo-200 bg-white text-indigo-700">
+                                    {activeTemplate.basePositionTitle}
+                                  </Badge>
+                                  <Badge className="border-indigo-200 bg-white text-indigo-700">
+                                    {activeTemplate.questionCount} {language === 'es' ? 'preguntas' : 'questions'}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-indigo-200 bg-white px-4 py-3">
+                                <div className="min-w-0">
+                                  <p className="text-xs uppercase tracking-wide text-indigo-500">
+                                    {language === 'es' ? 'Estado' : 'Status'}
+                                  </p>
+                                  <p className="text-sm font-medium text-indigo-950">
+                                    {language === 'es' ? 'Plantilla activa para esta evaluación' : 'Template active for this evaluation'}
+                                  </p>
+                                </div>
+                                <div className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_0_6px_rgba(99,102,241,0.12)]" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-indigo-200 bg-white/70 p-6 text-sm text-indigo-700">
+                              {language === 'es'
+                                ? 'No hay plantilla seleccionada.'
+                                : 'No template selected.'}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1017,7 +1118,7 @@ export default function ExternalTechnicalEvaluationsPage() {
           )}
 
           {activeTab === 'templates' && (
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="overflow-hidden border-0 bg-white/85 shadow-xl backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-sky-600" />
@@ -1030,13 +1131,28 @@ export default function ExternalTechnicalEvaluationsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {technicalTemplates.length === 0 ? (
-                  <div className="text-center py-12">
-                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {loadingTemplates ? (
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {[...Array(4)].map((_, index) => (
+                      <div key={index} className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                        <div className="h-4 w-1/2 rounded-full bg-slate-200" />
+                        <div className="mt-3 h-3 w-2/5 rounded-full bg-slate-200" />
+                        <div className="mt-4 space-y-2">
+                          <div className="h-3 rounded-full bg-slate-200" />
+                          <div className="h-3 w-5/6 rounded-full bg-slate-200" />
+                          <div className="h-3 w-3/5 rounded-full bg-slate-200" />
+                        </div>
+                        <div className="mt-5 h-10 w-32 rounded-xl bg-slate-200" />
+                      </div>
+                    ))}
+                  </div>
+                ) : technicalTemplates.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-sky-200 bg-sky-50/70 py-14 text-center">
+                    <FileText className="mx-auto mb-4 h-16 w-16 text-sky-300" />
+                    <h3 className="mb-2 text-lg font-semibold text-slate-900">
                       {language === 'es' ? 'Aún no hay plantillas' : 'No templates yet'}
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="mx-auto mb-6 max-w-md text-sm text-slate-600">
                       {language === 'es'
                         ? 'Arma una evaluación técnica y guárdala como plantilla desde la vista previa final.'
                         : 'Build a technical evaluation and save it as a template from the final preview.'}
@@ -1047,36 +1163,63 @@ export default function ExternalTechnicalEvaluationsPage() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    {technicalTemplates.map(template => (
-                      <div key={template.id} className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0">
-                            <p className="font-semibold text-sky-950 truncate">{template.name}</p>
-                            <p className="text-sm text-sky-700 truncate">{template.basePositionTitle}</p>
+                  <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                    {technicalTemplates.map(template => {
+                      const isActive = selectedTemplateId === template.id;
+
+                      return (
+                        <div
+                          key={template.id}
+                          className={`relative overflow-hidden rounded-3xl border p-5 shadow-sm transition-all ${
+                            isActive
+                              ? 'border-sky-300 bg-gradient-to-br from-sky-50 to-indigo-50 shadow-lg ring-2 ring-sky-200'
+                              : 'border-sky-200 bg-white hover:border-sky-300 hover:shadow-md'
+                          }`}
+                        >
+                          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500 via-indigo-500 to-cyan-500" />
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="min-w-0">
+                              <p className="truncate text-lg font-semibold text-slate-950">{template.name}</p>
+                              <p className="mt-1 truncate text-sm text-slate-600">{template.basePositionTitle}</p>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                              <Badge className="border-sky-200 bg-sky-100 text-sky-700">
+                                {template.questionCount} {language === 'es' ? 'preguntas' : 'questions'}
+                              </Badge>
+                              {isActive && (
+                                <Badge className="border-indigo-200 bg-indigo-100 text-indigo-700">
+                                  {language === 'es' ? 'Activa' : 'Active'}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <Badge className="bg-sky-100 text-sky-700 border-sky-200">
-                            {template.questionCount}
-                          </Badge>
+                          <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-700">
+                            {template.description || (language === 'es' ? 'Sin descripción.' : 'No description.')}
+                          </p>
+                          <div className="mt-5 flex flex-wrap gap-2">
+                            <Badge variant="outline" className="border-slate-200 bg-white text-slate-700">
+                              {language === 'es' ? 'Cargo base' : 'Base role'}
+                            </Badge>
+                            <Badge variant="outline" className="border-slate-200 bg-white text-slate-700">
+                              {language === 'es' ? '20 preguntas' : '20 questions'}
+                            </Badge>
+                          </div>
+                          <div className="mt-5 flex gap-2">
+                            <Button
+                              type="button"
+                              className="flex-1 bg-sky-600 hover:bg-sky-700"
+                              onClick={() => {
+                                setFormData(prev => ({ ...prev, jobPositionId: template.basePositionId }));
+                                setSelectedTemplateId(template.id);
+                                setActiveTab('send');
+                              }}
+                            >
+                              {language === 'es' ? 'Usar plantilla' : 'Use template'}
+                            </Button>
+                          </div>
                         </div>
-                        <p className="mt-3 text-sm text-sky-800">
-                          {template.description || (language === 'es' ? 'Sin descripción.' : 'No description.')}
-                        </p>
-                        <div className="mt-4 flex gap-2">
-                          <Button
-                            type="button"
-                            className="bg-sky-600 hover:bg-sky-700"
-                            onClick={() => {
-                              setFormData(prev => ({ ...prev, jobPositionId: template.basePositionId }));
-                              setSelectedTemplateId(template.id);
-                              setActiveTab('send');
-                            }}
-                          >
-                            {language === 'es' ? 'Usar plantilla' : 'Use template'}
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
