@@ -229,6 +229,7 @@ export default function CampaignDetailPage() {
   const [selectedHiredCandidateId, setSelectedHiredCandidateId] = useState<string>('none');
   const [completionNotes, setCompletionNotes] = useState('');
   const [resendingEval, setResendingEval] = useState<string | null>(null);
+  const [copiedEval, setCopiedEval] = useState<string | null>(null);
 
   // State for searching existing evaluations
   const [addMode, setAddMode] = useState<'manual' | 'existing'>('manual');
@@ -629,7 +630,10 @@ export default function CampaignDetailPage() {
     const token = getTokenForType(candidate, type);
     if (!token) return;
     await navigator.clipboard.writeText(getEvalUrl(type, token));
+    const key = `${candidate.id}-${type}`;
+    setCopiedEval(key);
     toast.success('Enlace copiado');
+    setTimeout(() => setCopiedEval(prev => prev === key ? null : prev), 2000);
   };
 
   const handleResendEval = async (candidate: Candidate, type: string) => {
@@ -1773,8 +1777,8 @@ export default function CampaignDetailPage() {
                                   {isCompleted ? <CheckCircle className="w-3 h-3" /> : <div className="w-3 h-3 rounded-full border border-gray-300" />}
                                   {evalLabels[evalType] || evalType}
                                   {token && (
-                                    <button onClick={() => handleCopyEvalLink(candidate, evalType)} className="ml-1 opacity-60 hover:opacity-100" title="Copiar enlace">
-                                      <Copy className="w-3 h-3" />
+                                    <button onClick={() => handleCopyEvalLink(candidate, evalType)} className={`ml-1 transition-colors ${copiedEval === `${candidate.id}-${evalType}` ? 'text-emerald-500' : 'opacity-60 hover:opacity-100'}`} title="Copiar enlace">
+                                      {copiedEval === `${candidate.id}-${evalType}` ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                                     </button>
                                   )}
                                 </div>
@@ -1890,25 +1894,24 @@ export default function CampaignDetailPage() {
                                   <div className="flex items-center gap-1 flex-shrink-0">
                                     <Button
                                       size="sm"
-                                      variant="ghost"
-                                      className="h-7 px-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                      variant="outline"
+                                      className={`h-7 px-2 text-xs gap-1 transition-colors ${copiedEval === key ? 'text-emerald-600 border-emerald-300 bg-emerald-50' : 'text-gray-500 hover:text-indigo-600 hover:bg-indigo-50'}`}
                                       onClick={() => handleCopyEvalLink(candidate, evalType)}
-                                      title="Copiar enlace"
                                     >
-                                      <Copy className="w-3.5 h-3.5" />
+                                      {copiedEval === key ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                      {copiedEval === key ? 'Copiado' : 'Copiar link'}
                                     </Button>
-                                    {!isCompleted && !isLocked && (
+                                    {!isLocked && (
                                       <Button
                                         size="sm"
-                                        variant="ghost"
-                                        className="h-7 px-2 text-amber-500 hover:text-amber-700 hover:bg-amber-50"
+                                        variant="outline"
+                                        className="h-7 px-2 text-xs gap-1 text-amber-600 border-amber-200 hover:bg-amber-50"
                                         onClick={() => handleResendEval(candidate, evalType)}
                                         disabled={resendingEval === key}
-                                        title="Reenviar invitación"
                                       >
                                         {resendingEval === key
-                                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                          : <Send className="w-3.5 h-3.5" />
+                                          ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Enviando...</>
+                                          : <><Send className="w-3.5 h-3.5" />Reenviar</>
                                         }
                                       </Button>
                                     )}
