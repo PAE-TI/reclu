@@ -7,6 +7,15 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AlertCircle, ArrowRight, Check, Loader2, RefreshCw, Search, Shuffle, Trash2, FileText, Layers3 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -69,6 +78,10 @@ export function ExternalTechnicalQuestionBuilder({
   const [categories, setCategories] = useState<Array<{ name: string; count: number }>>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [categorySearchOpen, setCategorySearchOpen] = useState(false);
+  const [roleSearchOpen, setRoleSearchOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+  const [roleSearch, setRoleSearch] = useState('');
 
   const basePosition = useMemo(
     () => JOB_POSITIONS.find(position => position.id === basePositionId),
@@ -78,6 +91,33 @@ export function ExternalTechnicalQuestionBuilder({
   const baseTitle = language === 'es'
     ? basePosition?.title || 'Cargo base'
     : basePosition?.titleEn || basePosition?.title || 'Base position';
+
+  const sortedCategories = useMemo(() => {
+    return [...categories].sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+  }, [categories]);
+
+  const filteredRoles = useMemo(() => {
+    const term = roleSearch.trim().toLowerCase();
+    return [...JOB_POSITIONS]
+      .sort((a, b) => {
+        const aLabel = language === 'es' ? a.title : a.titleEn || a.title;
+        const bLabel = language === 'es' ? b.title : b.titleEn || b.title;
+        return aLabel.localeCompare(bLabel, language === 'es' ? 'es' : 'en', { sensitivity: 'base' });
+      })
+      .filter(position => {
+        if (!term) return true;
+        const label = `${position.title} ${position.titleEn || ''} ${position.subcategory} ${position.synonyms.join(' ')} ${position.keywords.join(' ')}`.toLowerCase();
+        return label.includes(term);
+      });
+  }, [language, roleSearch]);
+
+  const filteredCategoryItems = useMemo(() => {
+    const term = categorySearch.trim().toLowerCase();
+    return sortedCategories.filter(item => {
+      if (!term) return true;
+      return item.name.toLowerCase().includes(term);
+    });
+  }, [categorySearch, sortedCategories]);
 
   const fetchBank = async (params: Record<string, string>) => {
     const query = new URLSearchParams();
@@ -315,35 +355,115 @@ export function ExternalTechnicalQuestionBuilder({
                 </div>
                 <div className="space-y-2">
                   <Label>{language === 'es' ? 'Tema' : 'Theme'}</Label>
-                  <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={language === 'es' ? 'Todos' : 'All'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{language === 'es' ? 'Todos' : 'All'}</SelectItem>
-                      {categories.map(item => (
-                        <SelectItem key={item.name} value={item.name}>
-                          {item.name} ({item.count})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={categorySearchOpen} onOpenChange={open => {
+                    setCategorySearchOpen(open);
+                    if (!open) setCategorySearch('');
+                  }}>
+                    <PopoverTrigger asChild>
+                      <Button type="button" variant="outline" className="w-full justify-between bg-white font-normal">
+                        <span className="truncate">
+                          {category === 'all'
+                            ? (language === 'es' ? 'Todos' : 'All')
+                            : category}
+                        </span>
+                        <Search className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[320px] p-0" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder={language === 'es' ? 'Buscar tema...' : 'Search theme...'}
+                          value={categorySearch}
+                          onValueChange={setCategorySearch}
+                        />
+                        <CommandList>
+                          <CommandEmpty>{language === 'es' ? 'Sin resultados' : 'No results'}</CommandEmpty>
+                          <CommandGroup>
+                            <CommandItem
+                              value="all"
+                              onSelect={() => {
+                                setCategory('all');
+                                setCategorySearchOpen(false);
+                              }}
+                            >
+                              {language === 'es' ? 'Todos' : 'All'}
+                            </CommandItem>
+                            {filteredCategoryItems.map(item => (
+                              <CommandItem
+                                key={item.name}
+                                value={item.name}
+                                onSelect={() => {
+                                  setCategory(item.name);
+                                  setCategorySearchOpen(false);
+                                }}
+                              >
+                                <span className="flex-1 truncate">{item.name}</span>
+                                <span className="ml-2 text-xs text-muted-foreground">({item.count})</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <Label>{language === 'es' ? 'Cargo origen' : 'Source role'}</Label>
-                  <Select value={sourcePositionId} onValueChange={setSourcePositionId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={language === 'es' ? 'Cargo' : 'Role'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{language === 'es' ? 'Todos los cargos' : 'All roles'}</SelectItem>
-                      {JOB_POSITIONS.map(position => (
-                        <SelectItem key={position.id} value={position.id}>
-                          {language === 'es' ? position.title : position.titleEn || position.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={roleSearchOpen} onOpenChange={open => {
+                    setRoleSearchOpen(open);
+                    if (!open) setRoleSearch('');
+                  }}>
+                    <PopoverTrigger asChild>
+                      <Button type="button" variant="outline" className="w-full justify-between bg-white font-normal">
+                        <span className="truncate">
+                          {sourcePositionId === 'all'
+                            ? (language === 'es' ? 'Todos los cargos' : 'All roles')
+                            : (JOB_POSITIONS.find(position => position.id === sourcePositionId)?.titleEn || JOB_POSITIONS.find(position => position.id === sourcePositionId)?.title || sourcePositionId)}
+                        </span>
+                        <Search className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[340px] p-0" align="start">
+                      <Command>
+                        <CommandInput
+                          placeholder={language === 'es' ? 'Buscar cargo...' : 'Search role...'}
+                          value={roleSearch}
+                          onValueChange={setRoleSearch}
+                        />
+                        <CommandList>
+                          <CommandEmpty>{language === 'es' ? 'Sin resultados' : 'No results'}</CommandEmpty>
+                          <CommandGroup>
+                            <CommandItem
+                              value="all"
+                              onSelect={() => {
+                                setSourcePositionId('all');
+                                setRoleSearchOpen(false);
+                              }}
+                            >
+                              {language === 'es' ? 'Todos los cargos' : 'All roles'}
+                            </CommandItem>
+                            {filteredRoles.map(position => (
+                              <CommandItem
+                                key={position.id}
+                                value={`${position.title} ${position.titleEn || ''} ${position.subcategory}`}
+                                onSelect={() => {
+                                  setSourcePositionId(position.id);
+                                  setRoleSearchOpen(false);
+                                }}
+                              >
+                                <div className="flex-1 min-w-0">
+                                  <p className="truncate font-medium">
+                                    {language === 'es' ? position.title : position.titleEn || position.title}
+                                  </p>
+                                  <p className="truncate text-xs text-muted-foreground">{position.subcategory}</p>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <Label>{language === 'es' ? 'Nivel' : 'Difficulty'}</Label>
@@ -393,8 +513,8 @@ export function ExternalTechnicalQuestionBuilder({
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
-        <Card className="border-slate-200 shadow-sm">
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-start">
+        <Card className="self-start border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Search className="w-4 h-4 text-sky-600" />
@@ -427,10 +547,10 @@ export function ExternalTechnicalQuestionBuilder({
             </div>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[560px] pr-3">
-              <div className="space-y-3">
+            <ScrollArea className="h-[620px] pr-3">
+              <div className="space-y-4 pb-2">
                 {availableQuestions.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-200 p-6 text-center text-sm text-gray-500">
+                  <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-gray-500">
                     {language === 'es'
                       ? 'No hay preguntas cargadas todavía. Usa "Buscar en banco" o recarga el set base.'
                       : 'No questions loaded yet. Use "Search bank" or reload the base set.'}
@@ -443,7 +563,7 @@ export function ExternalTechnicalQuestionBuilder({
                         key={question.id}
                         type="button"
                         onClick={() => handlePickQuestion(question)}
-                        className={`w-full rounded-xl border p-4 text-left transition-colors ${
+                        className={`w-full rounded-2xl border p-4 text-left transition-all ${
                           isSelected
                             ? 'border-emerald-200 bg-emerald-50'
                             : replaceIndex !== null
@@ -451,9 +571,9 @@ export function ExternalTechnicalQuestionBuilder({
                               : 'border-slate-200 hover:border-sky-200 hover:bg-sky-50'
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0 flex-1 space-y-3">
+                            <div className="flex flex-wrap items-center gap-2">
                               <Badge variant="outline" className="bg-white">
                                 {question.jobPositionTitle}
                               </Badge>
@@ -470,14 +590,14 @@ export function ExternalTechnicalQuestionBuilder({
                                 {question.difficulty}
                               </Badge>
                             </div>
-                            <p className="line-clamp-2 text-sm font-medium text-slate-900">
+                            <p className="text-[15px] leading-6 font-medium text-slate-900">
                               {question.questionText}
                             </p>
-                            <p className="mt-2 text-xs text-slate-500">
+                            <p className="text-xs text-slate-500">
                               #{question.questionNumber} {language === 'es' ? 'del cargo' : 'for the role'}
                             </p>
                           </div>
-                          <div className="flex-shrink-0">
+                          <div className="flex-shrink-0 pt-1">
                             {isSelected ? (
                               <Check className="w-4 h-4 text-emerald-600" />
                             ) : replaceIndex !== null ? (
@@ -566,8 +686,8 @@ export function ExternalTechnicalQuestionBuilder({
               </div>
             </div>
 
-            <ScrollArea className="h-[600px] pr-2">
-              <div className="space-y-4">
+            <ScrollArea className="h-[620px] pr-2">
+              <div className="space-y-4 pb-2">
                 {selectedQuestions.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-slate-200 p-8 text-center text-sm text-gray-500">
                     {language === 'es' ? 'No hay preguntas seleccionadas.' : 'No questions selected.'}
