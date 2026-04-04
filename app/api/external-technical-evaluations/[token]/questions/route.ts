@@ -20,6 +20,7 @@ export async function GET(
         status: true,
         jobPositionId: true,
         jobPositionTitle: true,
+        questionSetConfig: true,
       },
     });
 
@@ -44,6 +45,81 @@ export async function GET(
         },
         { status: 400 }
       );
+    }
+
+    const customQuestionIds = Array.isArray(evaluation.questionSetConfig)
+      ? null
+      : (evaluation.questionSetConfig as { questionIds?: string[] } | null)?.questionIds;
+
+    if (customQuestionIds && customQuestionIds.length > 0) {
+      const customQuestions = await prisma.technicalQuestion.findMany({
+        where: {
+          id: { in: customQuestionIds },
+          isActive: true,
+        },
+        select: {
+          id: true,
+          questionNumber: true,
+          questionText: true,
+          questionTextEn: true,
+          category: true,
+          categoryEn: true,
+          difficulty: true,
+          optionA: true,
+          optionB: true,
+          optionC: true,
+          optionD: true,
+          optionAEn: true,
+          optionBEn: true,
+          optionCEn: true,
+          optionDEn: true,
+        },
+      });
+
+      const questionMap = new Map(customQuestions.map(question => [question.id, question]));
+      const orderedQuestions = customQuestionIds
+        .map(questionId => questionMap.get(questionId))
+        .filter((question): question is NonNullable<typeof question> => Boolean(question));
+
+      if (orderedQuestions.length === customQuestionIds.length) {
+        const localizedCustomQuestions = orderedQuestions.map(q => {
+          if (language === 'en') {
+            return {
+              id: q.id,
+              questionNumber: q.questionNumber,
+              questionText: q.questionTextEn || q.questionText,
+              category: q.categoryEn || q.category,
+              difficulty: q.difficulty,
+              optionA: q.optionAEn || q.optionA,
+              optionB: q.optionBEn || q.optionB,
+              optionC: q.optionCEn || q.optionC,
+              optionD: q.optionDEn || q.optionD,
+            };
+          }
+          return {
+            id: q.id,
+            questionNumber: q.questionNumber,
+            questionText: q.questionText,
+            category: q.category,
+            difficulty: q.difficulty,
+            optionA: q.optionA,
+            optionB: q.optionB,
+            optionC: q.optionC,
+            optionD: q.optionD,
+          };
+        });
+
+        return NextResponse.json({
+          questions: localizedCustomQuestions,
+          evaluation: {
+            id: evaluation.id,
+            jobPositionId: evaluation.jobPositionId,
+            jobPositionTitle: evaluation.jobPositionTitle,
+            status: evaluation.status,
+          },
+          customQuestionSet: true,
+        });
+      }
     }
 
     // Distribution: 60% hard, 25% medium, 15% easy (for 20 questions: 12H, 5M, 3E)

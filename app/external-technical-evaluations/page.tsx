@@ -48,6 +48,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { EvaluationNotesButton } from '@/components/evaluation-notes';
+import { ExternalTechnicalQuestionBuilder } from '@/components/external-technical-question-builder';
 import { useLanguage } from '@/contexts/language-context';
 import { JOB_POSITIONS, JOB_CATEGORIES, JobCategory } from '@/lib/job-positions';
 
@@ -76,6 +77,27 @@ interface TechnicalEvaluation {
   } | null;
 }
 
+interface QuestionBankQuestion {
+  id: string;
+  jobPositionId: string;
+  jobPositionTitle: string;
+  questionNumber: number;
+  questionText: string;
+  category: string | null;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+}
+
+interface QuestionSetConfig {
+  basePositionId: string;
+  sourcePositionId: string;
+  filters: {
+    search: string;
+    category: string;
+    difficulty: 'all' | 'EASY' | 'MEDIUM' | 'HARD';
+  };
+  questionIds: string[];
+}
+
 export default function ExternalTechnicalEvaluationsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -98,6 +120,9 @@ export default function ExternalTechnicalEvaluationsPage() {
   const [resending, setResending] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedQuestions, setSelectedQuestions] = useState<QuestionBankQuestion[]>([]);
+  const [questionSetConfig, setQuestionSetConfig] = useState<QuestionSetConfig | null>(null);
+  const [questionsReady, setQuestionsReady] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -141,6 +166,14 @@ export default function ExternalTechnicalEvaluationsPage() {
       setError(language === 'es' ? 'Selecciona un cargo' : 'Select a job position');
       return;
     }
+
+    if (!questionsReady || selectedQuestions.length !== 20) {
+      setError(language === 'es'
+        ? 'Debes completar y revisar las 20 preguntas antes de enviar.'
+        : 'You must complete and review all 20 questions before sending.'
+      );
+      return;
+    }
     
     setSubmitting(true);
     setError('');
@@ -150,7 +183,11 @@ export default function ExternalTechnicalEvaluationsPage() {
       const response = await fetch('/api/external-technical-evaluations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          questionIds: selectedQuestions.map(question => question.id),
+          questionSetConfig,
+        }),
       });
 
       if (!response.ok) {
@@ -161,6 +198,9 @@ export default function ExternalTechnicalEvaluationsPage() {
       setSuccess(`${t('extEval.success.sent')} ${formData.recipientEmail}`);
       setFormData({ recipientName: '', recipientEmail: '', jobPositionId: '' });
       setSearchTerm('');
+      setSelectedQuestions([]);
+      setQuestionSetConfig(null);
+      setQuestionsReady(false);
       fetchEvaluations();
       window.dispatchEvent(new Event('credits-updated'));
     } catch (err: any) {
@@ -530,9 +570,21 @@ export default function ExternalTechnicalEvaluationsPage() {
                         )}
                       </div>
 
+                      {formData.jobPositionId && (
+                        <ExternalTechnicalQuestionBuilder
+                          basePositionId={formData.jobPositionId}
+                          language={language === 'es' ? 'es' : 'en'}
+                          onChange={({ questionIds, questionSetConfig: config, selectedQuestions: previewQuestions, ready }) => {
+                            setSelectedQuestions(previewQuestions);
+                            setQuestionSetConfig(config);
+                            setQuestionsReady(ready && questionIds.length === 20);
+                          }}
+                        />
+                      )}
+
                       <Button
                         type="submit"
-                        disabled={submitting || !formData.jobPositionId}
+                        disabled={submitting || !formData.jobPositionId || !questionsReady}
                         className="w-full bg-sky-600 hover:bg-sky-700"
                       >
                         {submitting ? (
@@ -570,7 +622,11 @@ export default function ExternalTechnicalEvaluationsPage() {
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-6 h-6 bg-sky-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                      <p className="text-sky-700 text-sm">{language === 'es' ? 'Se generan 20 preguntas específicas del cargo' : '20 job-specific questions are generated'}</p>
+                      <p className="text-sky-700 text-sm">
+                        {language === 'es'
+                          ? 'Revisa las 20 preguntas, cámbialas por otras de cualquier cargo, tema o nivel y personaliza el set completo'
+                          : 'Review the 20 questions, swap them for others from any role, topic, or difficulty, and fully customize the set'}
+                      </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-6 h-6 bg-sky-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>

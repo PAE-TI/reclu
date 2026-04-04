@@ -2303,6 +2303,7 @@ model ExternalTechnicalEvaluation {
   // Job position this evaluation is for
   jobPositionId   String
   jobPositionTitle String   // Store title for display
+  questionSetConfig Json?    // Custom question set configuration and selected question IDs
   
   // Relations
   senderUser      User      @relation(fields: [senderUserId], references: [id], onDelete: Restrict)

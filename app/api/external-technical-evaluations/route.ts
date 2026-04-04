@@ -47,7 +47,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { recipientName, recipientEmail, jobPositionId, title, description, sendEmail = true } = body;
+    const {
+      recipientName,
+      recipientEmail,
+      jobPositionId,
+      title,
+      description,
+      sendEmail = true,
+      questionIds = [],
+      questionSetConfig = null,
+    } = body;
 
     if (!recipientName || !recipientEmail || !jobPositionId) {
       return NextResponse.json(
@@ -94,6 +103,12 @@ export async function POST(request: NextRequest) {
         senderUserId: session.user.id,
         jobPositionId,
         jobPositionTitle,
+        questionSetConfig: Array.isArray(questionIds) && questionIds.length > 0
+          ? {
+              questionIds,
+              questionSetConfig,
+            }
+          : null,
         token,
         tokenExpiry,
         status: 'PENDING',
