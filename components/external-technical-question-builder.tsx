@@ -62,7 +62,7 @@ export function ExternalTechnicalQuestionBuilder({
   const [availableQuestions, setAvailableQuestions] = useState<QuestionBankQuestion[]>([]);
   const [selectedQuestions, setSelectedQuestions] = useState<QuestionBankQuestion[]>([]);
   const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
-  const [sourcePositionId, setSourcePositionId] = useState(basePositionId);
+  const [sourcePositionId, setSourcePositionId] = useState('all');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [difficulty, setDifficulty] = useState<Difficulty>('all');
@@ -104,7 +104,7 @@ export function ExternalTechnicalQuestionBuilder({
       setAvailableQuestions(data.questions || []);
       setCategories(data.categories || []);
       setReplaceIndex(null);
-      setSourcePositionId(basePositionId);
+      setSourcePositionId('all');
     } catch (error) {
       console.error(error);
       toast.error(language === 'es' ? 'No se pudo cargar el set base' : 'Could not load the base set');
@@ -151,7 +151,7 @@ export function ExternalTechnicalQuestionBuilder({
   }, [basePositionId]);
 
   useEffect(() => {
-    setSourcePositionId(basePositionId);
+    setSourcePositionId('all');
   }, [basePositionId]);
 
   useEffect(() => {
@@ -477,6 +477,63 @@ export function ExternalTechnicalQuestionBuilder({
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-4 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500">
+                  {language === 'es' ? 'Preguntas seleccionadas' : 'Selected questions'}
+                </p>
+                <p className="mt-1 text-2xl font-semibold text-slate-900">
+                  {selectedCount}/{QUESTION_TARGET}
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  {language === 'es' ? 'El set final debe quedar completo.' : 'The final set must be complete.'}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-emerald-700">
+                  {language === 'es' ? 'Balance de dificultad' : 'Difficulty balance'}
+                </p>
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between text-sm text-emerald-900">
+                    <span>{language === 'es' ? 'Fácil' : 'Easy'}</span>
+                    <span>{difficultyCounts.EASY}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-emerald-100">
+                    <div className="h-full bg-emerald-500" style={{ width: `${(difficultyCounts.EASY / Math.max(selectedCount, 1)) * 100}%` }} />
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-emerald-900">
+                    <span>{language === 'es' ? 'Media' : 'Medium'}</span>
+                    <span>{difficultyCounts.MEDIUM}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-emerald-100">
+                    <div className="h-full bg-amber-500" style={{ width: `${(difficultyCounts.MEDIUM / Math.max(selectedCount, 1)) * 100}%` }} />
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-emerald-900">
+                    <span>{language === 'es' ? 'Difícil' : 'Hard'}</span>
+                    <span>{difficultyCounts.HARD}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-emerald-100">
+                    <div className="h-full bg-red-500" style={{ width: `${(difficultyCounts.HARD / Math.max(selectedCount, 1)) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-indigo-700">
+                  {language === 'es' ? 'Fuente activa' : 'Active source'}
+                </p>
+                <p className="mt-1 text-lg font-semibold text-indigo-950">
+                  {sourcePositionId === 'all'
+                    ? (language === 'es' ? 'Todos los cargos' : 'All roles')
+                    : (JOB_POSITIONS.find(position => position.id === sourcePositionId)?.titleEn || JOB_POSITIONS.find(position => position.id === sourcePositionId)?.title || sourcePositionId)}
+                </p>
+                <p className="mt-1 text-sm text-indigo-800">
+                  {language === 'es'
+                    ? 'Puedes mezclar preguntas de distintos cargos, temas y niveles.'
+                    : 'You can mix questions from different roles, topics, and difficulties.'}
+                </p>
+              </div>
+            </div>
+
             <ScrollArea className="h-[560px] pr-3">
               <div className="space-y-3">
                 {selectedQuestions.length === 0 ? (
@@ -492,22 +549,26 @@ export function ExternalTechnicalQuestionBuilder({
                       onDragOver={event => handleDragOver(event, index)}
                       onDrop={event => handleDrop(event, index)}
                       onDragEnd={handleDragEnd}
-                      className={`rounded-xl border p-4 transition-all ${
+                      className={`group rounded-2xl border bg-white p-4 shadow-sm transition-all hover:shadow-md ${
                         replaceIndex === index
                           ? 'border-amber-300 bg-amber-50'
                           : draggedIndex === index
                             ? 'border-sky-300 bg-sky-50 opacity-80'
                             : dropIndex === index && draggedIndex !== null
                               ? 'border-sky-400 bg-sky-50 ring-2 ring-sky-200'
-                              : 'border-slate-200 bg-white'
+                              : 'border-slate-200'
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div className="flex flex-wrap items-center gap-2">
                             <Badge className="bg-slate-900 text-white">#{index + 1}</Badge>
-                            <Badge variant="outline">{question.jobPositionTitle}</Badge>
-                            <Badge variant="outline">{question.category || question.categoryEn || 'Tema'}</Badge>
+                            <Badge variant="outline" className="bg-white">
+                              {question.jobPositionTitle}
+                            </Badge>
+                            <Badge variant="outline" className="bg-white">
+                              {question.category || question.categoryEn || 'Tema'}
+                            </Badge>
                             <Badge className={
                               question.difficulty === 'HARD'
                                 ? 'bg-red-100 text-red-700 border-red-200'
@@ -518,11 +579,22 @@ export function ExternalTechnicalQuestionBuilder({
                               {question.difficulty}
                             </Badge>
                           </div>
-                          <p className="text-sm font-medium text-slate-900">
+                          <p className="text-[15px] font-medium leading-6 text-slate-900">
                             {question.questionText}
                           </p>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            <span>
+                              {language === 'es' ? 'Arrastra para reordenar' : 'Drag to reorder'}
+                            </span>
+                            <span className="h-1 w-1 rounded-full bg-slate-300" />
+                            <span>
+                              {language === 'es'
+                                ? 'Haz clic en reemplazar para cambiar solo esta pregunta'
+                                : 'Use replace to swap only this question'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 lg:justify-end">
                           <Button type="button" size="sm" variant="outline" onClick={() => startReplace(index)}>
                             <Shuffle className="w-3.5 h-3.5 mr-1" />
                             {language === 'es' ? 'Reemplazar' : 'Replace'}
@@ -532,16 +604,6 @@ export function ExternalTechnicalQuestionBuilder({
                             {language === 'es' ? 'Quitar' : 'Remove'}
                           </Button>
                         </div>
-                      </div>
-                      <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                        <span>
-                          {language === 'es'
-                            ? 'Arrastra esta tarjeta para cambiar su orden'
-                            : 'Drag this card to change its order'}
-                        </span>
-                        <span className="rounded-full border border-slate-200 px-2 py-1">
-                          {language === 'es' ? 'Reordenable' : 'Sortable'}
-                        </span>
                       </div>
                     </div>
                   ))
