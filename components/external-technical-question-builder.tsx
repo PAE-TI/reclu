@@ -162,6 +162,8 @@ export function ExternalTechnicalQuestionBuilder({
       setAvailableQuestions(data.questions || []);
       setCategories(data.categories || []);
       setReplaceIndex(null);
+      setDraggedIndex(null);
+      setDropIndex(null);
     } catch (error) {
       console.error(error);
       toast.error(language === 'es' ? 'No se pudo cargar el set base' : 'Could not load the base set');
@@ -310,8 +312,15 @@ export function ExternalTechnicalQuestionBuilder({
   };
 
   const startReplace = (index: number) => {
-    setReplaceIndex(index);
-    toast.success(language === 'es' ? 'Selecciona una pregunta del banco para reemplazarla' : 'Select a bank question to replace it');
+    setReplaceIndex(prev => {
+      if (prev === index) {
+        toast.success(language === 'es' ? 'Modo reemplazo desactivado' : 'Replace mode turned off');
+        return null;
+      }
+
+      toast.success(language === 'es' ? 'Selecciona una pregunta del banco para reemplazarla' : 'Select a bank question to replace it');
+      return index;
+    });
   };
 
   const clearSelection = () => {
@@ -322,6 +331,7 @@ export function ExternalTechnicalQuestionBuilder({
   };
 
   const canAddMoreQuestions = selectedQuestions.length < QUESTION_TARGET;
+  const isReplacing = replaceIndex !== null;
 
   const moveQuestion = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex) return;
@@ -609,7 +619,7 @@ export function ExternalTechnicalQuestionBuilder({
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-stretch">
-        <Card className="self-stretch flex flex-col border-slate-200 shadow-sm max-h-[760px] lg:max-h-[calc(100vh-18rem)]">
+        <Card className="self-stretch flex flex-col border-slate-200 shadow-sm max-h-[1140px] lg:max-h-[calc(100vh-10rem)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Search className="w-4 h-4 text-sky-600" />
@@ -685,9 +695,19 @@ export function ExternalTechnicalQuestionBuilder({
                 </Button>
               )}
               {replaceIndex !== null && (
-                <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
-                  {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
-                </Badge>
+                <>
+                  <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
+                    {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
+                  </Badge>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setReplaceIndex(null)}
+                    className="h-9 rounded-full px-4 text-sm text-amber-700 hover:bg-amber-50"
+                  >
+                    {language === 'es' ? 'Cancelar reemplazo' : 'Cancel replace'}
+                  </Button>
+                </>
               )}
             </div>
           </CardHeader>
@@ -705,14 +725,14 @@ export function ExternalTechnicalQuestionBuilder({
                     const isSelected = selectedQuestions.some(item => item.id === question.id);
                     return (
                       <button
-                        key={question.id}
-                        type="button"
-                        onClick={() => {
-                          if (!canAddMoreQuestions && !selectedQuestions.some(item => item.id === question.id)) {
-                            toast.error(
-                              language === 'es'
-                                ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
-                                : 'The set is already full. Replace or remove a question before adding another.'
+                      key={question.id}
+                      type="button"
+                      onClick={() => {
+                        if (!isReplacing && !canAddMoreQuestions && !selectedQuestions.some(item => item.id === question.id)) {
+                          toast.error(
+                            language === 'es'
+                              ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
+                              : 'The set is already full. Replace or remove a question before adding another.'
                             );
                             return;
                           }
@@ -773,7 +793,7 @@ export function ExternalTechnicalQuestionBuilder({
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden self-stretch flex flex-col border-slate-200 shadow-sm max-h-[760px] lg:max-h-[calc(100vh-18rem)]">
+        <Card className="overflow-hidden self-stretch flex flex-col border-slate-200 shadow-sm max-h-[1140px] lg:max-h-[calc(100vh-10rem)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Layers3 className="w-4 h-4 text-indigo-600" />
