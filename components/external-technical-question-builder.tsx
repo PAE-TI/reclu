@@ -234,7 +234,11 @@ export function ExternalTechnicalQuestionBuilder({
       }
 
       if (prev.length >= QUESTION_TARGET) {
-        toast.error(language === 'es' ? 'Reemplaza una pregunta antes de agregar otra' : 'Replace a question before adding another');
+        toast.error(
+          language === 'es'
+            ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
+            : 'The set is already full. Replace or remove a question before adding another.'
+        );
         return prev;
       }
 
@@ -555,6 +559,14 @@ export function ExternalTechnicalQuestionBuilder({
                 ? 'Haz clic en una pregunta para agregarla o para reemplazar la seleccionada.'
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
+            {selectedCount === QUESTION_TARGET && replaceIndex === null && (
+              <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <AlertCircle className="mr-2 inline-block h-4 w-4 align-text-bottom" />
+                {language === 'es'
+                  ? 'El set está completo. Usa Reemplazar o Vaciar selección para agregar otra pregunta.'
+                  : 'The set is full. Use Replace or Clear selection to add another question.'}
+              </div>
+            )}
             <div className="flex flex-wrap gap-2 pt-2">
               <Button
                 type="button"
