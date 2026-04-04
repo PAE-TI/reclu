@@ -969,7 +969,7 @@ export function ExternalTechnicalQuestionBuilder({
                         onDragOver={event => handleDragOver(event, index)}
                         onDrop={event => handleDrop(event, index)}
                         onDragEnd={handleDragEnd}
-                        className={`group rounded-3xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+                        className={`group relative overflow-hidden rounded-3xl border bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
                           isMarkedForReplacement
                             ? 'border-indigo-300 bg-indigo-50 ring-2 ring-indigo-200'
                             : draggedIndex === index
@@ -979,71 +979,78 @@ export function ExternalTechnicalQuestionBuilder({
                                 : 'border-slate-200'
                         }`}
                       >
-                        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                          <div className="min-w-0 flex-1 space-y-4">
-                            <div className="flex items-start gap-4">
-                              <div
-                                className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-semibold text-white shadow-sm ${
-                                  isMarkedForReplacement ? 'bg-indigo-600' : 'bg-slate-900'
-                                }`}
-                              >
-                                {index + 1}
-                              </div>
-                              <div className="min-w-0 flex-1 space-y-3">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <Badge variant="outline" className="bg-white">
-                                    {question.jobPositionTitle}
-                                  </Badge>
-                                  <Badge variant="outline" className="bg-white">
-                                    {question.category || question.categoryEn || 'Tema'}
-                                  </Badge>
-                                  <Badge
-                                    className={
-                                      question.difficulty === 'HARD'
-                                        ? 'bg-red-100 text-red-700 border-red-200'
-                                        : question.difficulty === 'MEDIUM'
-                                          ? 'bg-amber-100 text-amber-700 border-amber-200'
-                                          : 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                                    }
-                                  >
-                                    {question.difficulty}
-                                  </Badge>
+                        {isMarkedForReplacement && (
+                          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-sky-500" />
+                        )}
+                        <div className="p-5">
+                          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                            <div className="min-w-0 flex-1 space-y-4">
+                              <div className="flex items-start gap-4">
+                                <div
+                                  className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-semibold text-white shadow-sm ${
+                                    isMarkedForReplacement ? 'bg-indigo-600' : 'bg-slate-900'
+                                  }`}
+                                >
+                                  {index + 1}
                                 </div>
-                                <p className="text-[15px] leading-7 text-slate-900 md:text-[16px]">
-                                  {question.questionText}
-                                </p>
-                                {isMarkedForReplacement && (
-                                  <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-medium text-indigo-700">
-                                    <Shuffle className="h-3.5 w-3.5" />
-                                    {language === 'es'
-                                      ? 'Pregunta marcada para reemplazo'
-                                      : 'Question marked for replacement'}
+                                <div className="min-w-0 flex-1 space-y-3">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <Badge variant="outline" className="bg-white">
+                                      {question.jobPositionTitle}
+                                    </Badge>
+                                    <Badge variant="outline" className="bg-white">
+                                      {question.category || question.categoryEn || 'Tema'}
+                                    </Badge>
+                                    <Badge
+                                      className={
+                                        question.difficulty === 'HARD'
+                                          ? 'bg-red-100 text-red-700 border-red-200'
+                                          : question.difficulty === 'MEDIUM'
+                                            ? 'bg-amber-100 text-amber-700 border-amber-200'
+                                            : 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                      }
+                                    >
+                                      {question.difficulty}
+                                    </Badge>
                                   </div>
-                                )}
+                                  <p className="text-[15px] leading-7 text-slate-900 md:text-[16px]">
+                                    {question.questionText}
+                                  </p>
+                                  {isMarkedForReplacement && (
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-medium text-indigo-700">
+                                      <Shuffle className="h-3.5 w-3.5" />
+                                      {language === 'es'
+                                        ? 'Pregunta marcada para reemplazo'
+                                        : 'Question marked for replacement'}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-3 lg:w-44 lg:items-stretch">
+                              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 lg:justify-end">
+                                <span>
+                                  {language === 'es' ? 'Arrastra para reordenar' : 'Drag to reorder'}
+                                </span>
+                                <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                <span>
+                                  {language === 'es'
+                                    ? 'Reemplaza solo esta pregunta'
+                                    : 'Replace only this question'}
+                                </span>
+                              </div>
+                              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                                <Button type="button" size="sm" variant="outline" onClick={() => startReplace(index)} className="justify-center">
+                                  <Shuffle className="w-3.5 h-3.5 mr-1" />
+                                  {language === 'es' ? 'Reemplazar' : 'Replace'}
+                                </Button>
+                                <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveQuestion(index)} className="justify-center">
+                                  <Trash2 className="w-3.5 h-3.5 mr-1" />
+                                  {language === 'es' ? 'Quitar' : 'Remove'}
+                                </Button>
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                            <span>
-                              {language === 'es' ? 'Arrastra para reordenar' : 'Drag to reorder'}
-                            </span>
-                            <span className="h-1 w-1 rounded-full bg-slate-300" />
-                            <span>
-                              {language === 'es'
-                                ? 'Haz clic en reemplazar para cambiar solo esta pregunta'
-                                : 'Use replace to swap only this question'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2 lg:w-40 lg:flex-col lg:items-stretch lg:justify-start">
-                          <Button type="button" size="sm" variant="outline" onClick={() => startReplace(index)} className="justify-center">
-                            <Shuffle className="w-3.5 h-3.5 mr-1" />
-                            {language === 'es' ? 'Reemplazar' : 'Replace'}
-                          </Button>
-                          <Button type="button" size="sm" variant="outline" onClick={() => handleRemoveQuestion(index)} className="justify-center">
-                            <Trash2 className="w-3.5 h-3.5 mr-1" />
-                            {language === 'es' ? 'Quitar' : 'Remove'}
-                          </Button>
                         </div>
                       </div>
                     );
