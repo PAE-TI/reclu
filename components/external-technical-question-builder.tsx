@@ -262,6 +262,8 @@ export function ExternalTechnicalQuestionBuilder({
     setDropIndex(null);
   };
 
+  const canAddMoreQuestions = selectedQuestions.length < QUESTION_TARGET;
+
   const moveQuestion = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex) return;
     setSelectedQuestions(prev => {
@@ -547,8 +549,8 @@ export function ExternalTechnicalQuestionBuilder({
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-start">
-        <Card className="self-start border-slate-200 shadow-sm">
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr] lg:items-stretch">
+        <Card className="self-stretch border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Search className="w-4 h-4 text-sky-600" />
@@ -630,8 +632,8 @@ export function ExternalTechnicalQuestionBuilder({
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[620px] pr-3">
+          <CardContent className="h-full">
+            <ScrollArea className="h-[760px] pr-3">
               <div className="space-y-4 pb-2">
                 {availableQuestions.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-gray-500">
@@ -646,7 +648,17 @@ export function ExternalTechnicalQuestionBuilder({
                       <button
                         key={question.id}
                         type="button"
-                        onClick={() => handlePickQuestion(question)}
+                        onClick={() => {
+                          if (!canAddMoreQuestions && !selectedQuestions.some(item => item.id === question.id)) {
+                            toast.error(
+                              language === 'es'
+                                ? 'El set ya está completo. Reemplaza o quita una pregunta para agregar otra.'
+                                : 'The set is already full. Replace or remove a question before adding another.'
+                            );
+                            return;
+                          }
+                          handlePickQuestion(question);
+                        }}
                         className={`w-full rounded-2xl border p-4 text-left transition-all ${
                           isSelected
                             ? 'border-emerald-200 bg-emerald-50'
@@ -684,6 +696,8 @@ export function ExternalTechnicalQuestionBuilder({
                           <div className="flex-shrink-0 pt-1">
                             {isSelected ? (
                               <Check className="w-4 h-4 text-emerald-600" />
+                            ) : !canAddMoreQuestions ? (
+                              <AlertCircle className="w-4 h-4 text-amber-600" />
                             ) : replaceIndex !== null ? (
                               <Shuffle className="w-4 h-4 text-amber-600" />
                             ) : (
@@ -700,7 +714,7 @@ export function ExternalTechnicalQuestionBuilder({
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-slate-200 shadow-sm">
+        <Card className="overflow-hidden self-stretch border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Layers3 className="w-4 h-4 text-indigo-600" />
@@ -712,7 +726,7 @@ export function ExternalTechnicalQuestionBuilder({
                 : 'This is exactly the set the candidate will receive. You can also reorder it by dragging each card.'}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="h-full space-y-4">
             <div className="mb-4 grid gap-3 sm:grid-cols-3">
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
                 <p className="text-xs uppercase tracking-wide text-slate-500">
@@ -770,7 +784,7 @@ export function ExternalTechnicalQuestionBuilder({
               </div>
             </div>
 
-            <ScrollArea className="h-[620px] pr-2">
+            <ScrollArea className="h-[760px] pr-2">
               <div className="space-y-4 pb-2">
                 {selectedQuestions.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-slate-200 p-8 text-center text-sm text-gray-500">
