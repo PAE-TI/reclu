@@ -146,8 +146,6 @@ export async function updateCampaignCandidateOnCompletion(
       },
     });
 
-    console.log(`Campaign candidate ${candidate.id} updated: ${newStatus} (${completedEvaluations.length}/${campaignEvalTypes.length} evaluations)`);
-
     return {
       updated: true,
       candidateId: candidate.id,

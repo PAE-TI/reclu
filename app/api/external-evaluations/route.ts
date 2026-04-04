@@ -109,10 +109,6 @@ export async function POST(request: NextRequest) {
       html: emailContent.html
     });
 
-    if (!emailSent) {
-      console.warn('Failed to send email, but evaluation was created');
-    }
-
     return NextResponse.json({
       success: true,
       evaluation: {

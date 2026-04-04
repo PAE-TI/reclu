@@ -28,7 +28,6 @@ class EmailService {
         text: text || this.htmlToText(html),
       });
 
-      console.log('Email sent successfully via SMTP to:', to);
       return true;
     } catch (error) {
       console.error('Error sending email via SMTP:', error);

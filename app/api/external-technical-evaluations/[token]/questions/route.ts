@@ -232,8 +232,6 @@ export async function GET(
 
     // If no questions exist or not enough for proper distribution, generate them with LLM
     if (questions.length < TOTAL_QUESTIONS) {
-      console.log(`Generating questions for position: ${evaluation.jobPositionId} (current count: ${questions.length})`);
-      
       try {
         const needsLargeBank =
           evaluation.jobPositionId === 'data_analyst' ||
@@ -297,7 +295,6 @@ export async function GET(
         );
 
         questions = createdQuestions;
-        console.log(`Created ${questions.length} bilingual questions for position: ${evaluation.jobPositionId}`);
       } catch (genError) {
         console.error('Error generating questions:', genError);
         return NextResponse.json(

@@ -126,8 +126,6 @@ export async function POST(req: NextRequest) {
         subject,
         html,
       });
-
-      console.log(`Email de evaluación Driving Forces enviado a: ${data.recipientEmail}`);
     } catch (emailError) {
       console.error('Error al enviar email:', emailError);
       // No fallar la creación de la evaluación si no se puede enviar el email
