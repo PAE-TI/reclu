@@ -1221,7 +1221,7 @@ function PersonSelector({
           )}
 
           {/* People List */}
-          <div className="max-h-[300px] overflow-y-auto overscroll-contain">
+          <div className="max-h-[50vh] sm:max-h-[300px] overflow-y-auto overscroll-contain">
             <div className="p-2">
               {visiblePeople.length > 0 ? (
                 <>
@@ -1249,7 +1249,7 @@ function PersonSelector({
                           <p className="font-medium text-gray-900 truncate">{person.name}</p>
                           <p className="text-xs text-gray-500 truncate">{person.email}</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="hidden sm:flex items-center gap-2">
                           {person.disc && (
                             <Badge className={`${getDiscColor(person.disc.primaryStyle)} text-white text-xs`}>
                               {person.disc.primaryStyle}
@@ -1278,6 +1278,16 @@ function PersonSelector({
                           )}
                           {person.hasFullProfile && (
                             <Sparkles className="w-4 h-4 text-amber-500" />
+                          )}
+                          {mode === 'multi' && isSelected && (
+                            <CheckCircle2 className="w-5 h-5 text-indigo-600" />
+                          )}
+                        </div>
+                        <div className="flex sm:hidden items-center gap-1">
+                          {person.disc && (
+                            <Badge className={`${getDiscColor(person.disc.primaryStyle)} text-white text-xs`}>
+                              {person.disc.primaryStyle}
+                            </Badge>
                           )}
                           {mode === 'multi' && isSelected && (
                             <CheckCircle2 className="w-5 h-5 text-indigo-600" />
@@ -1682,33 +1692,33 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
   return (
     <div className="space-y-6">
       {/* Hero Header con indicadores */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 p-6 shadow-2xl">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 p-4 sm:p-6 shadow-2xl">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
         <div className="relative">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <GitCompare className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-xl flex-shrink-0">
+                <GitCompare className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">{t('analytics.comparing')} {compareList.length} {t('analytics.people')}</h1>
-                <p className="text-white/80">{t('analytics.compare.deepAnalysis')}</p>
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold text-white">{t('analytics.comparing')} {compareList.length} {t('analytics.people')}</h1>
+                <p className="text-white/80 text-sm">{t('analytics.compare.deepAnalysis')}</p>
               </div>
             </div>
             
             {/* Indicador de compatibilidad promedio */}
             <div className="flex items-center gap-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 sm:px-5 sm:py-3 border border-white/20">
                 <div className="flex items-center gap-3">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold ${
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-base sm:text-xl font-bold ${
                     avgCompatibility >= 80 ? 'bg-emerald-500' : 
                     avgCompatibility >= 60 ? 'bg-amber-500' : 'bg-orange-500'
-                  } text-white shadow-lg`}>
+                  } text-white shadow-lg flex-shrink-0`}>
                     {avgCompatibility}%
                   </div>
                   <div>
-                    <p className="text-white font-semibold">{t('analytics.compare.compatibility')}</p>
-                    <p className="text-white/70 text-sm">
+                    <p className="text-white font-semibold text-sm sm:text-base">{t('analytics.compare.compatibility')}</p>
+                    <p className="text-white/70 text-xs sm:text-sm">
                       {avgCompatibility >= 80 ? t('analytics.compare.excellentTeam') : 
                        avgCompatibility >= 60 ? t('analytics.compare.goodSynergy') : t('analytics.compare.opportunities')}
                     </p>
@@ -1719,18 +1729,18 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
           </div>
 
           {/* Personas seleccionadas */}
-          <div className="flex flex-wrap gap-3 mt-5">
+          <div className="flex flex-wrap gap-2 mt-4">
             {compareList.map((person, idx) => (
               <div 
                 key={person.id}
-                className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-white/20"
+                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/20 min-w-0 max-w-full"
               >
-                <div className={`w-10 h-10 rounded-full ${COMPARE_COLORS[idx].bg} flex items-center justify-center text-white font-bold shadow-lg`}>
+                <div className={`w-8 h-8 flex-shrink-0 rounded-full ${COMPARE_COLORS[idx].bg} flex items-center justify-center text-white font-bold shadow-lg`}>
                   {person.name.charAt(0)}
                 </div>
-                <div className="min-w-0">
-                  <p className="font-semibold text-white truncate">{person.name}</p>
-                  <div className="flex gap-1 mt-0.5 flex-wrap">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-white truncate text-sm max-w-[120px]">{person.name}</p>
+                  <div className="hidden sm:flex gap-1 mt-0.5 flex-wrap">
                     {person.disc && <span className="text-xs text-white/80">{person.disc.primaryStyle}</span>}
                     {person.drivingForces && <span className="text-xs text-white/80">• FM</span>}
                     {person.eq && <span className="text-xs text-white/80">• EQ</span>}
@@ -1743,9 +1753,9 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                 </div>
                 <button
                   onClick={() => toggleCompare(person)}
-                  className="ml-2 p-1.5 text-white/60 hover:text-white hover:bg-white/20 rounded-full transition-all"
+                  className="flex-shrink-0 p-1 text-white/60 hover:text-white hover:bg-white/20 rounded-full transition-all"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
@@ -1753,10 +1763,10 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
             {compareList.length < 4 && (
               <button 
                 onClick={() => {}}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-xl border border-dashed border-white/30 text-white/70 hover:text-white transition-all"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl border border-dashed border-white/30 text-white/70 hover:text-white transition-all"
               >
-                <Plus className="w-5 h-5" />
-                <span className="text-sm font-medium">{t('analytics.compare.addPerson')}</span>
+                <Plus className="w-4 h-4" />
+                <span className="text-sm font-medium hidden sm:inline">{t('analytics.compare.addPerson')}</span>
               </button>
             )}
           </div>
@@ -1765,8 +1775,8 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
 
       {/* Tabs de navegación modernos */}
       <Card className="bg-white border-0 shadow-lg relative z-20">
-        <div className="bg-gradient-to-r from-gray-50 to-slate-50 px-4 py-3 border-b rounded-t-lg">
-          <div className="flex gap-1 overflow-x-auto pb-1">
+        <div className="bg-gradient-to-r from-gray-50 to-slate-50 px-2 sm:px-4 py-2 sm:py-3 border-b rounded-t-lg">
+          <div className="flex gap-0.5 sm:gap-1 overflow-x-auto pb-1 scrollbar-hide">
             {[
               { key: 'resumen', labelKey: 'analytics.compare.tab.summary', icon: Layers, color: 'indigo' },
               { key: 'disc', labelKey: 'analytics.compare.tab.disc', icon: Brain, color: 'indigo' },
@@ -1783,19 +1793,19 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               <button
                 key={tab.key}
                 onClick={() => setCompareTab(tab.key as typeof compareTab)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                   compareTab === tab.key 
                     ? `bg-${tab.color}-100 text-${tab.color}-700 shadow-sm` 
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                 <span>{t(tab.labelKey)}</span>
               </button>
             ))}
           </div>
         </div>
-        <CardContent className="p-4 relative z-30">
+        <CardContent className="p-2 sm:p-4 relative z-30">
           <PersonSelector
             people={people}
             selectedPerson={null}
@@ -1813,7 +1823,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
       {compareTab === 'resumen' && (
         <div className="space-y-6">
           {/* Overview Cards */}
-          <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+          <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
             {compareList.map((person, idx) => (
               <Card key={person.id} className={`border-t-4 ${
                 idx === 0 ? 'border-t-indigo-500' :
@@ -2072,7 +2082,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                 {['D', 'I', 'S', 'C'].map(dim => (
                   <div key={dim} className="mb-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700 w-32">
+                      <span className="text-sm font-medium text-gray-700 min-w-0 flex-shrink-0 w-28 truncate">
                         {dim} - {DISC_DESCRIPTIONS[dim].name}
                       </span>
                     </div>
@@ -2083,7 +2093,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2178,7 +2188,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Top Motivadores */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.mainMotivators')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`p-4 rounded-xl ${COMPARE_COLORS[idx].bgLight} border ${COMPARE_COLORS[idx].border}`}>
                       <p className={`font-semibold ${COMPARE_COLORS[idx].text} mb-3`}>{person.name}</p>
@@ -2255,7 +2265,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Scores totales */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.totalEQScore')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`relative overflow-hidden p-6 rounded-xl bg-gradient-to-br ${
                       idx === 0 ? 'from-indigo-500 to-indigo-600' :
@@ -2293,7 +2303,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2383,7 +2393,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Scores totales */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.totalDNAScore')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`relative overflow-hidden p-6 rounded-xl bg-gradient-to-br ${
                       idx === 0 ? 'from-teal-500 to-teal-600' :
@@ -2409,7 +2419,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Perfiles DNA */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.dnaProfiles')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`p-4 rounded-xl ${COMPARE_COLORS[idx].bgLight} border ${COMPARE_COLORS[idx].border}`}>
                       <p className={`font-semibold ${COMPARE_COLORS[idx].text} mb-2`}>{person.name}</p>
@@ -2453,7 +2463,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2543,7 +2553,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Scores totales */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.totalAcumenScoreLabel')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`relative overflow-hidden p-6 rounded-xl bg-gradient-to-br ${
                       idx === 0 ? 'from-amber-500 to-amber-600' :
@@ -2569,7 +2579,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Perfiles Acumen */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.acumenProfiles')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`p-4 rounded-xl ${COMPARE_COLORS[idx].bgLight} border ${COMPARE_COLORS[idx].border}`}>
                       <p className={`font-semibold ${COMPARE_COLORS[idx].text} mb-2`}>{person.name}</p>
@@ -2614,7 +2624,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2655,7 +2665,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2745,7 +2755,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Scores de Integridad */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.integrityIndicators')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`relative overflow-hidden p-6 rounded-xl bg-gradient-to-br ${
                       idx === 0 ? 'from-violet-500 to-purple-600' :
@@ -2801,7 +2811,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : 0;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -2944,7 +2954,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
               {/* Indicadores Principales */}
               <div className="mb-8">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">{t('analytics.compare.resilienceIndicators')}</h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => (
                     <div key={person.id} className={`relative overflow-hidden p-6 rounded-xl bg-gradient-to-br ${
                       idx === 0 ? 'from-orange-500 to-rose-600' :
@@ -3002,7 +3012,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           : COMPARE_COLORS[idx].bg;
                         return (
                           <div key={person.id} className="flex items-center gap-3">
-                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-20 truncate`}>
+                            <span className={`text-xs font-medium ${COMPARE_COLORS[idx].text} w-16 truncate flex-shrink-0`}>
                               {person.name.split(' ')[0]}
                             </span>
                             <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
@@ -3466,7 +3476,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                   <Target className="w-4 h-4 text-indigo-600" />
                   {language === 'es' ? 'Roles Sugeridos para el Equipo' : 'Suggested Team Roles'}
                 </h4>
-                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-2' : compareList.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                <div className={`grid gap-4 ${compareList.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : compareList.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
                   {compareList.map((person, idx) => {
                     // Determinar rol sugerido basado en perfil
                     let role = 'Colaborador';

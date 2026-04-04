@@ -97,17 +97,18 @@ export default function ComparisonChart({ data, title = "Comparativa de Evaluaci
         )}
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-60 sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data}>
+            <BarChart data={data} margin={{ bottom: 40, left: 0, right: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
               <XAxis 
                 dataKey="evaluation" 
                 stroke="#6B7280"
-                fontSize={12}
-                angle={-45}
+                fontSize={10}
+                angle={-35}
                 textAnchor="end"
-                height={80}
+                height={60}
+                tick={{ fontSize: 10 }}
               />
               <YAxis 
                 domain={[0, 100]}
