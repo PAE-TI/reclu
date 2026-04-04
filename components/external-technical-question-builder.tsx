@@ -366,24 +366,6 @@ export function ExternalTechnicalQuestionBuilder({
                   {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                   {language === 'es' ? 'Buscar en banco' : 'Search bank'}
                 </Button>
-                <Badge className="bg-slate-50 text-slate-700 border-slate-200 px-3 py-2">
-                  <FileText className="w-3.5 h-3.5 mr-1" />
-                  {language === 'es' ? `${selectedCount}/${QUESTION_TARGET} seleccionadas` : `${selectedCount}/${QUESTION_TARGET} selected`}
-                </Badge>
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 px-3 py-2">
-                  {language === 'es' ? `Fácil: ${difficultyCounts.EASY}` : `Easy: ${difficultyCounts.EASY}`}
-                </Badge>
-                <Badge className="bg-amber-50 text-amber-700 border-amber-200 px-3 py-2">
-                  {language === 'es' ? `Media: ${difficultyCounts.MEDIUM}` : `Medium: ${difficultyCounts.MEDIUM}`}
-                </Badge>
-                <Badge className="bg-red-50 text-red-700 border-red-200 px-3 py-2">
-                  {language === 'es' ? `Difícil: ${difficultyCounts.HARD}` : `Hard: ${difficultyCounts.HARD}`}
-                </Badge>
-                {replaceIndex !== null && (
-                  <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
-                    {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
-                  </Badge>
-                )}
               </div>
             </div>
 
@@ -423,6 +405,26 @@ export function ExternalTechnicalQuestionBuilder({
                 ? 'Haz clic en una pregunta para agregarla o para reemplazar la seleccionada.'
                 : 'Click a question to add it or replace the selected one.'}
             </CardDescription>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Badge className="bg-slate-100 text-slate-800 border-slate-200 px-3 py-2">
+                <FileText className="w-3.5 h-3.5 mr-1" />
+                {language === 'es' ? `${selectedCount}/${QUESTION_TARGET} seleccionadas` : `${selectedCount}/${QUESTION_TARGET} selected`}
+              </Badge>
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 px-3 py-2">
+                {language === 'es' ? `Fácil: ${difficultyCounts.EASY}` : `Easy: ${difficultyCounts.EASY}`}
+              </Badge>
+              <Badge className="bg-amber-50 text-amber-700 border-amber-200 px-3 py-2">
+                {language === 'es' ? `Media: ${difficultyCounts.MEDIUM}` : `Medium: ${difficultyCounts.MEDIUM}`}
+              </Badge>
+              <Badge className="bg-red-50 text-red-700 border-red-200 px-3 py-2">
+                {language === 'es' ? `Difícil: ${difficultyCounts.HARD}` : `Hard: ${difficultyCounts.HARD}`}
+              </Badge>
+              {replaceIndex !== null && (
+                <Badge className="bg-amber-100 text-amber-700 border-amber-200 px-3 py-2">
+                  {language === 'es' ? `Reemplazando pregunta #${replaceIndex + 1}` : `Replacing question #${replaceIndex + 1}`}
+                </Badge>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[560px] pr-3">
