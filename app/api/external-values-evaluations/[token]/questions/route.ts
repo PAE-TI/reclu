@@ -24,6 +24,7 @@ export async function GET(
       return NextResponse.json(
         {
           error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
           evaluation: {
             id: evaluation.id,
             title: evaluation.title,

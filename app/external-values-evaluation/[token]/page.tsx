@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 
 interface EvaluationData {
   id: string;
@@ -345,45 +346,12 @@ export default function ExternalValuesEvaluation() {
   // Already Completed State
   if (alreadyCompleted && evaluation) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-        <BrandingHeader />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                ¡Evaluación Completada!
-              </h1>
-              <p className="text-lg text-gray-600 mb-6">
-                Has completado exitosamente la evaluación de Valores e Integridad.
-              </p>
-              <div className="bg-violet-50 border border-violet-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-violet-800 mb-2">Información de la Evaluación</h3>
-                <div className="text-sm text-violet-700 space-y-1 text-left">
-                  <div><strong>Título:</strong> {evaluation.title}</div>
-                  <div><strong>Evaluado:</strong> {evaluation.recipientName}</div>
-                  {evaluation.completedAt && (
-                    <div>
-                      <strong>Completada el:</strong>{' '}
-                      {new Date(evaluation.completedAt).toLocaleString('es-ES', {
-                        dateStyle: 'long',
-                        timeStyle: 'short',
-                      })}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-green-700 text-sm">
-                  Los resultados de tu evaluación han sido procesados. 
-                  Podrás recibir un reporte detallado de tu perfil de valores.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-        <BrandingFooter />
-      </div>
+      <ExternalEvaluationCompletedState
+        evaluationType="Valores e Integridad"
+        evaluationTitle={evaluation.title}
+        recipientName={evaluation.recipientName}
+        completedAt={evaluation.completedAt}
+      />
     );
   }
 

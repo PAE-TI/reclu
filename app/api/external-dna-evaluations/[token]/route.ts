@@ -102,7 +102,18 @@ export async function POST(
     
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
-        { error: 'Esta evaluación ya fue completada' },
+        {
+          error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            recipientName: evaluation.recipientName,
+            recipientEmail: evaluation.recipientEmail,
+            title: evaluation.title,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
         { status: 400 }
       );
     }

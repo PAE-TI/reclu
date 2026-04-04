@@ -38,7 +38,17 @@ export async function POST(req: NextRequest, { params }: Context) {
 
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
-        { error: 'Esta evaluación ya ha sido completada' },
+        {
+          error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            title: evaluation.title,
+            recipientName: evaluation.recipientName,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
         { status: 400 }
       );
     }

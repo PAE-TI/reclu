@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 
 // Branding Header Component
 function BrandingHeader() {
@@ -106,6 +107,7 @@ interface Question {
 
 interface Evaluation {
   id: string;
+  title: string;
   recipientName: string;
   recipientEmail: string;
   status: string;
@@ -266,38 +268,16 @@ export default function ExternalDNAEvaluation() {
   // Completed state
   if (completed) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
-        <BrandingHeader />
-        <main className="flex-1 py-8 px-4">
-          <div className="max-w-4xl mx-auto">
-            <Card className="shadow-xl border-0">
-              <CardContent className="p-8 text-center">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-12 h-12 text-green-600" />
-                </div>
-                <h2 className="mt-6 text-2xl font-bold text-gray-900">
-                  ¡Evaluación Completada!
-                </h2>
-                <p className="mt-3 text-gray-600 max-w-md mx-auto">
-                  Gracias por completar la evaluación DNA-25. Tus resultados han sido enviados a{' '}
-                  <strong>
-                    {evaluation?.senderUser?.firstName} {evaluation?.senderUser?.lastName}
-                  </strong>
-                  .
-                </p>
-                <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
-                  <Dna className="w-8 h-8 text-indigo-600 mx-auto" />
-                  <p className="mt-2 text-sm text-gray-600">
-                    El evaluador recibirá tu perfil de competencias y podrá compartir contigo
-                    un reporte detallado de tus fortalezas y áreas de desarrollo.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-        <BrandingFooter />
-      </div>
+      <ExternalEvaluationCompletedState
+        evaluationType="DNA-25"
+        evaluationTitle={evaluation?.title}
+        recipientName={evaluation?.recipientName}
+        senderName={
+          evaluation?.senderUser
+            ? `${evaluation.senderUser.firstName || ''} ${evaluation.senderUser.lastName || ''}`.trim()
+            : undefined
+        }
+      />
     );
   }
 

@@ -45,7 +45,18 @@ export async function POST(
 
     if (evaluation.status !== 'PENDING') {
       return NextResponse.json(
-        { error: 'Esta evaluación ya fue completada o ha expirado' },
+        {
+          error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            recipientName: evaluation.recipientName,
+            recipientEmail: evaluation.recipientEmail,
+            jobPositionTitle: evaluation.jobPositionTitle,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
         { status: 400 }
       );
     }

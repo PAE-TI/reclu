@@ -31,7 +31,16 @@ export async function GET(
 
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
-        { error: language === 'es' ? 'Esta evaluación ya fue completada' : 'This evaluation has already been completed' },
+        {
+          error: language === 'es' ? 'Esta evaluación ya fue completada' : 'This evaluation has already been completed',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            jobPositionId: evaluation.jobPositionId,
+            jobPositionTitle: evaluation.jobPositionTitle,
+            status: evaluation.status,
+          },
+        },
         { status: 400 }
       );
     }

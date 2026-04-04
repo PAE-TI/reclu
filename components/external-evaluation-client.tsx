@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import ExternalEvaluationQuestionnaire from './external-evaluation-questionnaire';
+import ExternalEvaluationCompletedState from './external-evaluation-completed-state';
 import { BrandingHeader, BrandingFooter } from './external-branding';
 import { Language, translations } from '@/contexts/language-context';
 
@@ -165,45 +166,15 @@ export default function ExternalEvaluationClient({ token }: ExternalEvaluationCl
   }
 
   if (alreadyCompleted && evaluation) {
-    const dateLocale = language === 'es' ? 'es-ES' : 'en-US';
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-        <BrandingHeader language={language} setLanguage={handleSetLanguage} evaluationType={t('ext.disc.name')} />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                {t('ext.completed')}
-              </h1>
-              <p className="text-lg text-gray-600 mb-6">
-                {t('ext.completedOn')}{' '}
-                {evaluation.completedAt && new Date(evaluation.completedAt).toLocaleDateString(dateLocale, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-blue-800 mb-2">{t('ext.evalInfo')}</h3>
-                <div className="text-sm text-blue-700 space-y-1 text-left">
-                  <div><strong>{t('ext.evalTitle')}:</strong> {evaluation.title}</div>
-                  <div><strong>{t('ext.sentBy')}:</strong> {evaluation.senderName}</div>
-                  <div><strong>{t('ext.evaluated')}:</strong> {evaluation.recipientName}</div>
-                </div>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-green-700 text-sm">
-                  {t('ext.resultsMessage')} {evaluation.senderName}, {t('ext.reportMessage')}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-        <BrandingFooter language={language} />
-      </div>
+      <ExternalEvaluationCompletedState
+        language={language}
+        evaluationType={t('ext.disc.name')}
+        evaluationTitle={evaluation.title}
+        recipientName={evaluation.recipientName}
+        senderName={evaluation.senderName}
+        completedAt={evaluation.completedAt}
+      />
     );
   }
 

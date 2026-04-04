@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 import {
   Heart,
   AlertCircle,
@@ -286,29 +287,11 @@ export default function ExternalEQEvaluationPage() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
-        <BrandingHeader />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
-            <CardContent className="pt-8 pb-8 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">¡Evaluación Completada!</h2>
-              <p className="text-gray-600 mb-6">
-                Gracias {evaluation?.recipientName} por completar la evaluación de Inteligencia Emocional.
-              </p>
-              <div className="bg-rose-50 rounded-xl p-4 border border-rose-100">
-                <Lock className="w-6 h-6 text-rose-500 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">
-                  Tus resultados son confidenciales y serán revisados por el administrador.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-        <BrandingFooter />
-      </div>
+      <ExternalEvaluationCompletedState
+        evaluationType="Inteligencia Emocional"
+        evaluationTitle={evaluation?.status ? 'Evaluación EQ' : undefined}
+        recipientName={evaluation?.recipientName}
+      />
     );
   }
 

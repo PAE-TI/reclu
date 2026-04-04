@@ -19,6 +19,21 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    if (evaluation.status === 'COMPLETED') {
+      return NextResponse.json(
+        {
+          error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
+        { status: 400 }
+      );
+    }
     
     if (new Date() > evaluation.tokenExpiry) {
       return NextResponse.json(

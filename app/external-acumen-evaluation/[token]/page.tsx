@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Target, AlertCircle, Loader2, CheckCircle, ChevronRight, ChevronLeft, Sparkles, Shield, Award, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 
 function BrandingHeader() {
   return (
@@ -84,13 +85,25 @@ export default function ExternalAcumenEvaluation() {
   const fetchData = async () => {
     try {
       const evalRes = await fetch(`/api/external-acumen-evaluations/${token}`);
+      const data = await evalRes.json();
+
       if (!evalRes.ok) {
-        const data = await evalRes.json();
+        if (evalRes.status === 400 && data.alreadyCompleted) {
+          setEvaluation(data.evaluation || data);
+          setCompleted(true);
+          return;
+        }
         setError(data.error || 'Error al cargar');
         setLoading(false);
         return;
       }
-      setEvaluation(await evalRes.json());
+
+      setEvaluation(data);
+
+      if (data.status === 'COMPLETED' || data.alreadyCompleted) {
+        setCompleted(true);
+        return;
+      }
 
       const questRes = await fetch(`/api/external-acumen-evaluations/${token}/questions`);
       if (questRes.ok) setQuestions(await questRes.json());
@@ -154,11 +167,11 @@ export default function ExternalAcumenEvaluation() {
 
   if (completed) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50">
-        <BrandingHeader />
-        <main className="flex-1 flex items-center justify-center p-4"><Card className="max-w-lg border-0 shadow-xl"><CardContent className="p-8 text-center"><CheckCircle className="w-16 h-16 text-green-500 mx-auto" /><h2 className="mt-4 text-2xl font-bold text-gray-900">¡Evaluación Completada!</h2><p className="mt-2 text-gray-600">Gracias por completar la evaluación Acumen. Los resultados estarán disponibles pronto.</p></CardContent></Card></main>
-        <BrandingFooter />
-      </div>
+      <ExternalEvaluationCompletedState
+        evaluationType="Acumen"
+        evaluationTitle={evaluation?.title}
+        recipientName={evaluation?.recipientName}
+      />
     );
   }
 

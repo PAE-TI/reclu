@@ -28,6 +28,7 @@ import {
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/language-context';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 
 // Branding Header Component with language toggle
 function BrandingHeader({ language, onLanguageChange }: { language: string; onLanguageChange: (lang: 'es' | 'en') => void }) {
@@ -136,6 +137,7 @@ interface Evaluation {
   jobPositionId: string;
   jobPositionTitle: string;
   status: string;
+  completedAt?: string | null;
   senderUser: {
     firstName: string | null;
     lastName: string | null;
@@ -350,42 +352,18 @@ export default function ExternalTechnicalEvaluationPage() {
   // Completed screen
   if (isCompleted) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50">
-        <BrandingHeader language={language} onLanguageChange={handleLanguageChange} />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full">
-            <CardContent className="pt-8 pb-8 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                {language === 'es' ? '¡Evaluación Completada!' : 'Evaluation Completed!'}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                {language === 'es' 
-                  ? 'Gracias por completar la evaluación técnica. Tus resultados han sido registrados y serán analizados por el equipo de selección.'
-                  : 'Thank you for completing the technical evaluation. Your results have been recorded and will be analyzed by the selection team.'
-                }
-              </p>
-              <div className="p-4 bg-sky-50 rounded-lg border border-sky-200">
-                <div className="flex items-center justify-center gap-2 text-sky-700">
-                  <Lock className="w-5 h-5" />
-                  <span className="font-medium">
-                    {language === 'es' ? 'Evaluación enviada correctamente' : 'Evaluation submitted successfully'}
-                  </span>
-                </div>
-                <p className="text-sm text-sky-600 mt-2">
-                  {language === 'es' 
-                    ? 'Los resultados son confidenciales y serán analizados por el equipo de selección. Ya puedes cerrar esta ventana.'
-                    : 'Results are confidential and will be analyzed by the selection team. You can now close this window.'
-                  }
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-        <BrandingFooter showCTA={true} language={language} />
-      </div>
+      <ExternalEvaluationCompletedState
+        language={language}
+        evaluationType={language === 'es' ? 'Evaluación Técnica' : 'Technical Evaluation'}
+        evaluationTitle={evaluation?.jobPositionTitle}
+        recipientName={evaluation?.recipientName}
+        senderName={
+          evaluation?.senderUser
+            ? `${evaluation.senderUser.firstName || ''} ${evaluation.senderUser.lastName || ''}`.trim()
+            : undefined
+        }
+        completedAt={evaluation?.completedAt}
+      />
     );
   }
 

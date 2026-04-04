@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
 import {
   Target,
   ArrowRight,
@@ -335,34 +336,16 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
 
   if (step === 'completed') {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <BrandingHeader />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-lg border-0 shadow-xl">
-            <CardContent className="pt-8 pb-8 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-12 h-12 text-green-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">¡Evaluación Completada!</h3>
-              <p className="text-gray-600 mb-6">
-                Gracias por completar la evaluación de Fuerzas Motivadoras.
-                Tus respuestas han sido registradas exitosamente.
-              </p>
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-                <Target className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                <p className="text-sm text-purple-800">
-                  El administrador revisará tus resultados y te contactará 
-                  si necesita compartir algún feedback contigo.
-                </p>
-              </div>
-              <p className="text-sm text-gray-500">
-                Ya puedes cerrar esta ventana.
-              </p>
-            </CardContent>
-          </Card>
-        </main>
-        <BrandingFooter />
-      </div>
+      <ExternalEvaluationCompletedState
+        evaluationType="Fuerzas Motivadoras"
+        evaluationTitle={evaluation?.title}
+        recipientName={evaluation?.recipientName}
+        senderName={
+          evaluation?.senderUser
+            ? evaluation.senderUser.name || `${evaluation.senderUser.firstName} ${evaluation.senderUser.lastName}`.trim()
+            : undefined
+        }
+      />
     );
   }
 

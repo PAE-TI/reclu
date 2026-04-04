@@ -60,7 +60,18 @@ export async function GET(
 
       if (evaluation.status === 'COMPLETED') {
         return NextResponse.json(
-          { error: 'Esta evaluación ya fue completada' },
+          {
+            error: 'Esta evaluación ya fue completada',
+            alreadyCompleted: true,
+            evaluation: {
+              id: evaluation.id,
+              title: evaluation.title,
+              recipientName: evaluation.recipientName,
+              recipientEmail: evaluation.recipientEmail,
+              status: evaluation.status,
+              completedAt: evaluation.completedAt,
+            },
+          },
           { status: 400 }
         );
       }
@@ -105,7 +116,18 @@ export async function POST(
 
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
-        { error: 'Esta evaluación ya fue completada' },
+        {
+          error: 'Esta evaluación ya fue completada',
+          alreadyCompleted: true,
+          evaluation: {
+            id: evaluation.id,
+            title: evaluation.title,
+            recipientName: evaluation.recipientName,
+            recipientEmail: evaluation.recipientEmail,
+            status: evaluation.status,
+            completedAt: evaluation.completedAt,
+          },
+        },
         { status: 400 }
       );
     }
