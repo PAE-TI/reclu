@@ -74,6 +74,15 @@ interface ExternalTechnicalQuestionBuilderProps {
 
 const QUESTION_TARGET = 20;
 
+const uniqueQuestionsById = (questions: QuestionBankQuestion[]) => {
+  const seen = new Set<string>();
+  return questions.filter(question => {
+    if (seen.has(question.id)) return false;
+    seen.add(question.id);
+    return true;
+  });
+};
+
 export function ExternalTechnicalQuestionBuilder({
   basePositionId,
   language,
@@ -157,9 +166,9 @@ export function ExternalTechnicalQuestionBuilder({
       setDifficulty('all');
       setSourcePositionId('all');
       const data = await fetchBank({ positionId: basePositionId });
-      const defaults = (data.questions || []).slice(0, QUESTION_TARGET);
+      const defaults = uniqueQuestionsById(data.questions || []).slice(0, QUESTION_TARGET);
       setSelectedQuestions(defaults);
-      setAvailableQuestions(data.questions || []);
+      setAvailableQuestions(uniqueQuestionsById(data.questions || []));
       setCategories(data.categories || []);
       setReplaceIndex(null);
       setDraggedIndex(null);
@@ -189,13 +198,14 @@ export function ExternalTechnicalQuestionBuilder({
       const orderedSelectedQuestions = (selectedResponse.questions || []).sort((a: QuestionBankQuestion, b: QuestionBankQuestion) =>
         config.questionIds.indexOf(a.id) - config.questionIds.indexOf(b.id)
       );
+      const uniqueOrderedSelectedQuestions = uniqueQuestionsById(orderedSelectedQuestions);
 
       setSearch(config.filters.search || '');
       setCategory(config.filters.category || 'all');
       setDifficulty(config.filters.difficulty || 'all');
       setSourcePositionId(config.sourcePositionId || 'all');
-      setSelectedQuestions(orderedSelectedQuestions.slice(0, QUESTION_TARGET));
-      setAvailableQuestions(bankResponse.questions || orderedSelectedQuestions);
+      setSelectedQuestions(uniqueOrderedSelectedQuestions.slice(0, QUESTION_TARGET));
+      setAvailableQuestions(uniqueQuestionsById(bankResponse.questions || uniqueOrderedSelectedQuestions));
       setCategories(bankResponse.categories || []);
       setReplaceIndex(null);
       setDraggedIndex(null);
@@ -227,7 +237,7 @@ export function ExternalTechnicalQuestionBuilder({
         category: category === 'all' ? '' : category,
         difficulty,
       });
-      setAvailableQuestions(data.questions || []);
+      setAvailableQuestions(uniqueQuestionsById(data.questions || []));
       if ((data.questions || []).length === 0) {
         toast.error(language === 'es' ? 'No se encontraron preguntas con esos filtros' : 'No questions found for those filters');
       }
@@ -276,6 +286,15 @@ export function ExternalTechnicalQuestionBuilder({
   const handlePickQuestion = (question: QuestionBankQuestion) => {
     setSelectedQuestions(prev => {
       if (replaceIndex !== null) {
+        if (prev[replaceIndex]?.id === question.id) {
+          toast.error(
+            language === 'es'
+              ? 'Esa pregunta ya está en esa posición.'
+              : 'That question is already in that position.'
+          );
+          return prev;
+        }
+
         const next = [...prev];
         const existingIndex = next.findIndex(item => item.id === question.id);
         if (existingIndex >= 0 && existingIndex !== replaceIndex) {
@@ -288,10 +307,12 @@ export function ExternalTechnicalQuestionBuilder({
 
       const existsIndex = prev.findIndex(item => item.id === question.id);
       if (existsIndex >= 0) {
-        const next = [...prev];
-        const [moved] = next.splice(existsIndex, 1);
-        next.push(moved);
-        return next;
+        toast.error(
+          language === 'es'
+            ? 'Esta pregunta ya fue agregada al set.'
+            : 'This question has already been added to the set.'
+        );
+        return prev;
       }
 
       if (prev.length >= QUESTION_TARGET) {
@@ -441,7 +462,7 @@ export function ExternalTechnicalQuestionBuilder({
         category: category === 'all' ? '' : category,
         difficulty: nextDifficulty,
       });
-      setAvailableQuestions(data.questions || []);
+      setAvailableQuestions(uniqueQuestionsById(data.questions || []));
     } catch (error) {
       console.error(error);
       toast.error(language === 'es' ? 'Error al filtrar preguntas' : 'Error filtering questions');
