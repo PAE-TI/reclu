@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 import {
   Target,
   ArrowRight,
@@ -139,6 +140,7 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [expired, setExpired] = useState(false);
   const [step, setStep] = useState<'welcome' | 'questionnaire' | 'completed'>('welcome');
   const [startTime, setStartTime] = useState<Date | null>(null);
 
@@ -153,7 +155,7 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
         if (response.status === 404) {
           setError('Evaluación no encontrada');
         } else if (response.status === 410) {
-          setError('Este enlace de evaluación ha expirado');
+          setExpired(true);
         } else {
           throw new Error('Error al cargar la evaluación');
         }
@@ -301,6 +303,10 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
     fetchQuestions();
   };
 
+  const senderName = evaluation?.senderUser
+    ? evaluation.senderUser.name || `${evaluation.senderUser.firstName} ${evaluation.senderUser.lastName}`.trim()
+    : undefined;
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -317,6 +323,17 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
   }
 
   if (error) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          evaluationType="Fuerzas Motivadoras"
+          evaluationTitle={evaluation?.title}
+          recipientName={evaluation?.recipientName}
+          senderName={senderName}
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <BrandingHeader />
@@ -350,9 +367,6 @@ export default function ExternalDrivingForcesEvaluation({ params }: { params: { 
   }
 
   if (!evaluation) return null;
-
-  const senderName = evaluation.senderUser.name || 
-    `${evaluation.senderUser.firstName} ${evaluation.senderUser.lastName}`.trim();
 
   if (step === 'welcome') {
     return (

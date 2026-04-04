@@ -35,6 +35,7 @@ import {
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 
 interface EvaluationData {
   id: string;
@@ -314,6 +315,16 @@ export default function ExternalValuesEvaluation() {
 
   // Error/Expired State
   if (error || expired) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          evaluationType="Valores e Integridad"
+          evaluationTitle={evaluation?.title}
+          recipientName={evaluation?.recipientName}
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
         <BrandingHeader />

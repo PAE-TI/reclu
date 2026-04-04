@@ -35,13 +35,6 @@ export async function GET(
     }
 
     // Check expiry for non-results requests
-    if (!wantsResults && new Date() > evaluation.tokenExpiry) {
-      return NextResponse.json(
-        { error: 'El enlace ha expirado' },
-        { status: 410 }
-      );
-    }
-
     // For results, require authentication
     if (wantsResults) {
       const session = await getServerSession(authOptions);
@@ -58,6 +51,28 @@ export async function GET(
           { status: 403 }
         );
       }
+    }
+
+    if (evaluation.status === 'COMPLETED') {
+      return NextResponse.json({
+        evaluation: {
+          id: evaluation.id,
+          title: evaluation.title,
+          recipientName: evaluation.recipientName,
+          recipientEmail: evaluation.recipientEmail,
+          tokenExpiry: evaluation.tokenExpiry,
+          status: evaluation.status,
+          completedAt: evaluation.completedAt,
+        },
+        alreadyCompleted: true,
+      });
+    }
+
+    if (!wantsResults && new Date() > evaluation.tokenExpiry) {
+      return NextResponse.json(
+        { error: 'El enlace ha expirado' },
+        { status: 410 }
+      );
     }
 
     return NextResponse.json(evaluation);

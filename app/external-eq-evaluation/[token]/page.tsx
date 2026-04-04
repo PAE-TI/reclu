@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 import {
   Heart,
   AlertCircle,
@@ -130,6 +131,7 @@ export default function ExternalEQEvaluationPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expired, setExpired] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
@@ -144,6 +146,9 @@ export default function ExternalEQEvaluationPage() {
       if (!evalResponse.ok) {
         const errorData = await evalResponse.json();
         setError(errorData.error || 'Evaluación no encontrada');
+        if (evalResponse.status === 410) {
+          setExpired(true);
+        }
         setIsLoading(false);
         return;
       }
@@ -268,6 +273,21 @@ export default function ExternalEQEvaluationPage() {
   }
 
   if (error) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          evaluationType="Inteligencia Emocional"
+          evaluationTitle="Evaluación EQ"
+          recipientName={evaluation?.recipientName}
+          senderName={
+            evaluation?.senderUser
+              ? `${evaluation.senderUser.firstName} ${evaluation.senderUser.lastName}`.trim()
+              : undefined
+          }
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
         <BrandingHeader />

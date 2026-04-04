@@ -21,17 +21,6 @@ export async function GET(
       );
     }
 
-    // Verificar si el token ha expirado
-    if (TokenUtils.isTokenExpired(evaluation.tokenExpiry)) {
-      return NextResponse.json(
-        { 
-          error: 'El enlace ha expirado',
-          expired: true
-        },
-        { status: 410 }
-      );
-    }
-
     // Verificar si ya fue completada
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
@@ -46,6 +35,17 @@ export async function GET(
             status: evaluation.status,
             completedAt: evaluation.completedAt,
           },
+        },
+        { status: 410 }
+      );
+    }
+
+    // Verificar si el token ha expirado
+    if (TokenUtils.isTokenExpired(evaluation.tokenExpiry)) {
+      return NextResponse.json(
+        { 
+          error: 'El enlace ha expirado',
+          expired: true
         },
         { status: 410 }
       );

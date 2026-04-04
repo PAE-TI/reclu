@@ -33,8 +33,44 @@ export async function GET(
       );
     }
 
-    // For completed evaluations with results, verify authentication
-    if ((includeResults || evaluation.status === 'COMPLETED') && evaluation.result) {
+    if (evaluation.status === 'COMPLETED') {
+      if (includeResults && evaluation.result) {
+        const session = await getServerSession(authOptions);
+        
+        if (!session?.user?.id) {
+          return NextResponse.json(
+            { error: 'Debes iniciar sesión para ver los resultados', requireAuth: true },
+            { status: 401 }
+          );
+        }
+        
+        const hasAccess = await canAccessTeamEvaluation(session.user.id, evaluation.senderUserId);
+        if (!hasAccess) {
+          return NextResponse.json(
+            { error: 'No tienes permiso para ver estos resultados' },
+            { status: 403 }
+          );
+        }
+      }
+
+      return NextResponse.json({
+        evaluation: {
+          id: evaluation.id,
+          title: evaluation.title,
+          recipientName: evaluation.recipientName,
+          recipientEmail: evaluation.recipientEmail,
+          status: evaluation.status,
+          tokenExpiry: evaluation.tokenExpiry,
+          completedAt: evaluation.completedAt,
+          senderName: evaluation.senderUser.name,
+          company: evaluation.senderUser.company,
+        },
+        result: evaluation.result,
+      });
+    }
+
+    // For pending evaluations with results, verify authentication
+    if (includeResults && evaluation.result) {
       const session = await getServerSession(authOptions);
       
       if (!session?.user?.id) {
@@ -51,14 +87,12 @@ export async function GET(
           { status: 403 }
         );
       }
-    } else {
+    } else if (new Date() > evaluation.tokenExpiry) {
       // Check if expired (only for questionnaire access)
-      if (new Date() > evaluation.tokenExpiry) {
-        return NextResponse.json(
-          { error: 'Este enlace de evaluación ha expirado' },
-          { status: 410 }
-        );
-      }
+      return NextResponse.json(
+        { error: 'Este enlace de evaluación ha expirado' },
+        { status: 410 }
+      );
     }
 
     return NextResponse.json({

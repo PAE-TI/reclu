@@ -25,14 +25,6 @@ export async function GET(
       );
     }
 
-    // Check if expired
-    if (new Date() > evaluation.tokenExpiry) {
-      return NextResponse.json(
-        { error: 'Este enlace de evaluación ha expirado' },
-        { status: 410 }
-      );
-    }
-
     // Check if already completed
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
@@ -49,6 +41,14 @@ export async function GET(
           },
         },
         { status: 400 }
+      );
+    }
+
+    // Check if expired
+    if (new Date() > evaluation.tokenExpiry) {
+      return NextResponse.json(
+        { error: 'Este enlace de evaluación ha expirado' },
+        { status: 410 }
       );
     }
 

@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Target, AlertCircle, Loader2, CheckCircle, ChevronRight, ChevronLeft, Sparkles, Shield, Award, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 
 function BrandingHeader() {
   return (
@@ -76,6 +77,7 @@ export default function ExternalAcumenEvaluation() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [expired, setExpired] = useState(false);
   const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
@@ -92,6 +94,9 @@ export default function ExternalAcumenEvaluation() {
           setEvaluation(data.evaluation || data);
           setCompleted(true);
           return;
+        }
+        if (evalRes.status === 410) {
+          setExpired(true);
         }
         setError(data.error || 'Error al cargar');
         setLoading(false);
@@ -156,6 +161,16 @@ export default function ExternalAcumenEvaluation() {
   }
 
   if (error) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          evaluationType="Acumen"
+          evaluationTitle={evaluation?.title}
+          recipientName={evaluation?.recipientName}
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50">
         <BrandingHeader />

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 
 // Branding Header Component
 function BrandingHeader() {
@@ -143,6 +144,7 @@ export default function ExternalDNAEvaluation() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [expired, setExpired] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<string, number>>({});
@@ -160,6 +162,9 @@ export default function ExternalDNAEvaluation() {
 
       if (!response.ok) {
         setError(data.error || 'Error al cargar la evaluación');
+        if (response.status === 410) {
+          setExpired(true);
+        }
         setLoading(false);
         return;
       }
@@ -243,6 +248,21 @@ export default function ExternalDNAEvaluation() {
 
   // Error state
   if (error) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          evaluationType="DNA-25"
+          evaluationTitle={evaluation?.title}
+          recipientName={evaluation?.recipientName}
+          senderName={
+            evaluation?.senderUser
+              ? `${evaluation.senderUser.firstName || ''} ${evaluation.senderUser.lastName || ''}`.trim()
+              : undefined
+          }
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-violet-50 to-purple-50">
         <BrandingHeader />

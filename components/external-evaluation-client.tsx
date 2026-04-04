@@ -17,6 +17,7 @@ import {
 import { toast } from 'react-hot-toast';
 import ExternalEvaluationQuestionnaire from './external-evaluation-questionnaire';
 import ExternalEvaluationCompletedState from './external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from './external-evaluation-expired-state';
 import { BrandingHeader, BrandingFooter } from './external-branding';
 import { Language, translations } from '@/contexts/language-context';
 
@@ -136,6 +137,18 @@ export default function ExternalEvaluationClient({ token }: ExternalEvaluationCl
   }
 
   if (error || expired) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          language={language}
+          evaluationType={t('ext.disc.name')}
+          evaluationTitle={evaluation?.title}
+          recipientName={evaluation?.recipientName}
+          senderName={evaluation?.senderName}
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
         <BrandingHeader language={language} setLanguage={handleSetLanguage} evaluationType={t('ext.disc.name')} />

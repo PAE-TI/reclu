@@ -20,13 +20,6 @@ export async function GET(
       );
     }
 
-    if (new Date() > new Date(evaluation.tokenExpiry)) {
-      return NextResponse.json(
-        { error: 'Esta evaluación ha expirado' },
-        { status: 410 }
-      );
-    }
-
     if (evaluation.status === 'COMPLETED') {
       return NextResponse.json(
         {
@@ -42,6 +35,13 @@ export async function GET(
           },
         },
         { status: 400 }
+      );
+    }
+
+    if (new Date() > new Date(evaluation.tokenExpiry)) {
+      return NextResponse.json(
+        { error: 'Esta evaluación ha expirado' },
+        { status: 410 }
       );
     }
 

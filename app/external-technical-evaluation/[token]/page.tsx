@@ -29,6 +29,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/language-context';
 import ExternalEvaluationCompletedState from '@/components/external-evaluation-completed-state';
+import ExternalEvaluationExpiredState from '@/components/external-evaluation-expired-state';
 
 // Branding Header Component with language toggle
 function BrandingHeader({ language, onLanguageChange }: { language: string; onLanguageChange: (lang: 'es' | 'en') => void }) {
@@ -162,6 +163,7 @@ export default function ExternalTechnicalEvaluationPage() {
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expired, setExpired] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
@@ -184,6 +186,9 @@ export default function ExternalTechnicalEvaluationPage() {
       if (!evalResponse.ok) {
         const errorData = await evalResponse.json();
         setError(errorData.error || (language === 'es' ? 'Evaluación no encontrada' : 'Evaluation not found'));
+        if (evalResponse.status === 410) {
+          setExpired(true);
+        }
         setIsLoading(false);
         return;
       }
@@ -330,6 +335,22 @@ export default function ExternalTechnicalEvaluationPage() {
   }
 
   if (error) {
+    if (expired) {
+      return (
+        <ExternalEvaluationExpiredState
+          language={language}
+          evaluationType={language === 'es' ? 'Evaluación Técnica' : 'Technical Evaluation'}
+          evaluationTitle={evaluation?.jobPositionTitle}
+          recipientName={evaluation?.recipientName}
+          senderName={
+            evaluation?.senderUser
+              ? `${evaluation.senderUser.firstName || ''} ${evaluation.senderUser.lastName || ''}`.trim()
+              : undefined
+          }
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-50">
         <BrandingHeader language={language} onLanguageChange={handleLanguageChange} />
