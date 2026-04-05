@@ -268,7 +268,7 @@ export default function ExternalStressResults() {
           )}
 
           <ResultSummaryCard
-            accentClassName="bg-gradient-to-r from-rose-600 to-orange-600"
+            accentClassName="bg-gradient-to-r from-orange-600 to-red-600"
             icon={<Activity className="w-8 h-8 text-white" />}
             title={t('results.stress.title')}
             subtitle={evaluation?.recipientName}

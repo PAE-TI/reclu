@@ -64,6 +64,7 @@ export async function GET(
           status: evaluation.status,
           completedAt: evaluation.completedAt,
         },
+        result: evaluation.result,
         alreadyCompleted: true,
       });
     }

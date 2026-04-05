@@ -294,7 +294,7 @@ export default function ExternalDNAEvaluationResults() {
         </Button>
 
         <ResultSummaryCard
-          accentClassName="bg-gradient-to-r from-indigo-600 to-violet-600"
+          accentClassName="bg-gradient-to-r from-teal-600 to-cyan-600"
           icon={<Dna className="w-9 h-9 text-white" />}
           title={t('results.dna.title')}
           subtitle={evaluation.recipientName}

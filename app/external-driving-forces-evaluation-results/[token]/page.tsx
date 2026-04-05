@@ -456,13 +456,13 @@ export default function ExternalDrivingForcesResultsPage() {
           </Button>
 
           <ResultSummaryCard
-            accentClassName="bg-gradient-to-r from-purple-500 to-indigo-600"
+          accentClassName="bg-gradient-to-r from-emerald-600 to-green-600"
             icon={<Target className="w-8 h-8 text-white" />}
             title={t('results.df.title')}
             subtitle={evaluation.title}
             right={
               <>
-                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
                   {result.motivationalProfile}
                 </Badge>
                 {evaluation.completedAt && (
