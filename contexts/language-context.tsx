@@ -1850,8 +1850,8 @@ export const translations = {
     'campaigns.status.archived': 'Archivada',
     
     // New Campaign
-    'campaigns.new.title': 'Nueva Campaña de Selección',
-    'campaigns.new.subtitle': 'Define el cargo, selecciona evaluaciones y comienza a recibir perfiles completos',
+    'campaigns.new.title': 'Nueva Campaña',
+    'campaigns.new.subtitle': 'Define el propósito, selecciona evaluaciones y comienza a recibir perfiles completos',
     'campaigns.new.fullBattery': 'Batería completa disponible',
     'campaigns.new.infoTitle': 'Información de la Campaña',
     'campaigns.new.infoDesc': 'Datos generales del proceso de selección',
@@ -5162,8 +5162,8 @@ export const translations = {
     'campaigns.status.archived': 'Archived',
     
     // New Campaign
-    'campaigns.new.title': 'New Selection Campaign',
-    'campaigns.new.subtitle': 'Define the position, select evaluations and start receiving complete profiles',
+    'campaigns.new.title': 'New Campaign',
+    'campaigns.new.subtitle': 'Define the purpose, select evaluations, and start receiving complete profiles',
     'campaigns.new.fullBattery': 'Full battery available',
     'campaigns.new.infoTitle': 'Campaign Information',
     'campaigns.new.infoDesc': 'General data for the selection process',
