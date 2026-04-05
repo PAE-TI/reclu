@@ -116,10 +116,10 @@ export const translations = {
     
     // Campaigns Section
     'campaigns.badge': '✨ Funcionalidad Destacada',
-    'campaigns.label': 'Campañas de Selección',
-    'campaigns.title1': 'Revoluciona tus procesos de selección',
-    'campaigns.title2': 'con datos objetivos',
-    'campaigns.subtitle': 'Crea campañas para cada cargo, aplica baterías de evaluaciones a todos tus candidatos y compara perfiles automáticamente contra el perfil ideal del puesto.',
+    'campaigns.label': 'Campañas',
+    'campaigns.title1': 'Gestiona selección y',
+    'campaigns.title2': 'equipos internos con datos objetivos',
+    'campaigns.subtitle': 'Crea campañas para cubrir cargos, evaluar equipos internos y comparar perfiles automáticamente con una batería de evaluaciones consistente.',
     'campaigns.feature1.title': 'Biblioteca de +225 cargos',
     'campaigns.feature1.desc': 'Perfiles ideales predefinidos con benchmarks de competencias',
     'campaigns.feature2.title': 'Evaluación masiva',
@@ -565,7 +565,7 @@ export const translations = {
     'sidebar.general.dashboard': 'Panel de Control',
     'sidebar.general.analytics': 'Análisis Avanzado',
     'sidebar.general.batchEvaluations': 'Enviar Pruebas',
-    'sidebar.general.campaigns': 'Campañas de Selección',
+    'sidebar.general.campaigns': 'Campañas',
     'sidebar.general.team': 'Mi Equipo',
     'sidebar.general.evaluationsGuide': 'Guía de Evaluaciones',
     'sidebar.general.admin': 'Administración',
@@ -728,7 +728,7 @@ export const translations = {
     'dashboard.individual.desc': 'Análisis por persona',
     'dashboard.compare': 'Comparar',
     'dashboard.compare.desc': 'Comparar personas',
-    'dashboard.campaigns.title': 'Campañas de Selección',
+    'dashboard.campaigns.title': 'Campañas',
     'dashboard.campaigns.new': 'Nuevo',
     'dashboard.campaigns.description': 'Las <strong>Campañas de Selección</strong> te permiten gestionar procesos de reclutamiento completos. Crea una campaña para un cargo específico, invita candidatos y compara automáticamente sus perfiles contra el perfil ideal del puesto usando nuestro algoritmo de compatibilidad.',
     'dashboard.campaigns.idealProfile': 'Perfil Ideal',
@@ -2777,7 +2777,7 @@ export const translations = {
     'tour.advancedAnalytics.title': '⭐ Análisis Avanzado',
     'tour.advancedAnalytics.description': 'La función más poderosa: ve el perfil INTEGRADO de una persona (combinando todos sus módulos) o COMPARA varias personas para decidir entre candidatos o formar equipos equilibrados.',
     
-    'tour.campaigns.title': '⭐ Campañas de Selección',
+    'tour.campaigns.title': '⭐ Campañas',
     'tour.campaigns.description': 'Gestiona procesos completos de reclutamiento. Crea una campaña para un cargo, define el perfil ideal, invita candidatos y compara su compatibilidad automáticamente. Puedes agregar candidatos nuevos o reusar evaluaciones ya completadas.',
     
     'tour.campaignsFeatures.title': 'Funciones de Campañas',
@@ -3428,10 +3428,10 @@ export const translations = {
     
     // Campaigns Section
     'campaigns.badge': '✨ Featured Functionality',
-    'campaigns.label': 'Selection Campaigns',
-    'campaigns.title1': 'Revolutionize your selection processes',
-    'campaigns.title2': 'with objective data',
-    'campaigns.subtitle': 'Create campaigns for each position, apply assessment batteries to all your candidates, and automatically compare profiles against the ideal job profile.',
+    'campaigns.label': 'Campaigns',
+    'campaigns.title1': 'Manage selection and',
+    'campaigns.title2': 'internal teams with objective data',
+    'campaigns.subtitle': 'Create campaigns to fill roles, evaluate internal teams, and automatically compare profiles with a consistent assessment battery.',
     'campaigns.feature1.title': 'Library of 225+ positions',
     'campaigns.feature1.desc': 'Predefined ideal profiles with competency benchmarks',
     'campaigns.feature2.title': 'Mass assessment',
@@ -3877,7 +3877,7 @@ export const translations = {
     'sidebar.general.dashboard': 'Dashboard',
     'sidebar.general.analytics': 'Advanced Analytics',
     'sidebar.general.batchEvaluations': 'Send Assessments',
-    'sidebar.general.campaigns': 'Selection Campaigns',
+    'sidebar.general.campaigns': 'Campaigns',
     'sidebar.general.team': 'My Team',
     'sidebar.general.evaluationsGuide': 'Assessments Guide',
     'sidebar.general.admin': 'Administration',
@@ -4040,7 +4040,7 @@ export const translations = {
     'dashboard.individual.desc': 'Analysis by person',
     'dashboard.compare': 'Compare',
     'dashboard.compare.desc': 'Compare people',
-    'dashboard.campaigns.title': 'Selection Campaigns',
+    'dashboard.campaigns.title': 'Campaigns',
     'dashboard.campaigns.new': 'New',
     'dashboard.campaigns.description': '<strong>Selection Campaigns</strong> allow you to manage complete recruitment processes. Create a campaign for a specific position, invite candidates and automatically compare their profiles against the ideal job profile using our compatibility algorithm.',
     'dashboard.campaigns.idealProfile': 'Ideal Profile',
@@ -6089,7 +6089,7 @@ export const translations = {
     'tour.advancedAnalytics.title': '⭐ Advanced Analytics',
     'tour.advancedAnalytics.description': 'The most powerful feature: see a person\'s INTEGRATED profile (combining all their modules) or COMPARE multiple people to decide between candidates or build balanced teams.',
     
-    'tour.campaigns.title': '⭐ Selection Campaigns',
+    'tour.campaigns.title': '⭐ Campaigns',
     'tour.campaigns.description': 'Manage complete recruitment processes. Create a campaign for a position, define the ideal profile, invite candidates, and automatically compare their compatibility. You can add new candidates or reuse already completed evaluations.',
     
     'tour.campaignsFeatures.title': 'Campaign Features',

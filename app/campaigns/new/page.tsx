@@ -214,7 +214,12 @@ export default function NewCampaignPage() {
       campaignType,
       isPrivate: campaignType === 'INTERNAL_TEAM' ? true : prev.isPrivate,
       allowTeamAddCandidates: campaignType === 'INTERNAL_TEAM' ? true : prev.allowTeamAddCandidates,
+      jobTitle: '',
+      jobCategory: '',
+      technicalTemplateId: campaignType === 'INTERNAL_TEAM' ? prev.technicalTemplateId : prev.technicalTemplateId,
     }));
+    setSelectedPosition(null);
+    setSearchQuery('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -461,10 +466,20 @@ export default function NewCampaignPage() {
 
             <div ref={searchRef} className="relative">
               <Label htmlFor="jobTitle" className="text-sm font-medium text-gray-700">
-                {t('campaigns.new.jobTitle')} <span className="text-rose-500">*</span>
+                {isInternalTeamCampaign
+                  ? (language === 'es' ? 'Equipo o área a evaluar' : 'Team or area to evaluate')
+                  : (t('campaigns.new.jobTitle'))} <span className="text-rose-500">*</span>
               </Label>
-              <div className="relative mt-2">
-                {selectedPosition ? (
+              <div className="mt-2">
+                {isInternalTeamCampaign ? (
+                  <Input
+                    id="jobTitle"
+                    placeholder={language === 'es' ? 'Ej. Equipo comercial LATAM, Operaciones, Customer Success' : 'E.g. LATAM sales team, Operations, Customer Success'}
+                    value={formData.jobTitle}
+                    onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value, jobCategory: '' }))}
+                    className="h-11 bg-white border-gray-200 focus:border-sky-500 focus:ring-sky-500"
+                  />
+                ) : selectedPosition ? (
                   <div className="flex items-center gap-3 p-4 border-2 rounded-xl bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200">
                     <div className="p-2.5 bg-cyan-100 rounded-lg">
                       <Briefcase className="w-5 h-5 text-cyan-600" />
@@ -478,7 +493,7 @@ export default function NewCampaignPage() {
                     </Button>
                   </div>
                 ) : (
-                  <>
+                  <div className="relative">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
                       id="jobTitle"
@@ -496,11 +511,10 @@ export default function NewCampaignPage() {
                     {searching && (
                       <Loader2 className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 animate-spin text-cyan-500" />
                     )}
-                  </>
+                  </div>
                 )}
 
-                {/* Dropdown de resultados */}
-                {showDropdown && searchResults.length > 0 && !selectedPosition && (
+                {!isInternalTeamCampaign && showDropdown && searchResults.length > 0 && !selectedPosition && (
                   <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl">
                     <div className="max-h-72 overflow-y-auto overscroll-contain">
                       {searchResults.map((position, idx) => (
@@ -534,7 +548,11 @@ export default function NewCampaignPage() {
               </div>
               <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                 <Info className="w-3.5 h-3.5" />
-                {t('campaigns.new.jobTitleInfo')}
+                {isInternalTeamCampaign
+                  ? (language === 'es'
+                    ? 'Usa este campo como el nombre del equipo, área o grupo que vas a evaluar.'
+                    : 'Use this field as the name of the team, area, or group you are going to evaluate.')
+                  : t('campaigns.new.jobTitleInfo')}
               </p>
             </div>
 

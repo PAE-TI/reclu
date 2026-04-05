@@ -122,6 +122,7 @@ export default function CampaignsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
   const [permissions, setPermissions] = useState<Permissions>({ canCreate: true, canViewPrivate: true });
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -175,7 +176,8 @@ export default function CampaignsPage() {
     const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           campaign.jobTitle.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || campaign.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesType = typeFilter === 'all' || campaign.campaignType === typeFilter;
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
@@ -476,6 +478,27 @@ export default function CampaignsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white transition-colors rounded-xl"
               />
+            </div>
+
+            {/* Type Filter Pills */}
+            <div className="flex gap-1.5 flex-wrap bg-slate-100 p-1 rounded-xl">
+              {['all', 'SELECTION', 'INTERNAL_TEAM'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setTypeFilter(type)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    typeFilter === type
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {type === 'all'
+                    ? (language === 'es' ? 'Todos' : 'All')
+                    : type === 'SELECTION'
+                      ? (language === 'es' ? 'Selección' : 'Selection')
+                      : (language === 'es' ? 'Equipo interno' : 'Internal team')}
+                </button>
+              ))}
             </div>
             
             {/* Status Filter Pills */}
