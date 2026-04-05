@@ -271,17 +271,17 @@ export default function CampaignsPage() {
               <div className="flex items-center gap-6 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 border border-white/10">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-white">{stats.activeCampaigns}</p>
-                  <p className="text-xs text-slate-400">{language === 'es' ? 'Activas' : 'Active'}</p>
+                  <p className="text-xs text-slate-400">{language === 'es' ? 'En curso' : 'In progress'}</p>
                 </div>
                 <div className="w-px h-10 bg-white/20" />
                 <div className="text-center">
                   <p className="text-2xl font-bold text-white">{stats.totalCandidates}</p>
-                  <p className="text-xs text-slate-400">{language === 'es' ? 'Candidatos' : 'Candidates'}</p>
+                  <p className="text-xs text-slate-400">{language === 'es' ? 'Personas' : 'People'}</p>
                 </div>
                 <div className="w-px h-10 bg-white/20" />
                 <div className="text-center">
                   <p className="text-2xl font-bold text-emerald-400">{stats.avgCompletionRate}%</p>
-                  <p className="text-xs text-slate-400">{language === 'es' ? 'Completado' : 'Completed'}</p>
+                  <p className="text-xs text-slate-400">{language === 'es' ? 'Completitud' : 'Completion'}</p>
                 </div>
               </div>
 
@@ -307,7 +307,7 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-3xl font-bold text-slate-900">{stats.totalCampaigns}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Total Campañas' : 'Total Campaigns'}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Total campañas' : 'Total campaigns'}</p>
               </div>
               <div className="p-3 bg-slate-100 rounded-xl group-hover:scale-110 transition-transform">
                 <Briefcase className="w-5 h-5 text-slate-600" />
@@ -315,7 +315,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
               <Target className="w-3 h-3" />
-              <span>{language === 'es' ? 'Procesos de selección' : 'Selection processes'}</span>
+              <span>{language === 'es' ? 'Procesos de evaluación' : 'Assessment processes'}</span>
             </div>
           </CardContent>
         </Card>
@@ -325,7 +325,7 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-3xl font-bold text-emerald-600">{stats.activeCampaigns}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Campañas Activas' : 'Active Campaigns'}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Campañas activas' : 'Active campaigns'}</p>
               </div>
               <div className="p-3 bg-emerald-50 rounded-xl group-hover:scale-110 transition-transform">
                 <Zap className="w-5 h-5 text-emerald-600" />
@@ -333,7 +333,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
               <Flame className="w-3 h-3" />
-              <span>{language === 'es' ? 'En progreso' : 'In progress'}</span>
+              <span>{language === 'es' ? 'Seleccion y desarrollo' : 'Selection and development'}</span>
             </div>
           </CardContent>
         </Card>
@@ -343,7 +343,7 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-3xl font-bold text-amber-600">{stats.totalCandidates}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Candidatos' : 'Candidates'}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Personas' : 'People'}</p>
               </div>
               <div className="p-3 bg-amber-50 rounded-xl group-hover:scale-110 transition-transform">
                 <Users className="w-5 h-5 text-amber-600" />
@@ -361,7 +361,7 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-3xl font-bold text-rose-600">{stats.completedCandidates}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Evaluados' : 'Evaluated'}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Completadas' : 'Completed'}</p>
               </div>
               <div className="p-3 bg-rose-50 rounded-xl group-hover:scale-110 transition-transform">
                 <CheckCircle className="w-5 h-5 text-rose-600" />
@@ -369,7 +369,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
               <Award className="w-3 h-3" />
-              <span>{language === 'es' ? 'Perfiles completos' : 'Complete profiles'}</span>
+              <span>{language === 'es' ? 'Procesos completos' : 'Completed processes'}</span>
             </div>
           </CardContent>
         </Card>
@@ -379,7 +379,7 @@ export default function CampaignsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-3xl font-bold text-purple-600">{stats.avgScore > 0 ? stats.avgScore + '%' : '-'}</p>
-                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Score Promedio' : 'Avg Score'}</p>
+                <p className="text-sm text-slate-500 font-medium mt-1">{language === 'es' ? 'Score promedio' : 'Average score'}</p>
               </div>
               <div className="p-3 bg-purple-50 rounded-xl group-hover:scale-110 transition-transform">
                 <TrendingUp className="w-5 h-5 text-purple-600" />
@@ -387,7 +387,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs text-slate-500">
               <BarChart3 className="w-3 h-3" />
-              <span>{language === 'es' ? 'Rendimiento global' : 'Overall performance'}</span>
+              <span>{language === 'es' ? 'Lectura general' : 'Overall view'}</span>
             </div>
           </CardContent>
         </Card>
@@ -410,6 +410,9 @@ export default function CampaignsPage() {
                       <Badge className="bg-slate-700 text-white border-0">
                         <Star className="w-3 h-3 mr-1" />
                         Top
+                      </Badge>
+                      <Badge className={`${campaignTypeConfig[stats.mostActiveCampaign?.campaignType as keyof typeof campaignTypeConfig]?.color || 'bg-slate-100 text-slate-700 border-slate-200'} border`}>
+                        {campaignTypeConfig[stats.mostActiveCampaign?.campaignType as keyof typeof campaignTypeConfig]?.label || stats.mostActiveCampaign?.campaignType}
                       </Badge>
                     </div>
                     <p className="text-lg font-semibold text-slate-800">{stats.mostActiveCampaign.name}</p>
@@ -449,15 +452,15 @@ export default function CampaignsPage() {
           <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-0 shadow-lg">
             <CardContent className="p-5">
               <div className="flex items-start gap-3">
-                <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-lg">
+              <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-lg">
                   <Lightbulb className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{language === 'es' ? 'Tip de Headhunter' : 'Headhunter Tip'}</h3>
+                  <h3 className="font-bold text-gray-900 mb-1">{language === 'es' ? 'Tip de Talento' : 'Talent Tip'}</h3>
                   <p className="text-sm text-gray-600">
                     {language === 'es' 
-                      ? 'Combina DISC + EQ + Pruebas Técnicas para obtener un perfil 360° de tus candidatos y tomar mejores decisiones de contratación.'
-                      : 'Combine DISC + EQ + Technical Tests to get a 360° profile of your candidates and make better hiring decisions.'}
+                      ? 'Combina DISC, EQ, Pruebas Técnicas y métricas de avance para obtener una lectura 360° de personas y equipos, ya sea para contratación o desarrollo interno.'
+                      : 'Combine DISC, EQ, Technical Tests, and progress metrics to get a 360° view of people and teams, whether for hiring or internal development.'}
                   </p>
                 </div>
               </div>

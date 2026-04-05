@@ -1809,8 +1809,8 @@ export const translations = {
     'batchEval.results.close': 'Cerrar',
     
     // Campaigns Page (Campañas de Selección)
-    'campaigns.page.title': 'Campañas de Selección',
-    'campaigns.page.subtitle': 'Gestiona procesos de selección y encuentra al candidato ideal para tu organización',
+    'campaigns.page.title': 'Campañas',
+    'campaigns.page.subtitle': 'Gestiona procesos de selección y equipos internos desde un solo lugar',
     'campaigns.newCampaign': 'Nueva Campaña',
     'campaigns.activeCampaigns': 'Campañas Activas',
     'campaigns.totalCandidates': 'Total Candidatos',
@@ -5121,8 +5121,8 @@ export const translations = {
     'batchEval.results.close': 'Close',
     
     // Campaigns (Selection Campaigns)
-    'campaigns.page.title': 'Selection Campaigns',
-    'campaigns.page.subtitle': 'Manage selection processes and find the ideal candidate for your organization',
+    'campaigns.page.title': 'Campaigns',
+    'campaigns.page.subtitle': 'Manage selection processes and internal teams from one place',
     'campaigns.newCampaign': 'New Campaign',
     'campaigns.activeCampaigns': 'Active Campaigns',
     'campaigns.totalCandidates': 'Total Candidates',
