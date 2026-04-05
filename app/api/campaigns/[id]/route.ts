@@ -192,6 +192,7 @@ export async function GET(
     return NextResponse.json({ 
       campaign: {
         ...campaign,
+        campaignType: campaign.campaignType,
         candidates: enrichedCandidates,
       },
       permissions: {
@@ -219,7 +220,7 @@ export async function PUT(
 
     const { id } = params;
     const body = await request.json();
-    const { name, jobTitle, jobCategory, description, evaluationTypes, status, hiredCandidateId, hiredCandidateName, completionNotes, technicalTemplateId } = body;
+    const { name, jobTitle, jobCategory, description, campaignType, evaluationTypes, status, hiredCandidateId, hiredCandidateName, completionNotes, technicalTemplateId } = body;
 
     // Obtener el dueño real si es facilitador
     const user = await prisma.user.findUnique({
@@ -259,6 +260,7 @@ export async function PUT(
         ...(jobTitle && { jobTitle }),
         ...(jobCategory !== undefined && { jobCategory }),
         ...(description !== undefined && { description }),
+        ...(campaignType && { campaignType }),
         ...(evaluationTypes && { evaluationTypes }),
         ...(technicalTemplateId !== undefined && { technicalTemplateId: resolvedTechnicalTemplateId }),
         ...(status && { status }),
@@ -267,6 +269,7 @@ export async function PUT(
         ...(hiredCandidateId !== undefined && { hiredCandidateId: hiredCandidateId || null }),
         ...(hiredCandidateName !== undefined && { hiredCandidateName: hiredCandidateName || null }),
         ...(completionNotes !== undefined && { completionNotes: completionNotes || null }),
+        ...(campaignType === 'INTERNAL_TEAM' && { isPrivate: true, allowTeamAddCandidates: true }),
       },
     });
 

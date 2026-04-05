@@ -68,6 +68,7 @@ interface Campaign {
   jobTitle: string;
   jobCategory: string | null;
   description: string | null;
+  campaignType: string;
   status: string;
   evaluationTypes: string[];
   isPrivate: boolean;
@@ -98,6 +99,19 @@ const getStatusConfig = (t: (key: string) => string): Record<string, { label: st
   ANALYZING: { label: t('campaigns.status.analyzing'), color: 'bg-purple-100 text-purple-700 border-purple-200', bgGradient: 'from-purple-500 to-indigo-600', icon: <BarChart3 className="w-3 h-3" /> },
   COMPLETED: { label: t('campaigns.status.completed'), color: 'bg-teal-100 text-teal-700 border-teal-200', bgGradient: 'from-teal-500 to-emerald-600', icon: <CheckCircle className="w-3 h-3" /> },
   ARCHIVED: { label: t('campaigns.status.archived'), color: 'bg-gray-100 text-gray-600 border-gray-200', bgGradient: 'from-gray-400 to-gray-500', icon: <Archive className="w-3 h-3" /> },
+});
+
+const getCampaignTypeConfig = (language: string) => ({
+  SELECTION: {
+    label: language === 'es' ? 'Selección' : 'Selection',
+    description: language === 'es' ? 'Proceso de reclutamiento' : 'Hiring process',
+    color: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+  },
+  INTERNAL_TEAM: {
+    label: language === 'es' ? 'Equipo interno' : 'Internal team',
+    description: language === 'es' ? 'Desarrollo y comparación interna' : 'Internal development',
+    color: 'bg-sky-100 text-sky-700 border-sky-200',
+  },
 });
 
 export default function CampaignsPage() {
@@ -221,6 +235,7 @@ export default function CampaignsPage() {
   };
 
   const { language } = useLanguage();
+  const campaignTypeConfig = getCampaignTypeConfig(language);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -560,6 +575,11 @@ export default function CampaignsPage() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-lg truncate">{campaign.name}</h3>
                       <p className="text-white/80 text-sm truncate">{campaign.jobTitle}</p>
+                      <div className="mt-2">
+                        <Badge className="border border-white/20 bg-white/15 text-white backdrop-blur-sm">
+                          {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.label || campaign.campaignType}
+                        </Badge>
+                      </div>
                     </div>
                     <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm">
                       {status.icon}
@@ -672,6 +692,9 @@ export default function CampaignsPage() {
                         <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
                           {campaign.name}
                         </h3>
+                        <Badge className={`${campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.color || 'bg-gray-100 text-gray-700 border-gray-200'} border font-medium`}>
+                          {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.label || campaign.campaignType}
+                        </Badge>
                         <Badge className={`${status.color} flex items-center gap-1 border font-medium`}>
                           {status.icon}
                           {status.label}

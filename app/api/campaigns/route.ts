@@ -91,6 +91,7 @@ export async function GET(request: NextRequest) {
         jobTitle: campaign.jobTitle,
         jobCategory: campaign.jobCategory,
         description: campaign.description,
+        campaignType: campaign.campaignType,
         status: campaign.status,
         evaluationTypes: campaign.evaluationTypes,
         technicalTemplateId: campaign.technicalTemplateId,
@@ -147,7 +148,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, jobTitle, jobCategory, description, evaluationTypes, isPrivate, allowTeamAddCandidates, technicalTemplateId } = body;
+    const { name, jobTitle, jobCategory, description, campaignType, evaluationTypes, isPrivate, allowTeamAddCandidates, technicalTemplateId } = body;
 
     if (!name || !jobTitle) {
       return NextResponse.json(
@@ -192,10 +193,11 @@ export async function POST(request: NextRequest) {
         jobTitle,
         jobCategory: jobCategory || null,
         description: description || null,
+        campaignType: campaignType === 'INTERNAL_TEAM' ? 'INTERNAL_TEAM' : 'SELECTION',
         evaluationTypes: selectedEvaluationTypes,
         technicalTemplateId: resolvedTechnicalTemplateId,
-        isPrivate: isPrivate !== false, // Default true
-        allowTeamAddCandidates: allowTeamAddCandidates === true, // Default false
+        isPrivate: campaignType === 'INTERNAL_TEAM' ? true : isPrivate !== false,
+        allowTeamAddCandidates: campaignType === 'INTERNAL_TEAM' ? true : allowTeamAddCandidates === true,
         userId: permissions.ownerId,
         status: 'ACTIVE',
       },

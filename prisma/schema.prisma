@@ -2146,6 +2146,7 @@ model SelectionCampaign {
   jobTitle        String                // Cargo para el que se busca
   jobCategory     String?               // Categoría del cargo
   description     String?               @db.Text
+  campaignType    String                @default("SELECTION") // SELECTION | INTERNAL_TEAM
   
   // Owner of the campaign
   userId          String

@@ -58,6 +58,8 @@ interface TechnicalTemplate {
   questionCount: number;
 }
 
+type CampaignType = 'SELECTION' | 'INTERNAL_TEAM';
+
 const getEvaluationTypes = (t: (key: string) => string, language: string) => [
   { id: 'DISC', name: 'DISC', description: t('batchEval.disc.desc'), icon: Brain, color: 'text-indigo-600', bg: 'bg-indigo-100' },
   { id: 'DRIVING_FORCES', name: t('batchEval.drivingForces.name'), description: t('batchEval.drivingForces.desc'), icon: Zap, color: 'text-amber-600', bg: 'bg-amber-100' },
@@ -89,6 +91,7 @@ export default function NewCampaignPage() {
     jobTitle: '',
     jobCategory: '',
     description: '',
+    campaignType: 'SELECTION' as CampaignType,
     evaluationTypes: ['DISC', 'DRIVING_FORCES', 'EQ'] as string[],
     isPrivate: true,
     allowTeamAddCandidates: false,
@@ -205,6 +208,15 @@ export default function NewCampaignPage() {
     });
   };
 
+  const handleCampaignTypeChange = (campaignType: CampaignType) => {
+    setFormData(prev => ({
+      ...prev,
+      campaignType,
+      isPrivate: campaignType === 'INTERNAL_TEAM' ? true : prev.isPrivate,
+      allowTeamAddCandidates: campaignType === 'INTERNAL_TEAM' ? true : prev.allowTeamAddCandidates,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -253,6 +265,7 @@ export default function NewCampaignPage() {
   };
 
   const totalCredits = formData.evaluationTypes.length * creditsPerEvaluation;
+  const isInternalTeamCampaign = formData.campaignType === 'INTERNAL_TEAM';
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -290,6 +303,135 @@ export default function NewCampaignPage() {
         </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 pb-10">
+        {/* Tipo de campaña */}
+        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/80">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-sky-100 rounded-xl">
+                <Sparkles className="w-5 h-5 text-sky-600" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{language === 'es' ? 'Tipo de campaña' : 'Campaign type'}</CardTitle>
+                <CardDescription>
+                  {language === 'es'
+                    ? 'Define si la campaña es para selección externa o para evaluar y comparar a tu equipo interno.'
+                    : 'Choose whether the campaign is for external hiring or for evaluating and comparing your internal team.'}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleCampaignTypeChange('SELECTION')}
+                className={`text-left rounded-2xl border-2 p-5 transition-all ${
+                  !isInternalTeamCampaign
+                    ? 'border-cyan-500 bg-gradient-to-br from-cyan-50 to-blue-50 shadow-md'
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`rounded-xl p-3 ${!isInternalTeamCampaign ? 'bg-cyan-100' : 'bg-slate-100'}`}>
+                    <Briefcase className={`w-6 h-6 ${!isInternalTeamCampaign ? 'text-cyan-600' : 'text-slate-500'}`} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <h3 className="font-semibold text-slate-900">{language === 'es' ? 'Selección' : 'Selection'}</h3>
+                        <p className="text-sm text-slate-600 mt-1">
+                          {language === 'es'
+                            ? 'Para procesos de reclutamiento y contratación de candidatos externos.'
+                            : 'For recruiting and hiring external candidates.'}
+                        </p>
+                      </div>
+                      <Badge className="bg-cyan-100 text-cyan-700 border-cyan-200">
+                        {language === 'es' ? 'Más usado' : 'Most common'}
+                      </Badge>
+                    </div>
+                    <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                      <li>• {language === 'es' ? 'Ideal para vacantes abiertas y shortlist' : 'Ideal for open roles and shortlists'}</li>
+                      <li>• {language === 'es' ? 'Permite compartir a candidatos externos' : 'Share with external candidates'}</li>
+                      <li>• {language === 'es' ? 'Enfoque en ajuste al cargo' : 'Focused on role fit'}</li>
+                    </ul>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleCampaignTypeChange('INTERNAL_TEAM')}
+                className={`text-left rounded-2xl border-2 p-5 transition-all ${
+                  isInternalTeamCampaign
+                    ? 'border-sky-500 bg-gradient-to-br from-sky-50 to-cyan-50 shadow-md'
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`rounded-xl p-3 ${isInternalTeamCampaign ? 'bg-sky-100' : 'bg-slate-100'}`}>
+                    <Users className={`w-6 h-6 ${isInternalTeamCampaign ? 'text-sky-600' : 'text-slate-500'}`} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <h3 className="font-semibold text-slate-900">{language === 'es' ? 'Equipo interno' : 'Internal team'}</h3>
+                        <p className="text-sm text-slate-600 mt-1">
+                          {language === 'es'
+                            ? 'Para evaluar colaboradores actuales, comparar talento y definir planes de desarrollo.'
+                            : 'For assessing current employees, comparing talent, and building development plans.'}
+                        </p>
+                      </div>
+                      <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                        {language === 'es' ? 'Talento interno' : 'Internal talent'}
+                      </Badge>
+                    </div>
+                    <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                      <li>• {language === 'es' ? 'Pensada para equipos y colaboradores actuales' : 'Built for current employees and teams'}</li>
+                      <li>• {language === 'es' ? 'Útil para movilidad interna y sucesión' : 'Useful for internal mobility and succession'}</li>
+                      <li>• {language === 'es' ? 'Comparación continua entre perfiles' : 'Continuous comparison across profiles'}</li>
+                    </ul>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className={`rounded-xl border p-4 ${isInternalTeamCampaign ? 'border-sky-200 bg-sky-50/70' : 'border-cyan-200 bg-cyan-50/70'}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{language === 'es' ? 'Visibilidad' : 'Visibility'}</p>
+                <p className="mt-1 text-sm font-medium text-slate-900">
+                  {isInternalTeamCampaign
+                    ? (language === 'es' ? 'Privada por defecto' : 'Private by default')
+                    : (formData.isPrivate ? (language === 'es' ? 'Privada' : 'Private') : (language === 'es' ? 'Pública' : 'Public'))}
+                </p>
+              </div>
+              <div className={`rounded-xl border p-4 ${isInternalTeamCampaign ? 'border-sky-200 bg-sky-50/70' : 'border-cyan-200 bg-cyan-50/70'}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{language === 'es' ? 'Carga de candidatos' : 'Candidate loading'}</p>
+                <p className="mt-1 text-sm font-medium text-slate-900">
+                  {isInternalTeamCampaign
+                    ? (language === 'es' ? 'Equipo habilitado' : 'Team enabled')
+                    : (formData.allowTeamAddCandidates ? (language === 'es' ? 'Equipo habilitado' : 'Team enabled') : (language === 'es' ? 'Solo propietario' : 'Owner only'))}
+                </p>
+              </div>
+              <div className={`rounded-xl border p-4 ${isInternalTeamCampaign ? 'border-sky-200 bg-sky-50/70' : 'border-cyan-200 bg-cyan-50/70'}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{language === 'es' ? 'Objetivo' : 'Goal'}</p>
+                <p className="mt-1 text-sm font-medium text-slate-900">
+                  {isInternalTeamCampaign
+                    ? (language === 'es' ? 'Desarrollo y comparación interna' : 'Internal development and comparison')
+                    : (language === 'es' ? 'Selección y contratación' : 'Hiring and selection')}
+                </p>
+              </div>
+            </div>
+
+            {isInternalTeamCampaign && (
+              <div className="rounded-2xl border border-sky-200 bg-sky-50/60 p-4 text-sm text-sky-800">
+                {language === 'es'
+                  ? 'Esta modalidad queda optimizada para equipos internos: acceso privado, análisis comparativo y carga más flexible de colaboradores.'
+                  : 'This mode is optimized for internal teams: private access, comparative analysis, and more flexible employee loading.'}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Información Básica */}
         <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
           <CardHeader className="border-b border-slate-100 bg-slate-50/80">

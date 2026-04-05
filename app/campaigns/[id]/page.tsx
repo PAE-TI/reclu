@@ -127,6 +127,7 @@ interface Campaign {
   jobTitle: string;
   jobCategory: string | null;
   description: string | null;
+  campaignType: string;
   status: string;
   evaluationTypes: string[];
   technicalTemplateId?: string | null;
@@ -199,6 +200,19 @@ const getEvaluationIcons = (t: (key: string) => string, language: string): Recor
   TECHNICAL: { icon: FileCode, color: 'text-sky-600', label: language === 'es' ? 'Técnica' : 'Technical' },
 });
 
+const getCampaignTypeConfig = (language: string) => ({
+  SELECTION: {
+    label: language === 'es' ? 'Selección' : 'Selection',
+    helper: language === 'es' ? 'Proceso de reclutamiento y contratación' : 'Recruitment and hiring process',
+    color: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+  },
+  INTERNAL_TEAM: {
+    label: language === 'es' ? 'Equipo interno' : 'Internal team',
+    helper: language === 'es' ? 'Evaluación y comparación de talento interno' : 'Internal talent evaluation and comparison',
+    color: 'bg-sky-100 text-sky-700 border-sky-200',
+  },
+});
+
 export default function CampaignDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -207,6 +221,7 @@ export default function CampaignDetailPage() {
 
   const statusConfig = getStatusConfig(t);
   const evaluationIcons = getEvaluationIcons(t, language);
+  const campaignTypeConfig = getCampaignTypeConfig(language);
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
@@ -772,6 +787,9 @@ export default function CampaignDetailPage() {
                   <Badge className={`${statusColors[campaign.status] || statusColors.DRAFT} border`}>
                     {statusLabels[campaign.status] || campaign.status}
                   </Badge>
+                  <Badge className="border border-white/20 bg-white/15 text-white backdrop-blur-sm">
+                    {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.label || campaign.campaignType}
+                  </Badge>
                 </div>
                 <p className="text-white/80 flex items-center gap-2">
                   <Briefcase className="w-4 h-4" />
@@ -779,6 +797,9 @@ export default function CampaignDetailPage() {
                   {campaign.description && (
                     <span className="hidden sm:inline">• {campaign.description}</span>
                   )}
+                </p>
+                <p className="mt-2 max-w-3xl text-sm text-white/70">
+                  {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.helper}
                 </p>
               </div>
             </div>
