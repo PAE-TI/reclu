@@ -307,9 +307,9 @@ export default function NewCampaignPage() {
           </Badge>
         </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 pb-10">
+      <form onSubmit={handleSubmit} className="space-y-6 pb-10" data-tour="campaign-builder">
         {/* Tipo de campaña */}
-        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm" data-tour="campaign-type-selector">
           <CardHeader className="border-b border-slate-100 bg-slate-50/80">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-sky-100 rounded-xl">

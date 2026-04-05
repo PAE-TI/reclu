@@ -24,7 +24,9 @@ import {
   Brain,
   Rocket,
   Search,
-  Briefcase
+  Briefcase,
+  Layers3,
+  SlidersHorizontal
 } from 'lucide-react';
 
 interface TourStepConfig {
@@ -106,11 +108,21 @@ const tourStepConfigs: TourStepConfig[] = [
     highlight: true
   },
   {
-    id: 'campaigns-features',
-    titleKey: 'tour.campaignsFeatures.title',
-    descriptionKey: 'tour.campaignsFeatures.description',
-    icon: <Target className="w-8 h-8 text-teal-500" />,
-    position: 'center'
+    id: 'campaign-types',
+    titleKey: 'tour.campaignTypes.title',
+    descriptionKey: 'tour.campaignTypes.description',
+    icon: <Layers3 className="w-8 h-8 text-sky-500" />,
+    target: '[data-tour="campaign-type-selector"]',
+    position: 'bottom',
+    highlight: true
+  },
+  {
+    id: 'campaign-builder',
+    titleKey: 'tour.campaignBuilder.title',
+    descriptionKey: 'tour.campaignBuilder.description',
+    icon: <SlidersHorizontal className="w-8 h-8 text-indigo-500" />,
+    target: '[data-tour="campaign-builder"]',
+    position: 'top'
   },
   {
     id: 'notes',

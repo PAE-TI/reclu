@@ -2778,10 +2778,13 @@ export const translations = {
     'tour.advancedAnalytics.description': 'La función más poderosa: ve el perfil INTEGRADO de una persona (combinando todos sus módulos) o COMPARA varias personas para decidir entre candidatos o formar equipos equilibrados.',
     
     'tour.campaigns.title': '⭐ Campañas',
-    'tour.campaigns.description': 'Gestiona procesos completos de reclutamiento. Crea una campaña para un cargo, define el perfil ideal, invita candidatos y compara su compatibilidad automáticamente. Puedes agregar candidatos nuevos o reusar evaluaciones ya completadas.',
-    
-    'tour.campaignsFeatures.title': 'Funciones de Campañas',
-    'tour.campaignsFeatures.description': '1) Perfil Ideal: Define qué puntuaciones busca el cargo. 2) Batch de Evaluaciones: Envía múltiples pruebas con un clic. 3) Compatibilidad: Algoritmo que calcula % de ajuste. 4) Reusar Evaluaciones: Agrega personas que ya tienen evaluaciones completadas, ¡sin cobrar créditos por esas pruebas!',
+    'tour.campaigns.description': 'Gestiona selección y equipos internos desde un solo lugar. Crea campañas para contratar, comparar talento interno y organizar evaluaciones con una lógica clara según el propósito.',
+
+    'tour.campaignTypes.title': 'Tipo de campaña',
+    'tour.campaignTypes.description': 'Empieza definiendo si la campaña es para selección externa o para equipos internos. Esa decisión cambia el tono, la carga de candidatos y el contexto de uso.',
+
+    'tour.campaignBuilder.title': 'Construcción de la campaña',
+    'tour.campaignBuilder.description': 'Aquí completas el nombre, el contexto y las evaluaciones. En selección buscas un cargo; en equipo interno defines el área o grupo a evaluar y ajustas la campaña a ese objetivo.',
     
     'tour.notes.title': 'Notas y Comentarios',
     'tour.notes.description': 'Agrega notas privadas a cada evaluación para registrar observaciones de entrevistas, comentarios del cliente o recordatorios de seguimiento. Solo tú y tu equipo pueden verlas.',
@@ -2805,7 +2808,7 @@ export const translations = {
     'tour.settings.description': 'Accede al historial de transacciones de créditos para ver un registro detallado de cada evaluación enviada y los créditos consumidos.',
     
     'tour.finish.title': '🎉 ¡Listo para comenzar!',
-    'tour.finish.description': 'Ya conoces Reclu. El siguiente paso: ve a "Enviar Pruebas" y envía tu primera evaluación. Si necesitas ayuda, recuerda que puedes consultar la guía completa en cualquier momento.',
+    'tour.finish.description': 'Ya conoces Reclu. El siguiente paso: envía pruebas, crea una campaña y elige si vas a contratar o a desarrollar talento interno. Si necesitas ayuda, recuerda que puedes consultar la guía completa en cualquier momento.',
     
     // Results - Common
     'results.loading': 'Cargando resultados...',
@@ -6090,10 +6093,13 @@ export const translations = {
     'tour.advancedAnalytics.description': 'The most powerful feature: see a person\'s INTEGRATED profile (combining all their modules) or COMPARE multiple people to decide between candidates or build balanced teams.',
     
     'tour.campaigns.title': '⭐ Campaigns',
-    'tour.campaigns.description': 'Manage complete recruitment processes. Create a campaign for a position, define the ideal profile, invite candidates, and automatically compare their compatibility. You can add new candidates or reuse already completed evaluations.',
-    
-    'tour.campaignsFeatures.title': 'Campaign Features',
-    'tour.campaignsFeatures.description': '1) Ideal Profile: Define what scores the position is looking for. 2) Batch Evaluations: Send multiple tests with one click. 3) Compatibility: Algorithm that calculates % fit. 4) Reuse Evaluations: Add people who already have completed evaluations, without charging credits for those tests!',
+    'tour.campaigns.description': 'Manage selection and internal teams from one place. Create campaigns to hire, compare internal talent, and organize assessments with a clear purpose.',
+
+    'tour.campaignTypes.title': 'Campaign type',
+    'tour.campaignTypes.description': 'Start by defining whether the campaign is for external selection or for internal teams. That choice changes the tone, candidate loading, and the overall context.',
+
+    'tour.campaignBuilder.title': 'Campaign builder',
+    'tour.campaignBuilder.description': 'Here you set the name, context, and assessments. For selection you search for a role; for internal teams you define the area or group to evaluate and adapt the campaign to that goal.',
     
     'tour.notes.title': 'Notes and Comments',
     'tour.notes.description': 'Add private notes to each evaluation to record interview observations, client comments, or follow-up reminders. Only you and your team can see them.',
@@ -6117,7 +6123,7 @@ export const translations = {
     'tour.settings.description': 'Access the credit transaction history to see a detailed record of each evaluation sent and credits consumed.',
     
     'tour.finish.title': '🎉 Ready to start!',
-    'tour.finish.description': 'You now know Reclu. The next step: go to "Send Tests" and send your first evaluation. If you need help, remember you can check the complete guide at any time.',
+    'tour.finish.description': 'You now know Reclu. The next step: send assessments, create a campaign, and choose whether you are hiring or developing internal talent. If you need help, remember you can check the complete guide at any time.',
     
     // Results - Common
     'results.loading': 'Loading results...',
