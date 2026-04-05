@@ -253,6 +253,14 @@ export default function CampaignDetailPage() {
   const [archivingCampaign, setArchivingCampaign] = useState(false);
   const [selectedHiredCandidateId, setSelectedHiredCandidateId] = useState<string>('none');
   const [completionNotes, setCompletionNotes] = useState('');
+
+  const isInternalTeamCampaign = campaign?.campaignType === 'INTERNAL_TEAM';
+  const campaignTypeLabel = campaign?.campaignType
+    ? campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.label || campaign.campaignType
+    : '';
+  const campaignTypeHelper = campaign?.campaignType
+    ? campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.helper
+    : '';
   const [resendingEval, setResendingEval] = useState<string | null>(null);
   const [copiedEval, setCopiedEval] = useState<string | null>(null);
 
@@ -764,10 +772,9 @@ export default function CampaignDetailPage() {
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-0 space-y-6">
       {/* Header Moderno */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 sm:p-8">
-        <div className="absolute inset-0 bg-grid-white/10" />
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+      <div className={`relative overflow-hidden rounded-2xl bg-white p-6 sm:p-8 border shadow-sm ${isInternalTeamCampaign ? 'border-sky-100' : 'border-indigo-100'}`}>
+        <div className={`absolute inset-y-0 left-0 w-1 ${isInternalTeamCampaign ? 'bg-gradient-to-b from-sky-500 to-cyan-500' : 'bg-gradient-to-b from-indigo-500 to-purple-500'}`} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.75),_transparent_40%)]" />
         
         <div className="relative">
           {/* Back button and Title */}
@@ -777,29 +784,29 @@ export default function CampaignDetailPage() {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => router.push('/campaigns')} 
-                className="flex-shrink-0 bg-white/20 hover:bg-white/30 text-white"
+                className="flex-shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="text-white">
+              <div className="text-slate-900">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h1 className="text-2xl sm:text-3xl font-bold">{campaign.name}</h1>
                   <Badge className={`${statusColors[campaign.status] || statusColors.DRAFT} border`}>
                     {statusLabels[campaign.status] || campaign.status}
                   </Badge>
-                  <Badge className="border border-white/20 bg-white/15 text-white backdrop-blur-sm">
-                    {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.label || campaign.campaignType}
+                  <Badge className={`${campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.color || 'bg-slate-100 text-slate-700 border-slate-200'} border`}>
+                    {campaignTypeLabel}
                   </Badge>
                 </div>
-                <p className="text-white/80 flex items-center gap-2">
-                  <Briefcase className="w-4 h-4" />
+                <p className="text-slate-600 flex items-center gap-2">
+                  <Briefcase className={`w-4 h-4 ${isInternalTeamCampaign ? 'text-sky-600' : 'text-indigo-600'}`} />
                   {campaign.jobTitle}
                   {campaign.description && (
                     <span className="hidden sm:inline">• {campaign.description}</span>
                   )}
                 </p>
-                <p className="mt-2 max-w-3xl text-sm text-white/70">
-                  {campaignTypeConfig[campaign.campaignType as keyof typeof campaignTypeConfig]?.helper}
+                <p className="mt-2 max-w-3xl text-sm text-slate-500">
+                  {campaignTypeHelper}
                 </p>
               </div>
             </div>
@@ -808,7 +815,7 @@ export default function CampaignDetailPage() {
             {permissions.canDelete && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 text-white">
+                  <Button variant="ghost" size="icon" className="bg-slate-100 hover:bg-slate-200 text-slate-700">
                     <MoreVertical className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -869,10 +876,10 @@ export default function CampaignDetailPage() {
           {permissions.canAddCandidates && !isLocked && (
           <Dialog open={showAddCandidate} onOpenChange={(open) => { if (!open) resetAddDialog(); else setShowAddCandidate(true); }}>
             <DialogTrigger asChild>
-              <Button className="bg-white text-indigo-700 hover:bg-white/90 shadow-md font-semibold">
-                <UserPlus className="w-4 h-4 mr-2" />
-                {t('campaigns.detail.addCandidates')}
-              </Button>
+            <Button className={`shadow-md font-semibold ${isInternalTeamCampaign ? 'bg-sky-600 text-white hover:bg-sky-700' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
+              <UserPlus className="w-4 h-4 mr-2" />
+              {t('campaigns.detail.addCandidates')}
+            </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -1296,7 +1303,7 @@ export default function CampaignDetailPage() {
           <Button
             onClick={handleAnalyze}
             disabled={analyzing || campaign.candidates.length === 0}
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30 font-semibold"
+            className={`font-semibold border ${isInternalTeamCampaign ? 'bg-sky-600 hover:bg-sky-700 text-white border-sky-600' : 'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-600'}`}
             variant="outline"
           >
             {analyzing ? (
@@ -1339,18 +1346,28 @@ export default function CampaignDetailPage() {
       <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-teal-600" />
-              Completar campaña
+              <DialogTitle className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-teal-600" />
+              {isInternalTeamCampaign ? (language === 'es' ? 'Cerrar proceso' : 'Close process') : (language === 'es' ? 'Completar campaña' : 'Complete campaign')}
             </DialogTitle>
             <DialogDescription>
-              Registra el resultado final de esta búsqueda. Podrás indicar si se contrató a algún candidato y agregar notas de cierre.
+              {isInternalTeamCampaign
+                ? (language === 'es'
+                  ? 'Registra el cierre de esta evaluación interna. Podrás indicar una persona destacada y agregar notas de cierre.'
+                  : 'Record the closure of this internal assessment. You can indicate a highlighted person and add closing notes.')
+                : (language === 'es'
+                  ? 'Registra el resultado final de esta búsqueda. Podrás indicar si se contrató a algún candidato y agregar notas de cierre.'
+                  : 'Record the final outcome of this search. You can indicate if a candidate was hired and add closing notes.')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-5 py-2">
             {/* Hired candidate selector */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">¿Se contrató a algún candidato?</label>
+              <label className="text-sm font-medium text-gray-700">
+                {isInternalTeamCampaign
+                  ? (language === 'es' ? '¿Se destacó a alguna persona?' : 'Was a person highlighted?')
+                  : (language === 'es' ? '¿Se contrató a algún candidato?' : 'Was any candidate hired?')}
+              </label>
               <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
                 <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedHiredCandidateId === 'none' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <input
@@ -1361,7 +1378,11 @@ export default function CampaignDetailPage() {
                     onChange={() => setSelectedHiredCandidateId('none')}
                     className="accent-teal-600"
                   />
-                  <span className="text-sm text-gray-600">No se contrató / posición no cubierta</span>
+                  <span className="text-sm text-gray-600">
+                    {isInternalTeamCampaign
+                      ? (language === 'es' ? 'No se destacó a nadie / proceso interno sin cierre definido' : 'No person highlighted / internal process without a defined close')
+                      : (language === 'es' ? 'No se contrató / posición no cubierta' : 'No hire / position not covered')}
+                  </span>
                 </label>
                 {campaign.candidates.filter(c => c.status === 'COMPLETED' || c.overallScore !== null).map(candidate => (
                   <label key={candidate.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedHiredCandidateId === candidate.id ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'}`}>
@@ -1463,19 +1484,30 @@ export default function CampaignDetailPage() {
 
       {/* Completion Banner */}
       {campaign.status === 'COMPLETED' && (
-        <div className="rounded-2xl border border-teal-200 bg-gradient-to-r from-teal-50 to-emerald-50 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="rounded-2xl border border-teal-200 bg-white p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
           <div className="flex items-center gap-3 flex-1">
             <div className="p-2.5 bg-teal-100 rounded-xl">
               <Trophy className="w-6 h-6 text-teal-600" />
             </div>
             <div>
-              <p className="font-semibold text-teal-800 text-sm">Campaña completada</p>
+              <p className="font-semibold text-teal-800 text-sm">
+                {isInternalTeamCampaign
+                  ? (language === 'es' ? 'Proceso completado' : 'Process completed')
+                  : (language === 'es' ? 'Campaña completada' : 'Campaign completed')}
+              </p>
               {campaign.hiredCandidateName ? (
                 <p className="text-teal-700 text-sm mt-0.5">
-                  Candidato seleccionado: <span className="font-bold">{campaign.hiredCandidateName}</span>
+                  {isInternalTeamCampaign
+                    ? (language === 'es' ? 'Persona destacada:' : 'Highlighted person:')
+                    : (language === 'es' ? 'Persona seleccionada:' : 'Selected person:')}
+                  <span className="font-bold"> {campaign.hiredCandidateName}</span>
                 </p>
               ) : (
-                <p className="text-teal-600 text-sm mt-0.5">Sin candidato contratado registrado</p>
+                <p className="text-teal-600 text-sm mt-0.5">
+                  {isInternalTeamCampaign
+                    ? (language === 'es' ? 'Sin persona destacada registrada' : 'No highlighted person recorded')
+                    : (language === 'es' ? 'Sin candidato contratado registrado' : 'No hired candidate recorded')}
+                </p>
               )}
               {campaign.completionNotes && (
                 <p className="text-teal-600 text-xs mt-1 italic">{campaign.completionNotes}</p>
@@ -1497,7 +1529,7 @@ export default function CampaignDetailPage() {
           <CardContent className="relative p-5 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/80 font-medium">{t('campaigns.candidates')}</p>
+                <p className="text-sm text-white/80 font-medium">{language === 'es' ? 'Personas' : 'People'}</p>
                 <p className="text-3xl font-bold mt-1">{campaign.candidates.length}</p>
               </div>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -1512,7 +1544,7 @@ export default function CampaignDetailPage() {
           <CardContent className="relative p-5 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/80 font-medium">{t('campaigns.status.completed')}</p>
+                <p className="text-sm text-white/80 font-medium">{language === 'es' ? 'Completadas' : 'Completed'}</p>
                 <p className="text-3xl font-bold mt-1">{completedCandidates}</p>
               </div>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -1527,7 +1559,7 @@ export default function CampaignDetailPage() {
           <CardContent className="relative p-5 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/80 font-medium">{t('batchEval.pending')}</p>
+                <p className="text-sm text-white/80 font-medium">{language === 'es' ? 'Pendientes' : 'Pending'}</p>
                 <p className="text-3xl font-bold mt-1">{campaign.candidates.length - completedCandidates}</p>
               </div>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -1542,7 +1574,7 @@ export default function CampaignDetailPage() {
           <CardContent className="relative p-5 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/80 font-medium">{t('campaigns.progress')}</p>
+                <p className="text-sm text-white/80 font-medium">{language === 'es' ? 'Avance' : 'Progress'}</p>
                 <p className="text-3xl font-bold mt-1">{completionRate}%</p>
               </div>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -1559,7 +1591,7 @@ export default function CampaignDetailPage() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <span className="text-sm font-medium text-gray-700 flex items-center gap-2 flex-shrink-0">
               <Target className="w-4 h-4 text-indigo-600" />
-              {t('batchEval.evalsPerPerson')}:
+              {language === 'es' ? 'Evaluaciones por persona' : 'Assessments per person'}:
             </span>
             <div className="flex flex-wrap gap-2 flex-1">
               {campaign.evaluationTypes.map((type) => {
