@@ -59,7 +59,7 @@ export default function PublicLanding() {
     <div className="min-h-screen bg-white">
       <PublicHeader />
 
-      {/* Hero - Headhunter Tecnológico */}
+      {/* Hero - Talent Platform */}
       <section className="pt-28 pb-20 bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
         
@@ -73,41 +73,41 @@ export default function PublicLanding() {
             <div>
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 text-cyan-300 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-cyan-500/30 backdrop-blur-sm">
                 <Cpu className="w-4 h-4" />
-                {language === 'es' ? 'Headhunter Tecnológico con IA' : 'AI-Powered Tech Headhunter'}
+                {language === 'es' ? 'Plataforma de talento con IA' : 'AI-powered talent platform'}
               </div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                {language === 'es' ? 'Tu' : 'Your'}
-                <span className="bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"> {language === 'es' ? 'seleccionador' : 'talent selector'}</span>
-                <span className="block mt-2">{language === 'es' ? 'de talento inteligente' : 'powered by AI'}</span>
+                {language === 'es' ? 'Gestiona' : 'Manage'}
+                <span className="bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"> {language === 'es' ? 'campañas de talento' : 'talent campaigns'}</span>
+                <span className="block mt-2">{language === 'es' ? 'con análisis científico y pruebas personalizables' : 'with scientific analysis and customizable tests'}</span>
               </h1>
               
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 {language === 'es' 
-                  ? 'Reclu analiza candidatos con 8 módulos de evaluación científica para encontrar al profesional perfecto para tu empresa. Sin sesgos, con datos precisos.'
-                  : 'Reclu analyzes candidates with 8 scientific assessment modules to find the perfect professional for your company. No bias, with precise data.'}
+                  ? 'Reclu te permite crear campañas de selección, evaluar equipos internos y lanzar pruebas técnicas con plantillas, banco de preguntas, reemplazo y resultados claros. Todo en un solo lugar.'
+                  : 'Reclu lets you create selection campaigns, evaluate internal teams and launch technical tests with templates, question bank, replacement tools and clear results. All in one place.'}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <Link href="/auth/signup">
                   <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-600 hover:to-indigo-600 text-lg px-8 py-6 rounded-xl group shadow-2xl shadow-cyan-500/25 w-full sm:w-auto">
-                    {language === 'es' ? 'Comenzar a Seleccionar' : 'Start Selecting'}
+                    {language === 'es' ? 'Crear mi cuenta' : 'Create my account'}
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <Link href="/#como-funciona">
                   <Button variant="outline" size="lg" className="text-lg px-8 py-6 rounded-xl border-2 border-white/20 text-white bg-white/5 hover:bg-white/10 w-full sm:w-auto">
                     <Play className="w-5 h-5 mr-2" />
-                    {language === 'es' ? 'Cómo Funciona' : 'How It Works'}
+                    {language === 'es' ? 'Ver la plataforma' : 'See the platform'}
                   </Button>
                 </Link>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { value: '96%', label: language === 'es' ? 'Precisión' : 'Accuracy', icon: Target },
-                  { value: '-70%', label: language === 'es' ? 'Tiempo' : 'Time', icon: Timer },
-                  { value: '+85%', label: language === 'es' ? 'Retención' : 'Retention', icon: TrendingUp },
+                  { value: '2', label: language === 'es' ? 'Tipos de campaña' : 'Campaign types', icon: Layers },
+                  { value: '8', label: language === 'es' ? 'Módulos' : 'Modules', icon: Target },
+                  { value: '225+', label: language === 'es' ? 'Cargos técnicos' : 'Tech roles', icon: FileCode },
                 ].map((stat, i) => (
                   <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center">
                     <stat.icon className="w-5 h-5 text-cyan-400 mx-auto mb-2" />
@@ -127,19 +127,19 @@ export default function PublicLanding() {
                       <Search className="w-5 h-5 text-cyan-300" />
                     </div>
                     <div>
-                      <p className="text-white/60 text-xs">{language === 'es' ? 'Búsqueda en curso' : 'Search in progress'}</p>
-                      <p className="text-white font-semibold">{language === 'es' ? 'Product Manager Senior' : 'Senior Product Manager'}</p>
+                      <p className="text-white/60 text-xs">{language === 'es' ? 'Campaña activa' : 'Active campaign'}</p>
+                      <p className="text-white font-semibold">{language === 'es' ? 'Campaña de talento interno' : 'Internal talent campaign'}</p>
                     </div>
                     <Badge className="ml-auto bg-green-500/20 text-green-300 border-green-500/30">
                       <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                      {language === 'es' ? 'Analizando' : 'Analyzing'}
+                      {language === 'es' ? 'Procesando' : 'Processing'}
                     </Badge>
                   </div>
                 </div>
                 
                 <div className="p-5 space-y-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">{language === 'es' ? 'Candidatos evaluados' : 'Candidates evaluated'}</span>
+                    <span className="text-gray-400">{language === 'es' ? 'Personas evaluadas' : 'People evaluated'}</span>
                     <span className="text-white font-semibold">24 / 30</span>
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
@@ -147,7 +147,7 @@ export default function PublicLanding() {
                   </div>
 
                   <div className="pt-4 border-t border-white/10">
-                    <p className="text-xs font-medium text-gray-400 uppercase mb-3">{language === 'es' ? 'Top Candidatos Identificados' : 'Top Candidates Identified'}</p>
+                    <p className="text-xs font-medium text-gray-400 uppercase mb-3">{language === 'es' ? 'Top perfiles identificados' : 'Top profiles identified'}</p>
                     {[
                       { name: 'María López G.', score: 94, match: language === 'es' ? 'Match Excelente' : 'Excellent Match', color: 'emerald' },
                       { name: 'Carlos R. Pérez', score: 89, match: language === 'es' ? 'Match Alto' : 'High Match', color: 'cyan' },
@@ -176,9 +176,9 @@ export default function PublicLanding() {
                   
                   <div className="pt-3 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-4">
-                      <span className="text-gray-400">{language === 'es' ? 'Módulos aplicados:' : 'Modules applied:'}</span>
+                      <span className="text-gray-400">{language === 'es' ? 'Evaluaciones aplicadas:' : 'Assessments applied:'}</span>
                       <div className="flex gap-1">
-                        {['DISC', 'EQ', 'DNA', 'TEC'].map((mod, j) => (
+                        {['DISC', 'EQ', 'DNA', 'TEC', 'PLN'].map((mod, j) => (
                           <span key={j} className="px-2 py-0.5 bg-cyan-500/20 text-cyan-300 rounded text-[10px]">{mod}</span>
                         ))}
                       </div>
@@ -212,13 +212,13 @@ export default function PublicLanding() {
               {language === 'es' ? 'El Problema' : 'The Problem'}
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              {language === 'es' ? 'Contratar sin datos ' : 'Hiring without data '}
+              {language === 'es' ? 'Tomar decisiones de talento sin datos ' : 'Making talent decisions without data '}
               <span className="text-red-500">{language === 'es' ? 'cuesta caro' : 'is expensive'}</span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               {language === 'es' 
-                ? 'El 46% de las contrataciones fallan en los primeros 18 meses. Las entrevistas tradicionales tienen solo un 14% de efectividad predictiva.'
-                : '46% of hires fail within the first 18 months. Traditional interviews have only 14% predictive effectiveness.'}
+                ? 'Las decisiones basadas solo en intuición afectan la selección, la movilidad interna y el desarrollo del equipo. Reclu unifica evaluación, comparación y seguimiento con datos claros.'
+                : 'Decisions based only on intuition affect hiring, internal mobility and team development. Reclu unifies assessment, comparison and follow-up with clear data.'}
             </p>
           </div>
 
@@ -230,23 +230,23 @@ export default function PublicLanding() {
                   <Users className="w-6 h-6 text-red-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">{language === 'es' ? 'Selección Tradicional' : 'Traditional Selection'}</h3>
-                  <p className="text-sm text-gray-500">{language === 'es' ? 'Proceso manual y subjetivo' : 'Manual and subjective process'}</p>
+                  <h3 className="font-bold text-gray-900">{language === 'es' ? 'Procesos aislados' : 'Isolated processes'}</h3>
+                  <p className="text-sm text-gray-500">{language === 'es' ? 'Selección, equipos e informes por separado' : 'Hiring, teams and reports handled separately'}</p>
                 </div>
               </div>
               <ul className="space-y-3">
                 {(language === 'es' ? [
-                  'Decisiones basadas en "corazonadas"',
-                  'Semanas revisando CVs manualmente',
-                  'Alta rotación por malas contrataciones',
-                  'Sin métricas de compatibilidad real',
-                  'Sesgos inconscientes en entrevistas',
+                  'Decisiones basadas en intuición',
+                  'Revisión manual de perfiles y resultados',
+                  'Falta de una vista única de talento',
+                  'Información técnica y conductual dispersa',
+                  'Poca trazabilidad entre campañas',
                 ] : [
-                  'Decisions based on "gut feelings"',
-                  'Weeks reviewing CVs manually',
-                  'High turnover from bad hires',
-                  'No real compatibility metrics',
-                  'Unconscious bias in interviews',
+                  'Decisions based on intuition',
+                  'Manual review of profiles and results',
+                  'No single talent view',
+                  'Scattered technical and behavioral data',
+                  'Low traceability across campaigns',
                 ]).map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-gray-600">
                     <div className="w-5 h-5 rounded-full bg-red-200 flex items-center justify-center flex-shrink-0">
@@ -266,22 +266,22 @@ export default function PublicLanding() {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900">{language === 'es' ? 'Con Reclu' : 'With Reclu'}</h3>
-                  <p className="text-sm text-gray-500">{language === 'es' ? 'Headhunter Tecnológico' : 'Tech Headhunter'}</p>
+                  <p className="text-sm text-gray-500">{language === 'es' ? 'Plataforma de talento' : 'Talent platform'}</p>
                 </div>
               </div>
               <ul className="space-y-3">
                 {(language === 'es' ? [
-                  'Análisis científico con 8 módulos',
-                  'Ranking automático de candidatos',
-                  '+85% de retención a 2 años',
-                  'Compatibilidad medida con precisión',
-                  'Evaluación objetiva y sin sesgos',
+                  'Campañas de selección e internas',
+                  'Pruebas técnicas con plantillas y banco de preguntas',
+                  'Comparación clara entre personas y equipos',
+                  'Resultados y análisis listos para decidir',
+                  'Proceso moderno, trazable y profesional',
                 ] : [
-                  'Scientific analysis with 8 modules',
-                  'Automatic candidate ranking',
-                  '+85% retention at 2 years',
-                  'Precisely measured compatibility',
-                  'Objective and unbiased evaluation',
+                  'Hiring and internal team campaigns',
+                  'Technical tests with templates and a question bank',
+                  'Clear comparison across people and teams',
+                  'Results and analysis ready for decisions',
+                  'Modern, traceable and professional workflow',
                 ]).map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-gray-700">
                     <div className="w-5 h-5 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
@@ -292,6 +292,96 @@ export default function PublicLanding() {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tipos de campañas */}
+      <section id="tipos-campanas" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge className="bg-indigo-100 text-indigo-700 mb-4">
+              <Layers className="w-4 h-4 mr-2" />
+              {language === 'es' ? 'Tipos de campaña' : 'Campaign types'}
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              {language === 'es' ? 'Diseñado para selección y equipos internos' : 'Built for hiring and internal teams'}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {language === 'es'
+                ? 'Cada campaña se adapta al objetivo real: contratar, comparar talento interno o evaluar capacidades técnicas con sets personalizados.'
+                : 'Each campaign adapts to the real goal: hire, compare internal talent, or evaluate technical skills with custom sets.'}
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: UsersRound,
+                title: language === 'es' ? 'Campañas de selección' : 'Selection campaigns',
+                desc: language === 'es'
+                  ? 'Define el cargo a cubrir, asigna evaluaciones y recibe candidatos ordenados por compatibilidad.'
+                  : 'Define the role to fill, assign assessments and receive candidates ranked by compatibility.',
+                bullets: language === 'es'
+                  ? ['Cargo objetivo', 'Ranking de candidatos', 'Resultados por persona']
+                  : ['Target role', 'Candidate ranking', 'Per-person results'],
+                color: 'indigo',
+              },
+              {
+                icon: Users,
+                title: language === 'es' ? 'Campañas de equipo interno' : 'Internal team campaigns',
+                desc: language === 'es'
+                  ? 'Evalúa a tu equipo actual, compara perfiles, detecta brechas y crea planes de desarrollo.'
+                  : 'Assess your current team, compare profiles, detect gaps and build development plans.',
+                bullets: language === 'es'
+                  ? ['Área o equipo', 'Comparación interna', 'Lectura de desarrollo']
+                  : ['Team or area', 'Internal comparison', 'Development insights'],
+                color: 'cyan',
+              },
+              {
+                icon: FileCode,
+                title: language === 'es' ? 'Pruebas técnicas personalizables' : 'Custom technical tests',
+                desc: language === 'es'
+                  ? 'Usa plantillas, mezcla preguntas por cargo, tema o nivel, reemplaza preguntas y revisa todo antes de enviar.'
+                  : 'Use templates, mix questions by role, topic or level, replace questions and review everything before sending.',
+                bullets: language === 'es'
+                  ? ['Plantillas', 'Banco de preguntas', 'Vista previa y reemplazo']
+                  : ['Templates', 'Question bank', 'Preview and replacement'],
+                color: 'sky',
+              },
+            ].map((item, i) => (
+              <Card key={i} className="border-0 shadow-xl overflow-hidden">
+                <CardContent className="p-0">
+                  <div className={`h-2 bg-gradient-to-r ${
+                    item.color === 'indigo' ? 'from-indigo-500 to-purple-500' :
+                    item.color === 'cyan' ? 'from-cyan-500 to-blue-500' :
+                    'from-sky-500 to-cyan-500'
+                  }`} />
+                  <div className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                        item.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+                        item.color === 'cyan' ? 'bg-cyan-100 text-cyan-600' :
+                        'bg-sky-100 text-sky-600'
+                      }`}>
+                        <item.icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">{item.title}</h3>
+                        <p className="text-sm text-gray-500">{item.desc}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {item.bullets.map((bullet) => (
+                        <Badge key={bullet} variant="outline" className="text-gray-700 border-gray-200 bg-gray-50">
+                          {bullet}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -324,7 +414,7 @@ export default function PublicLanding() {
               { icon: Compass, name: 'Acumen', desc: language === 'es' ? 'Claridad en toma de decisiones' : 'Clarity in decision making', color: 'amber', bgClass: 'bg-amber-100', textClass: 'text-amber-600', borderClass: 'border-amber-200', hoverClass: 'hover:border-amber-400' },
               { icon: Shield, name: language === 'es' ? 'Valores' : 'Values', desc: language === 'es' ? 'Alineación cultural' : 'Cultural alignment', color: 'violet', bgClass: 'bg-violet-100', textClass: 'text-violet-600', borderClass: 'border-violet-200', hoverClass: 'hover:border-violet-400' },
               { icon: Activity, name: language === 'es' ? 'Estrés' : 'Stress', desc: language === 'es' ? 'Manejo bajo presión' : 'Handling under pressure', color: 'orange', bgClass: 'bg-orange-100', textClass: 'text-orange-600', borderClass: 'border-orange-200', hoverClass: 'hover:border-orange-400' },
-              { icon: FileCode, name: language === 'es' ? 'Técnica' : 'Technical', desc: language === 'es' ? '+225 cargos · 13,700+ preguntas' : '+225 positions · 13,700+ questions', color: 'sky', bgClass: 'bg-sky-100', textClass: 'text-sky-600', borderClass: 'border-sky-200', hoverClass: 'hover:border-sky-400', isNew: true },
+              { icon: FileCode, name: language === 'es' ? 'Técnica' : 'Technical', desc: language === 'es' ? '+225 cargos · plantillas · banco de preguntas' : '+225 roles · templates · question bank', color: 'sky', bgClass: 'bg-sky-100', textClass: 'text-sky-600', borderClass: 'border-sky-200', hoverClass: 'hover:border-sky-400', isNew: true },
             ].map((mod, i) => (
               <div key={i} className={`bg-white rounded-xl p-6 border-2 ${mod.borderClass} ${mod.hoverClass} transition-all hover:shadow-lg hover:-translate-y-1 group relative`}>
                 {mod.isNew && (
@@ -648,20 +738,20 @@ export default function PublicLanding() {
               {
                 q: language === 'es' ? '¿Cómo funcionan las campañas de reclutamiento?' : 'How do recruitment campaigns work?',
                 a: language === 'es'
-                  ? 'Creas una campaña definiendo el cargo, seleccionas qué módulos aplicar, cargas los candidatos y Reclu envía las invitaciones automáticamente. Los candidatos completan las evaluaciones y recibes un ranking ordenado por compatibilidad.'
-                  : 'You create a campaign defining the position, select which modules to apply, upload candidates and Reclu automatically sends invitations. Candidates complete evaluations and you receive a ranking sorted by compatibility.'
+                  ? 'Creas una campaña, eliges si es de selección o de equipo interno, seleccionas los módulos de evaluación y Reclu envía las invitaciones automáticamente. Luego recibes resultados y comparaciones ordenadas por compatibilidad.'
+                  : 'You create a campaign, choose whether it is for selection or internal team use, select the assessment modules and Reclu automatically sends invitations. Then you receive ordered results and comparisons by compatibility.'
               },
               {
                 q: language === 'es' ? '¿Cuánto tiempo toman las evaluaciones?' : 'How long do evaluations take?',
                 a: language === 'es'
-                  ? 'Las evaluaciones psicométricas toman entre 8-20 minutos cada una. Las pruebas técnicas toman aproximadamente 25-35 minutos. El candidato puede completarlas en cualquier momento.'
-                  : 'Psychometric evaluations take 8-20 minutes each. Technical tests take approximately 25-35 minutes. Candidates can complete them at any time.'
+                  ? 'Las evaluaciones psicométricas toman entre 8-20 minutos cada una. Las pruebas técnicas toman aproximadamente 25-35 minutos y se pueden configurar con plantillas y preguntas personalizadas. Cada persona puede completarlas en cualquier momento.'
+                  : 'Psychometric evaluations take 8-20 minutes each. Technical tests take approximately 25-35 minutes and can be configured with templates and custom questions. Each person can complete them at any time.'
               },
               {
                 q: language === 'es' ? '¿Qué cargos cubren las pruebas técnicas?' : 'What positions do technical tests cover?',
                 a: language === 'es'
-                  ? 'Tenemos más de 225 cargos cubiertos con 13,700+ preguntas en tecnología, administración, finanzas, marketing, recursos humanos, ventas, ingeniería y más. Las preguntas están clasificadas por dificultad (básico, intermedio, avanzado).'
-                  : 'We have 225+ positions covered with 13,700+ questions in technology, administration, finance, marketing, human resources, sales, engineering and more. Questions are classified by difficulty (basic, intermediate, advanced).'
+                  ? 'Tenemos más de 225 cargos cubiertos con 13,700+ preguntas en tecnología, administración, finanzas, marketing, recursos humanos, ventas, ingeniería y más. Además, puedes combinar preguntas por cargo, tema y nivel, o usar plantillas listas para enviar.'
+                  : 'We have 225+ positions covered with 13,700+ questions in technology, administration, finance, marketing, human resources, sales, engineering and more. You can also combine questions by role, topic and level, or use ready-to-send templates.'
               },
               {
                 q: language === 'es' ? '¿Cómo se protegen los datos?' : 'How is data protected?',
@@ -688,13 +778,13 @@ export default function PublicLanding() {
             {language === 'es' ? 'Comienza hoy' : 'Start today'}
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-            {language === 'es' ? 'Encuentra al talento que ' : 'Find the talent that '}
-            <span className="text-cyan-400">{language === 'es' ? 'tu empresa merece' : 'your company deserves'}</span>
+            {language === 'es' ? 'Construye decisiones de talento que ' : 'Build talent decisions that '}
+            <span className="text-cyan-400">{language === 'es' ? 'sí funcionan' : 'actually work'}</span>
           </h2>
           <p className="text-xl text-gray-300 mb-10">
             {language === 'es' 
-              ? 'Únete a cientos de empresas que ya seleccionan mejor con Reclu'
-              : 'Join hundreds of companies already hiring better with Reclu'}
+              ? 'Únete a equipos que ya usan campañas, pruebas técnicas y analítica para contratar, desarrollar y comparar con más claridad.'
+              : 'Join teams already using campaigns, technical tests and analytics to hire, develop and compare with more clarity.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/auth/signup">
@@ -722,7 +812,7 @@ export default function PublicLanding() {
               </div>
               <div>
                 <span className="text-white font-bold text-lg">Reclu</span>
-                <p className="text-xs text-gray-500">{language === 'es' ? 'Headhunter Tecnológico' : 'Tech Headhunter'}</p>
+                <p className="text-xs text-gray-500">{language === 'es' ? 'Plataforma de talento' : 'Talent platform'}</p>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm">
