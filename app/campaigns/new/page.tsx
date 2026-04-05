@@ -255,11 +255,11 @@ export default function NewCampaignPage() {
   const totalCredits = formData.evaluationTypes.length * creditsPerEvaluation;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         
         {/* Header compacto estilo dashboard */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Button 
               variant="outline" 
@@ -289,10 +289,10 @@ export default function NewCampaignPage() {
           </Badge>
         </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 pb-10">
         {/* Información Básica */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b rounded-t-lg">
+        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/80">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-cyan-100 rounded-xl">
                 <Target className="w-5 h-5 text-cyan-600" />
@@ -413,8 +413,8 @@ export default function NewCampaignPage() {
         </Card>
 
         {/* Visibilidad y Permisos */}
-        <Card className="shadow-lg border-0 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b">
+        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/80">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-blue-100 rounded-xl">
                 <Users className="w-5 h-5 text-blue-600" />
@@ -516,8 +516,8 @@ export default function NewCampaignPage() {
         </Card>
 
         {/* Tipos de Evaluación */}
-        <Card className="shadow-lg border-0 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b">
+        <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/80">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-indigo-100 rounded-xl">
                 <Brain className="w-5 h-5 text-indigo-600" />
@@ -687,7 +687,7 @@ export default function NewCampaignPage() {
         </Card>
 
         {/* Actions */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-gray-600">
               <Info className="w-5 h-5 text-cyan-500" />
