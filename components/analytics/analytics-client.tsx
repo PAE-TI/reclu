@@ -10,6 +10,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/language-context';
+import { getJobPositionById } from '@/lib/job-positions';
+import { getPerformanceLevelLabel } from '@/lib/technical-calculator';
 import { 
   BarChart3, 
   Users,
@@ -218,6 +220,22 @@ interface AnalyticsClientProps {
 
 type ViewMode = 'overview' | 'individual' | 'compare';
 type TabType = 'all' | 'disc' | 'df' | 'eq' | 'dna' | 'acumen' | 'values' | 'stress' | 'technical' | 'integrated';
+
+function humanizeIdentifier(identifier: string): string {
+  return identifier
+    .split(/[_-]/g)
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function getTechnicalPositionLabel(jobPositionId: string, language: string): string {
+  const position = getJobPositionById(jobPositionId);
+  if (position) {
+    return language === 'es' ? position.title : position.titleEn || position.title;
+  }
+  return humanizeIdentifier(jobPositionId);
+}
 
 const ITEMS_PER_PAGE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -6914,14 +6932,17 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             </div>
                             <div className="text-right">
                               <p className="text-4xl font-bold">{Math.round(selectedPerson.technical.totalScore)}%</p>
-                              <Badge className={`${
+                              <Badge className={`mt-2 ${
                                 selectedPerson.technical.totalScore >= 80 ? 'bg-green-500' :
                                 selectedPerson.technical.totalScore >= 60 ? 'bg-blue-500' :
                                 selectedPerson.technical.totalScore >= 40 ? 'bg-yellow-500' :
                                 'bg-red-500'
                               } text-white`}>
-                                {selectedPerson.technical.performanceLevel}
+                                {getPerformanceLevelLabel(selectedPerson.technical.performanceLevel, language)}
                               </Badge>
+                              <p className="mt-2 text-xs text-sky-100">
+                                {language === 'es' ? 'Resultado global de la prueba' : 'Overall test result'}
+                              </p>
                             </div>
                           </div>
                         </CardHeader>
@@ -6961,13 +6982,13 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             <div className="bg-white rounded-xl p-4 border border-sky-100 shadow-sm">
                               <div className="flex items-center gap-2 mb-3">
                                 <Briefcase className="w-5 h-5 text-indigo-500" />
-                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Contexto evaluado' : 'Evaluated context'}</span>
+                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Cargo evaluado' : 'Evaluated role'}</span>
                               </div>
                               <p className="text-lg font-bold text-indigo-600 truncate">
                                 {selectedPerson.name || (language === 'es' ? 'Persona evaluada' : 'Evaluated person')}
                               </p>
                               <p className="text-sm text-gray-500 truncate">
-                                {selectedPerson.technical.jobPositionId || (language === 'es' ? 'Sin cargo asociado' : 'No associated role')}
+                                {getTechnicalPositionLabel(selectedPerson.technical.jobPositionId, language)}
                               </p>
                             </div>
                           </div>
@@ -6998,7 +7019,7 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                                 selectedPerson.technical.totalScore >= 40 ? 'bg-amber-100 text-amber-700 border-amber-200' :
                                 'bg-red-100 text-red-700 border-red-200'
                               } border`}>
-                                {language === 'es' ? 'Nivel general' : 'Overall level'}: {selectedPerson.technical.performanceLevel.replace(/_/g, ' ')}
+                                {language === 'es' ? 'Nivel general' : 'Overall level'}: {getPerformanceLevelLabel(selectedPerson.technical.performanceLevel, language)}
                               </Badge>
                             </div>
                           </div>
