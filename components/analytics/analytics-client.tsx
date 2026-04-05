@@ -6982,13 +6982,13 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             <div className="bg-white rounded-xl p-4 border border-sky-100 shadow-sm">
                               <div className="flex items-center gap-2 mb-3">
                                 <Briefcase className="w-5 h-5 text-indigo-500" />
-                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Cargo evaluado' : 'Evaluated role'}</span>
+                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Cargo' : 'Role'}</span>
                               </div>
                               <p className="text-lg font-bold text-indigo-600 truncate">
-                                {selectedPerson.name || (language === 'es' ? 'Persona evaluada' : 'Evaluated person')}
-                              </p>
-                              <p className="text-sm text-gray-500 truncate">
                                 {getTechnicalPositionLabel(selectedPerson.technical.jobPositionId, language)}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {language === 'es' ? 'Asociado a la evaluación técnica' : 'Associated with the technical evaluation'}
                               </p>
                             </div>
                           </div>
