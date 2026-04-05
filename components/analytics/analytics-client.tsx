@@ -6931,13 +6931,13 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             <div className="bg-white rounded-xl p-4 border border-sky-100 shadow-sm">
                               <div className="flex items-center gap-2 mb-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Respuestas Correctas' : 'Correct Answers'}</span>
+                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Aciertos' : 'Accuracy'}</span>
                               </div>
                               <p className="text-3xl font-bold text-sky-600">
                                 {selectedPerson.technical.correctAnswers}/{selectedPerson.technical.totalQuestions}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {language === 'es' ? 'preguntas acertadas' : 'questions answered correctly'}
+                                {language === 'es' ? 'preguntas correctas' : 'correct questions'}
                               </p>
                             </div>
 
@@ -6961,11 +6961,45 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                             <div className="bg-white rounded-xl p-4 border border-sky-100 shadow-sm">
                               <div className="flex items-center gap-2 mb-3">
                                 <Briefcase className="w-5 h-5 text-indigo-500" />
-                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Cargo Evaluado' : 'Position Evaluated'}</span>
+                                <span className="font-semibold text-gray-700">{language === 'es' ? 'Contexto evaluado' : 'Evaluated context'}</span>
                               </div>
-                              <p className="text-lg font-bold text-indigo-600">
-                                ID: {selectedPerson.technical.jobPositionId || 'N/A'}
+                              <p className="text-lg font-bold text-indigo-600 truncate">
+                                {selectedPerson.name || (language === 'es' ? 'Persona evaluada' : 'Evaluated person')}
                               </p>
+                              <p className="text-sm text-gray-500 truncate">
+                                {selectedPerson.technical.jobPositionId || (language === 'es' ? 'Sin cargo asociado' : 'No associated role')}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 rounded-2xl border border-sky-100 bg-sky-50/60 p-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {language === 'es' ? 'Lectura ejecutiva' : 'Executive summary'}
+                                </p>
+                                <p className="text-sm text-slate-600 mt-1">
+                                  {selectedPerson.technical.performanceLevel === 'BELOW_AVERAGE'
+                                    ? (language === 'es'
+                                      ? 'El resultado muestra brechas claras en la base técnica. Conviene validar fundamentos antes de avanzar.'
+                                      : 'The result shows clear technical gaps. It is worth validating fundamentals before moving forward.')
+                                    : selectedPerson.technical.performanceLevel === 'AVERAGE'
+                                      ? (language === 'es'
+                                        ? 'El desempeño es funcional, con margen de mejora en preguntas de mayor complejidad.'
+                                        : 'Performance is functional, with room to improve on more complex questions.')
+                                      : (language === 'es'
+                                        ? 'El desempeño técnico es sólido y consistente para el contexto evaluado.'
+                                        : 'Technical performance is solid and consistent for the evaluated context.')}
+                                </p>
+                              </div>
+                              <Badge className={`self-start ${
+                                selectedPerson.technical.totalScore >= 80 ? 'bg-green-100 text-green-700 border-green-200' :
+                                selectedPerson.technical.totalScore >= 60 ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                selectedPerson.technical.totalScore >= 40 ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                'bg-red-100 text-red-700 border-red-200'
+                              } border`}>
+                                {language === 'es' ? 'Nivel general' : 'Overall level'}: {selectedPerson.technical.performanceLevel.replace(/_/g, ' ')}
+                              </Badge>
                             </div>
                           </div>
 
@@ -7066,11 +7100,11 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                           )}
 
                           {/* Puntuación por Categorías */}
-                          {selectedPerson.technical.categoryScores && Object.keys(selectedPerson.technical.categoryScores).length > 0 && (
+                              {selectedPerson.technical.categoryScores && Object.keys(selectedPerson.technical.categoryScores).length > 0 && (
                             <div className="mt-6">
                               <h4 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
                                 <Code className="w-5 h-5 text-sky-600" />
-                                {language === 'es' ? 'Rendimiento por Categoría' : 'Performance by Category'}
+                                {language === 'es' ? 'Rendimiento por categoría' : 'Performance by category'}
                               </h4>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {Object.entries(selectedPerson.technical.categoryScores).map(([category, score]: [string, any]) => (
