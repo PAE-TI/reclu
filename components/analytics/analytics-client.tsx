@@ -2013,7 +2013,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                           {Math.round(person.technical.totalScore)}%
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm">{person.technical.performanceLevel}</p>
+                          <p className="font-medium text-gray-900 text-sm">{getPerformanceLevelLabel(person.technical.performanceLevel, language)}</p>
                           <p className="text-gray-500 text-xs">{person.technical.correctAnswers}/{person.technical.totalQuestions} {language === 'es' ? 'correctas' : 'correct'}</p>
                         </div>
                       </div>
@@ -3193,7 +3193,7 @@ function CompareView({ people, compareList, recentSelections, getDiscColor, togg
                             </div>
                             <div className="flex-1">
                               <p className="font-medium text-gray-900">{person.name}</p>
-                              <p className="text-xs text-gray-500">{person.technical?.performanceLevel}</p>
+                              <p className="text-xs text-gray-500">{getPerformanceLevelLabel(person.technical?.performanceLevel || '', language)}</p>
                             </div>
                             <div className="text-right">
                               <p className="text-2xl font-bold text-sky-600">{Math.round(person.technical?.totalScore || 0)}%</p>
@@ -6054,6 +6054,34 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                         </CardContent>
                       </Card>
                     )}
+                    {selectedPerson.technical && (
+                      <Card className="bg-white border-0 shadow-lg">
+                        <CardHeader className="bg-gradient-to-r from-sky-500 to-cyan-500 text-white rounded-t-xl pb-3">
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <FileCode className="w-4 h-4" />
+                            {language === 'es' ? 'Técnica' : 'Technical'}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                          <div className="grid grid-cols-2 gap-3 mb-3">
+                            <div className="text-center p-2 bg-sky-50 rounded-lg">
+                              <p className="text-xs text-gray-500">{language === 'es' ? 'Puntaje' : 'Score'}</p>
+                              <p className="text-lg font-bold text-sky-600">{Math.round(selectedPerson.technical.totalScore)}%</p>
+                            </div>
+                            <div className="text-center p-2 bg-cyan-50 rounded-lg">
+                              <p className="text-xs text-gray-500">{language === 'es' ? 'Nivel' : 'Level'}</p>
+                              <p className="text-sm font-bold text-cyan-600">{getPerformanceLevelLabel(selectedPerson.technical.performanceLevel, language)}</p>
+                            </div>
+                          </div>
+                          <div className="text-center p-2 bg-gray-50 rounded-lg">
+                            <p className="text-xs text-gray-500">{language === 'es' ? 'Cargo' : 'Role'}</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {getTechnicalPositionLabel(selectedPerson.technical.jobPositionId, language)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                     {!selectedPerson.disc && (
                       <Card className="bg-gray-50 border-2 border-dashed border-gray-200">
                         <CardContent className="p-8 text-center">
@@ -6144,6 +6172,20 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                           <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                           <p className="text-gray-500 mb-4">{language === 'es' ? 'Evaluación Estrés pendiente' : 'Stress evaluation pending'}</p>
                           <Link href="/external-stress-evaluations">
+                            <Button variant="outline" size="sm">
+                              <Send className="w-4 h-4 mr-2" />
+                              {language === 'es' ? 'Enviar Evaluación' : 'Send Evaluation'}
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {!selectedPerson.technical && (
+                      <Card className="bg-gray-50 border-2 border-dashed border-gray-200">
+                        <CardContent className="p-8 text-center">
+                          <FileCode className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                          <p className="text-gray-500 mb-4">{language === 'es' ? 'Evaluación Técnica pendiente' : 'Technical evaluation pending'}</p>
+                          <Link href="/external-technical-evaluations">
                             <Button variant="outline" size="sm">
                               <Send className="w-4 h-4 mr-2" />
                               {language === 'es' ? 'Enviar Evaluación' : 'Send Evaluation'}
