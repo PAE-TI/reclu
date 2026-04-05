@@ -176,6 +176,17 @@ const bottomNavigation = [
   },
 ];
 
+const evaluationResultPrefixes: Record<string, string> = {
+  '/external-evaluations': '/external-evaluation-results/',
+  '/external-driving-forces-evaluations': '/external-driving-forces-evaluation-results/',
+  '/external-eq-evaluations': '/external-eq-evaluation-results/',
+  '/external-dna-evaluations': '/external-dna-evaluation-results/',
+  '/external-acumen-evaluations': '/external-acumen-evaluation-results/',
+  '/external-values-evaluations': '/external-values-evaluation-results/',
+  '/external-stress-evaluations': '/external-stress-evaluation-results/',
+  '/external-technical-evaluations': '/external-technical-evaluation-results/',
+};
+
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -210,6 +221,16 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     if (window.innerWidth < 1024) {
       onToggle();
     }
+  };
+
+  const isRouteActive = (href: string) => {
+    const cleanHref = href.split('?')[0];
+    if (pathname === cleanHref) {
+      return true;
+    }
+
+    const resultPrefix = evaluationResultPrefixes[cleanHref];
+    return resultPrefix ? pathname.startsWith(resultPrefix) : false;
   };
 
   return (
@@ -281,7 +302,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 return null;
               }
               
-              const isActive = pathname === item.href.split('?')[0];
+              const isActive = isRouteActive(item.href);
               const tourId = item.href === '/dashboard' ? 'dashboard' : 
                             item.href === '/analytics' ? 'analytics' : 
                             item.href === '/team' ? 'team' : 
@@ -337,8 +358,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             {systemModules.map((mod) => {
               const isExpanded = expandedModules[mod.id];
               const ModuleIcon = mod.icon;
-              const hasActiveItem = mod.items.some(item => pathname === item.href) ||
-                                   mod.quickActions?.some(action => pathname === action.href);
+              const hasActiveItem = mod.items.some(item => isRouteActive(item.href)) ||
+                                   mod.quickActions?.some(action => isRouteActive(action.href));
               
               return (
                 <div key={mod.id} className="rounded-lg overflow-hidden">
@@ -381,7 +402,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     <div className={`mt-1 ml-3 pl-3 border-l-2 ${mod.borderClass} space-y-0.5`}>
                       {/* Evaluaciones/Items principales */}
                       {mod.items.map((item, index) => {
-                        const isActive = pathname === item.href;
+                        const isActive = isRouteActive(item.href);
                         const ItemIcon = item.icon;
                         const tourId = index === 0 && mod.id === 'psychometric' ? 'sidebar-disc' : undefined;
                         const itemText = t(item.translationKey);
@@ -418,7 +439,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       {mod.quickActions && mod.quickActions.length > 0 && (
                         <div className="pt-2 mt-2 border-t border-slate-100 space-y-0.5">
                           {mod.quickActions.map((action) => {
-                            const isActive = pathname === action.href;
+                            const isActive = isRouteActive(action.href);
                             const ActionIcon = action.icon;
                             const tourId = action.href === '/batch-evaluations' ? 'batch-evaluations' : undefined;
                             const actionText = t(action.translationKey);
@@ -485,7 +506,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
             <div className="space-y-1">
               {bottomNavigation.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = isRouteActive(item.href);
                 const tourId = item.href === '/settings' ? 'settings' : 
                               item.href === '/profile' ? 'profile' : undefined;
                 return (

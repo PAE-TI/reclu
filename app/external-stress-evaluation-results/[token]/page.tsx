@@ -268,7 +268,7 @@ export default function ExternalStressResults() {
           )}
 
           <ResultSummaryCard
-            accentClassName="bg-gradient-to-r from-orange-600 to-red-600"
+            accentClassName="bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500"
             icon={<Activity className="w-8 h-8 text-white" />}
             title={t('results.stress.title')}
             subtitle={evaluation?.recipientName}
@@ -287,17 +287,17 @@ export default function ExternalStressResults() {
             }
           />
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl mb-6">
-            <CardHeader className="bg-gradient-to-r from-rose-600 to-orange-600 text-white rounded-t-xl">
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Brain className="w-5 h-5" />
+          <Card className="bg-white/90 backdrop-blur-sm border border-orange-100 shadow-lg mb-6 overflow-hidden">
+            <CardHeader className="border-b border-orange-100 bg-orange-50/80">
+              <CardTitle className="text-xl flex items-center gap-2 text-slate-900">
+                <Brain className="w-5 h-5 text-orange-600" />
                 {t('results.stress.profile')}
               </CardTitle>
-              <CardDescription className="text-rose-100">{result.stressProfile}</CardDescription>
+              <CardDescription className="text-slate-600">{result.stressProfile}</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-sm text-gray-600 mb-2">{t('results.stress.stressLevel')}</div>
                   <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold ${getStressLevelColor(result.stressLevel)}`}>
                     {result.stressLevel === 'Muy Alto' || result.stressLevel === 'Alto' ? (
@@ -312,7 +312,7 @@ export default function ExternalStressResults() {
                   <div className="text-2xl font-bold text-gray-900 mt-2">{result.nivelEstresGeneral}%</div>
                 </div>
                 
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-sm text-gray-600 mb-2">{t('results.stress.resilienceIndex')}</div>
                   <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold ${getResilienceLevelColor(result.resilienceLevel)}`}>
                     <Shield className="w-4 h-4" />
@@ -321,7 +321,7 @@ export default function ExternalStressResults() {
                   <div className="text-2xl font-bold text-gray-900 mt-2">{result.indiceResiliencia}%</div>
                 </div>
                 
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-sm text-gray-600 mb-2">{t('results.stress.adaptationCapacity')}</div>
                   <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-rose-100 to-orange-100 flex items-center justify-center">
                     <span className="text-2xl font-bold text-rose-600">{result.capacidadAdaptacion}%</span>
@@ -331,10 +331,10 @@ export default function ExternalStressResults() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Target className="w-5 h-5 text-rose-600" />
+          <Card className="bg-white/90 backdrop-blur-sm border border-slate-100 shadow-lg mb-6">
+            <CardHeader className="border-b border-slate-100">
+              <CardTitle className="text-lg flex items-center gap-2 text-slate-900">
+                <Target className="w-5 h-5 text-orange-600" />
                 {t('results.stress.dimensionAnalysis')}
               </CardTitle>
             </CardHeader>
@@ -403,8 +403,8 @@ export default function ExternalStressResults() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {result.riskFactors.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl border-l-4 border-l-red-500">
-                <CardHeader>
+              <Card className="bg-white/90 backdrop-blur-sm border border-red-100 shadow-lg border-l-4 border-l-red-400">
+                <CardHeader className="border-b border-red-100">
                   <CardTitle className="text-lg flex items-center gap-2 text-red-700">
                     <AlertTriangle className="w-5 h-5" />
                     {t('results.stress.riskFactors')}
@@ -424,8 +424,8 @@ export default function ExternalStressResults() {
             )}
             
             {result.protectiveFactors.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl border-l-4 border-l-green-500">
-                <CardHeader>
+              <Card className="bg-white/90 backdrop-blur-sm border border-green-100 shadow-lg border-l-4 border-l-green-400">
+                <CardHeader className="border-b border-green-100">
                   <CardTitle className="text-lg flex items-center gap-2 text-green-700">
                     <CheckCircle className="w-5 h-5" />
                     {t('results.stress.protectiveFactors')}
@@ -447,9 +447,9 @@ export default function ExternalStressResults() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {result.primaryStrengths.length > 0 && (
-              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2 text-green-700">
+              <Card className="bg-white/90 backdrop-blur-sm border border-emerald-100 shadow-lg">
+                <CardHeader className="border-b border-emerald-100">
+                  <CardTitle className="text-lg flex items-center gap-2 text-emerald-700">
                     <Award className="w-5 h-5" />
                     {t('results.stress.yourStrengths')}
                   </CardTitle>
@@ -457,7 +457,7 @@ export default function ExternalStressResults() {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {result.primaryStrengths.map((strength, idx) => (
-                      <Badge key={idx} className="bg-green-100 text-green-700 border-green-200">
+                      <Badge key={idx} className="bg-emerald-100 text-emerald-700 border-emerald-200">
                         {strength}
                       </Badge>
                     ))}
@@ -467,8 +467,8 @@ export default function ExternalStressResults() {
             )}
             
             {result.developmentAreas.length > 0 && (
-              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-0 shadow-xl">
-                <CardHeader>
+              <Card className="bg-white/90 backdrop-blur-sm border border-amber-100 shadow-lg">
+                <CardHeader className="border-b border-amber-100">
                   <CardTitle className="text-lg flex items-center gap-2 text-amber-700">
                     <Target className="w-5 h-5" />
                     {t('results.dna.developmentAreas')}
