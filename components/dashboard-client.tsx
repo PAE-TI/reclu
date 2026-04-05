@@ -99,60 +99,60 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
   const headhunterTips = [
     {
       icon: Target,
-      title: language === 'es' ? 'Define el Perfil Ideal' : 'Define the Ideal Profile',
+      title: language === 'es' ? 'Define el objetivo' : 'Define the objective',
       desc: language === 'es' 
-        ? 'Antes de evaluar, define qué competencias son críticas para el cargo. Usa la biblioteca de +225 cargos como referencia.'
-        : 'Before evaluating, define critical competencies for the role. Use the 225+ position library as reference.',
+        ? 'Antes de evaluar, define qué quieres medir: un cargo, un equipo interno o una comparación de talento. Usa la biblioteca de cargos como referencia cuando aplique.'
+        : 'Before evaluating, define what you want to measure: a role, an internal team, or a talent comparison. Use the position library as reference when applicable.',
       color: 'from-indigo-700 to-purple-700',
       bgColor: 'bg-indigo-50',
       link: '/campaigns/new'
     },
     {
       icon: Users,
-      title: language === 'es' ? 'Compara Candidatos Objetivamente' : 'Compare Candidates Objectively',
+      title: language === 'es' ? 'Compara talento objetivamente' : 'Compare talent objectively',
       desc: language === 'es' 
-        ? 'Usa el análisis comparativo para evaluar candidatos contra el perfil ideal y entre sí. Elimina sesgos en la selección.'
-        : 'Use comparative analysis to evaluate candidates against the ideal profile and each other. Eliminate selection bias.',
+        ? 'Usa el análisis comparativo para evaluar personas contra un perfil objetivo y entre sí. Elimina sesgos en selección y desarrollo interno.'
+        : 'Use comparative analysis to evaluate people against an objective profile and each other. Eliminate bias in selection and internal development.',
       color: 'from-indigo-600 to-purple-600',
       bgColor: 'bg-indigo-50',
       link: '/analytics?mode=compare'
     },
     {
       icon: FileCode,
-      title: language === 'es' ? 'Valida Conocimientos Técnicos' : 'Validate Technical Knowledge',
+      title: language === 'es' ? 'Valida habilidades técnicas' : 'Validate technical skills',
       desc: language === 'es' 
-        ? 'Complementa evaluaciones psicométricas con pruebas técnicas. Verifica que el candidato tiene el conocimiento que dice tener.'
-        : 'Complement psychometric evaluations with technical tests. Verify the candidate has the claimed knowledge.',
+        ? 'Complementa evaluaciones psicométricas con pruebas técnicas. Verifica conocimientos y ajusta la dificultad al contexto del cargo o equipo.'
+        : 'Complement psychometric evaluations with technical tests. Verify knowledge and adjust difficulty to the role or team context.',
       color: 'from-indigo-700 to-purple-700',
       bgColor: 'bg-indigo-50',
       link: '/external-technical-evaluations'
     },
     {
       icon: BarChart3,
-      title: language === 'es' ? 'Análisis Integrado 360°' : 'Integrated 360° Analysis',
+      title: language === 'es' ? 'Análisis integrado 360°' : 'Integrated 360° analysis',
       desc: language === 'es' 
-        ? 'Un perfil completo con las 8 evaluaciones te da una visión integral del candidato: comportamiento, motivación, inteligencia emocional y competencias.'
-        : 'A complete profile with all 8 assessments gives you a comprehensive view: behavior, motivation, emotional intelligence, and competencies.',
+        ? 'Un perfil completo con las evaluaciones te da una visión integral: comportamiento, motivación, inteligencia emocional, competencias y más.'
+        : 'A complete profile with the assessments gives you an integrated view: behavior, motivation, emotional intelligence, competencies, and more.',
       color: 'from-indigo-600 to-purple-600',
       bgColor: 'bg-indigo-50',
       link: '/analytics'
     },
     {
       icon: Clock,
-      title: language === 'es' ? 'Agiliza tu Proceso' : 'Streamline Your Process',
+      title: language === 'es' ? 'Agiliza tu operación' : 'Streamline your operation',
       desc: language === 'es' 
-        ? 'Envía evaluaciones en lote a múltiples candidatos. Ahorra tiempo y mantén consistencia en tu proceso de selección.'
-        : 'Send batch evaluations to multiple candidates. Save time and maintain consistency in your selection process.',
+        ? 'Envía evaluaciones en lote a múltiples personas. Ahorra tiempo y mantén consistencia en campañas de selección o internas.'
+        : 'Send batch evaluations to multiple people. Save time and maintain consistency in selection or internal campaigns.',
       color: 'from-indigo-700 to-purple-700',
       bgColor: 'bg-indigo-50',
       link: '/batch-evaluations'
     },
     {
       icon: Shield,
-      title: language === 'es' ? 'Evalúa Valores e Integridad' : 'Assess Values & Integrity',
+      title: language === 'es' ? 'Evalúa valores e integridad' : 'Assess values & integrity',
       desc: language === 'es' 
-        ? 'Los valores del candidato deben alinearse con la cultura organizacional. Usa la evaluación de Valores e Integridad para validarlo.'
-        : 'Candidate values must align with organizational culture. Use the Values & Integrity assessment to validate.',
+        ? 'Los valores de una persona deben alinearse con la cultura organizacional. Usa la evaluación de Valores e Integridad para validarlo.'
+        : 'A person’s values should align with organizational culture. Use the Values & Integrity assessment to validate.',
       color: 'from-indigo-600 to-purple-600',
       bgColor: 'bg-indigo-50',
       link: '/external-values-evaluations'
@@ -221,7 +221,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
     {
       icon: Briefcase,
       title: language === 'es' ? 'Nueva Campaña' : 'New Campaign',
-      desc: language === 'es' ? 'Inicia un proceso de selección' : 'Start a selection process',
+      desc: language === 'es' ? 'Crea un proceso para selección o equipo interno' : 'Create a selection or internal team process',
       href: '/campaigns/new',
       color: 'bg-gradient-to-r from-indigo-600 to-purple-600',
       primary: true
@@ -229,13 +229,13 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
     {
       icon: Package,
       title: language === 'es' ? 'Enviar Evaluaciones' : 'Send Evaluations',
-      desc: language === 'es' ? 'Los 8 módulos disponibles' : 'All 8 modules available',
+      desc: language === 'es' ? 'Los módulos disponibles' : 'Available modules',
       href: '/batch-evaluations',
       color: 'bg-indigo-600'
     },
     {
       icon: Users,
-      title: language === 'es' ? 'Comparar Candidatos' : 'Compare Candidates',
+      title: language === 'es' ? 'Comparar talento' : 'Compare talent',
       desc: language === 'es' ? 'Análisis comparativo' : 'Comparative analysis',
       href: '/analytics?mode=compare',
       color: 'bg-purple-600'
@@ -243,7 +243,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
     {
       icon: Eye,
       title: language === 'es' ? 'Ver Resultados' : 'View Results',
-      desc: language === 'es' ? 'Análisis individual' : 'Individual analysis',
+      desc: language === 'es' ? 'Lectura individual' : 'Individual view',
       href: '/analytics?mode=individual',
       color: 'bg-indigo-500'
     }
@@ -262,10 +262,10 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
               </div>
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
-                  {language === 'es' ? 'Centro de Reclutamiento' : 'Recruitment Center'}
+                  {language === 'es' ? 'Centro de Talento' : 'Talent Center'}
                 </h1>
                 <p className="text-slate-600">
-                  {language === 'es' ? 'Tu hub para seleccionar el mejor talento' : 'Your hub for selecting the best talent'}
+                  {language === 'es' ? 'Tu hub para gestionar selección, desarrollo y equipos internos' : 'Your hub to manage selection, development, and internal teams'}
                 </p>
               </div>
             </div>
@@ -285,8 +285,8 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
-                      {language === 'es' ? 'Candidatos' : 'Candidates'}
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                      {language === 'es' ? 'Personas' : 'People'}
                     </p>
                     <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalPeopleEvaluated}</p>
                   </div>
@@ -295,7 +295,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {language === 'es' ? 'Total evaluados' : 'Total evaluated'}
+                  {language === 'es' ? 'Total con actividad' : 'Total with activity'}
                 </p>
               </CardContent>
             </Card>
@@ -339,7 +339,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {language === 'es' ? 'Esperando respuesta' : 'Awaiting response'}
+                  {language === 'es' ? 'Esperando completitud' : 'Awaiting completion'}
                 </p>
               </CardContent>
             </Card>
@@ -358,7 +358,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {language === 'es' ? '8 módulos completos' : '8 complete modules'}
+                  {language === 'es' ? 'Múltiples módulos completos' : 'Multiple modules complete'}
                 </p>
               </CardContent>
             </Card>
@@ -377,7 +377,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                   </div>
                 </div>
                 <p className="text-xs text-indigo-300 mt-2">
-                  {language === 'es' ? 'Evaluaciones completadas' : 'Evaluations completed'}
+                  {language === 'es' ? 'Completadas hoy' : 'Completed today'}
                 </p>
               </CardContent>
             </Card>
