@@ -274,7 +274,7 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
             <Link href="/campaigns/new">
               <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg w-full lg:w-auto">
                 <Plus className="w-5 h-5 mr-2" />
-                {language === 'es' ? 'Nueva Campaña de Selección' : 'New Selection Campaign'}
+                {language === 'es' ? 'Nueva Campaña' : 'New Campaign'}
               </Button>
             </Link>
           </div>
