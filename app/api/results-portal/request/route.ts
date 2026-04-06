@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { emailService } from '@/lib/email';
-import { prisma } from '@/lib/db';
 import {
-  buildResultsPortalLink,
-  createPortalAccessCode,
   normalizePortalEmail,
+  setPortalSessionCookie,
 } from '@/lib/results-portal';
 
 export const dynamic = 'force-dynamic';
@@ -24,37 +21,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ingresa un correo válido' }, { status: 400 });
     }
 
-    const access = await createPortalAccessCode(normalizedEmail);
-    const accessLink = buildResultsPortalLink(normalizedEmail, access.rawCode);
-    const subjectData = emailService.generateResultsPortalAccessEmail(
-      normalizedEmail,
-      access.code,
-      accessLink,
-      access.expiresInMinutes
-    );
-
-    const sent = await emailService.sendEmail({
-      to: normalizedEmail,
-      subject: subjectData.subject,
-      html: subjectData.html,
-      text: subjectData.text,
-    });
-
-    if (!sent) {
-      await prisma.verificationToken.deleteMany({
-        where: { identifier: normalizedEmail },
-      });
-      return NextResponse.json(
-        { error: 'No se pudo enviar el correo de acceso' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
-      message: 'Te enviamos un código de acceso y un enlace directo a tu correo.',
+      message: 'Acceso concedido',
       email: normalizedEmail,
     });
+
+    setPortalSessionCookie(response, normalizedEmail);
+    return response;
   } catch (error) {
     console.error('Error creating results portal access:', error);
     return NextResponse.json(

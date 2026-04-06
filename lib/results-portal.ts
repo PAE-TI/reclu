@@ -91,10 +91,7 @@ export function generatePortalAccessCode(length = 8) {
 
 export function buildResultsPortalLink(email: string, code: string) {
   const normalizedEmail = normalizePortalEmail(email);
-  const normalizedCode = normalizePortalCode(code);
-  return buildAppUrl(
-    `/mis-resultados?email=${encodeURIComponent(normalizedEmail)}&code=${encodeURIComponent(normalizedCode)}`
-  );
+  return buildAppUrl(`/mis-resultados?email=${encodeURIComponent(normalizedEmail)}`);
 }
 
 export function createPortalSessionToken(email: string) {
@@ -159,59 +156,6 @@ export function clearPortalSessionCookie(response: NextResponse) {
     path: '/',
     expires: new Date(0),
   });
-}
-
-export async function createPortalAccessCode(email: string) {
-  const normalizedEmail = normalizePortalEmail(email);
-  await prisma.verificationToken.deleteMany({
-    where: { identifier: normalizedEmail },
-  });
-
-  const rawCode = generatePortalAccessCode();
-  const expires = new Date(Date.now() + RESULTS_PORTAL_CODE_EXPIRY_MINUTES * 60 * 1000);
-
-  await prisma.verificationToken.create({
-    data: {
-      identifier: normalizedEmail,
-      token: normalizePortalCode(rawCode),
-      expires,
-    },
-  });
-
-  return {
-    email: normalizedEmail,
-    code: formatPortalCode(rawCode),
-    rawCode: normalizePortalCode(rawCode),
-    expires,
-    expiresInMinutes: RESULTS_PORTAL_CODE_EXPIRY_MINUTES,
-    link: buildResultsPortalLink(normalizedEmail, rawCode),
-  };
-}
-
-export async function verifyPortalAccessCode(email: string, code: string) {
-  const normalizedEmail = normalizePortalEmail(email);
-  const normalizedCode = normalizePortalCode(code);
-
-  const verificationToken = await prisma.verificationToken.findFirst({
-    where: {
-      identifier: normalizedEmail,
-      token: normalizedCode,
-      expires: { gt: new Date() },
-    },
-  });
-
-  if (!verificationToken) {
-    return false;
-  }
-
-  await prisma.verificationToken.deleteMany({
-    where: {
-      identifier: normalizedEmail,
-      token: normalizedCode,
-    },
-  });
-
-  return true;
 }
 
 function formatSenderName(senderUser: {

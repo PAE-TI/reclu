@@ -33,7 +33,6 @@ import {
   Heart,
   Dna,
   Compass,
-  BadgeCheck,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -78,10 +77,6 @@ interface PortalEvaluationRecord {
   createdAt: string;
   result: unknown | null;
   summary: PortalEvaluationSummary;
-}
-
-function normalizePortalCode(code: string) {
-  return code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
 function getPortalStatusLabel(status: string) {
@@ -277,13 +272,10 @@ export default function ResultsPortalClient() {
   const router = useRouter();
 
   const [requestEmail, setRequestEmail] = useState('');
-  const [requestCode, setRequestCode] = useState('');
-  const [codeRequestedFor, setCodeRequestedFor] = useState<string | null>(null);
   const [accessEmail, setAccessEmail] = useState<string | null>(null);
   const [evaluations, setEvaluations] = useState<PortalEvaluationRecord[]>([]);
   const [loadingSession, setLoadingSession] = useState(true);
   const [loadingCode, setLoadingCode] = useState(false);
-  const [verifyingCode, setVerifyingCode] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterState>('all');
@@ -335,24 +327,20 @@ export default function ResultsPortalClient() {
 
   useEffect(() => {
     const email = searchParams.get('email');
-    const code = searchParams.get('code');
 
     const autoVerify = async () => {
-      if (!email || !code) {
+      if (!email) {
         setLoadingSession(false);
         await loadResults();
         return;
       }
 
       setRequestEmail(email);
-      setRequestCode(code);
-      setVerifyingCode(true);
-
       try {
-        const response = await fetch('/api/results-portal/verify', {
+        const response = await fetch('/api/results-portal/request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code }),
+          body: JSON.stringify({ email }),
         });
 
         if (!response.ok) {
@@ -360,14 +348,11 @@ export default function ResultsPortalClient() {
         }
 
         toast.success('Acceso validado');
-        setRequestCode('');
         router.replace('/mis-resultados');
         await loadResults();
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'No se pudo validar el acceso');
         setLoadingSession(false);
-      } finally {
-        setVerifyingCode(false);
       }
     };
 
@@ -389,42 +374,13 @@ export default function ResultsPortalClient() {
         throw new Error(data.error || 'No se pudo enviar el código');
       }
 
-      setCodeRequestedFor(requestEmail.trim().toLowerCase());
-      setRequestCode('');
-      toast.success('Revisa tu correo y usa el código para entrar');
+      setAccessEmail(data.email || requestEmail.trim().toLowerCase());
+      toast.success('Acceso concedido');
+      await loadResults();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'No se pudo enviar el código');
     } finally {
       setLoadingCode(false);
-    }
-  };
-
-  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setVerifyingCode(true);
-    try {
-      const response = await fetch('/api/results-portal/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: requestEmail,
-          code: normalizePortalCode(requestCode),
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudo verificar el código');
-      }
-
-      toast.success('Acceso concedido');
-      setRequestCode('');
-      router.replace('/mis-resultados');
-      await loadResults();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'No se pudo verificar el código');
-    } finally {
-      setVerifyingCode(false);
     }
   };
 
@@ -435,8 +391,6 @@ export default function ResultsPortalClient() {
       setAccessEmail(null);
       setEvaluations([]);
       setExpandedToken(null);
-      setCodeRequestedFor(null);
-      setRequestCode('');
       setActiveFilter('all');
       toast.success('Sesión cerrada');
     } finally {
@@ -481,8 +435,8 @@ export default function ResultsPortalClient() {
               </CardTitle>
               <p className="text-sm leading-6 text-slate-200">
                 {language === 'es'
-                  ? 'Ingresa tu correo, recibe un código temporal y revisa tus evaluaciones completadas, pendientes y descargables desde un solo lugar.'
-                  : 'Enter your email, receive a temporary code, and review completed, pending and downloadable assessments in one place.'}
+                  ? 'Ingresa tu correo y revisa tus evaluaciones completadas, pendientes y descargables desde un solo lugar.'
+                  : 'Enter your email and review completed, pending and downloadable assessments in one place.'}
               </p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
@@ -521,46 +475,9 @@ export default function ResultsPortalClient() {
 
                     <Button className="w-full" type="submit" disabled={loadingCode}>
                       {loadingCode ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-                      {language === 'es' ? 'Enviar código' : 'Send code'}
+                      {language === 'es' ? 'Ver resultados' : 'View results'}
                     </Button>
                   </form>
-
-                  {codeRequestedFor && (
-                    <form onSubmit={handleVerifyCode} className="space-y-4 rounded-3xl border border-indigo-100 bg-indigo-50/60 p-4 shadow-sm">
-                      <div>
-                        <p className="text-sm font-semibold text-indigo-900">
-                          {language === 'es' ? 'Ya enviamos el acceso' : 'Access sent'}
-                        </p>
-                        <p className="text-sm text-indigo-700">
-                          {language === 'es'
-                            ? 'Ingresa el código de 8 caracteres que llegó a tu correo.'
-                            : 'Enter the 8-character code we sent to your email.'}
-                        </p>
-                      </div>
-                      <Input
-                        value={requestCode}
-                        onChange={(e) => setRequestCode(e.target.value.toUpperCase())}
-                        placeholder="ABCD-EFGH"
-                        className="tracking-[0.35em] text-center font-mono text-lg"
-                        required
-                      />
-                      <Button className="w-full" type="submit" variant="secondary" disabled={verifyingCode}>
-                        {verifyingCode ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BadgeCheck className="mr-2 h-4 w-4" />}
-                        {language === 'es' ? 'Ingresar' : 'Enter'}
-                      </Button>
-                    </form>
-                  )}
-
-                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                      <p className="text-sm font-semibold text-slate-900">
-                        {language === 'es' ? '¿Cómo funciona?' : 'How it works'}
-                      </p>
-                      <ol className="mt-3 space-y-2 text-sm text-slate-600">
-                      <li>1. Ingresa tu correo.</li>
-                      <li>2. Recibe un código y un enlace seguro.</li>
-                      <li>3. Revisa tus evaluaciones y descargas.</li>
-                    </ol>
-                  </div>
 
                   <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700">
                     <ExternalLink className="h-4 w-4" />
@@ -625,7 +542,7 @@ export default function ResultsPortalClient() {
               </CardContent>
             </Card>
 
-            {loadingResults || verifyingCode || loadingSession ? (
+            {loadingResults || loadingSession ? (
               <Card className="border-slate-200 bg-white shadow-lg">
                 <CardContent className="flex items-center justify-center p-12">
                   <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
@@ -646,8 +563,8 @@ export default function ResultsPortalClient() {
                   </h3>
                   <p className="mt-2 text-sm text-slate-500">
                     {language === 'es'
-                      ? 'Una vez verificado, verás el historial de tus pruebas y podrás abrir o descargar los resultados.'
-                      : 'Once verified, you will see your assessment history and can open or download reports.'}
+                      ? 'Una vez ingresado tu correo, verás el historial de tus pruebas y podrás abrir o descargar los resultados.'
+                      : 'Once you enter your email, you will see your assessment history and can open or download reports.'}
                   </p>
                 </CardContent>
               </Card>
