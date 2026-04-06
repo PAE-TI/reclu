@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { PDFGenerator } from '@/lib/pdf-generator';
 import { getPerformanceLevelLabel } from '@/lib/technical-calculator';
+import { getExecutiveReading, getTechnicalExecutiveReading } from '@/lib/result-insights';
 import { getDiscInterpretations } from '@/lib/disc-interpretations';
 import { useLanguage } from '@/contexts/language-context';
 import {
@@ -139,21 +140,7 @@ function renderTechnicalDetails(result: any, language: 'es' | 'en') {
   const easy = result.easyTotal > 0 ? Math.round((result.easyCorrect / result.easyTotal) * 100) : null;
   const medium = result.mediumTotal > 0 ? Math.round((result.mediumCorrect / result.mediumTotal) * 100) : null;
   const hard = result.hardTotal > 0 ? Math.round((result.hardCorrect / result.hardTotal) * 100) : null;
-  const executiveReading = language === 'es'
-    ? score >= 80
-      ? 'Desempeño sobresaliente. La base técnica es consistente y fuerte para el contexto evaluado.'
-      : score >= 60
-        ? 'Desempeño sólido. Hay buena base técnica con oportunidades puntuales de mejora.'
-        : score >= 40
-          ? 'Desempeño en desarrollo. Hay señales de comprensión, pero todavía se requiere refuerzo.'
-          : 'Desempeño bajo. Conviene validar fundamentos antes de avanzar.'
-    : score >= 80
-      ? 'Outstanding performance. The technical base is consistent and strong for the evaluated context.'
-      : score >= 60
-        ? 'Solid performance. There is a good technical base with specific opportunities for improvement.'
-        : score >= 40
-          ? 'Developing performance. There are signs of understanding, but reinforcement is still needed.'
-          : 'Low performance. It is advisable to validate fundamentals before moving forward.';
+  const executiveReading = getTechnicalExecutiveReading(result, language);
 
   return (
     <div className="space-y-4">
@@ -220,49 +207,10 @@ function renderTechnicalDetails(result: any, language: 'es' | 'en') {
   );
 }
 
-function renderExecutiveReading(type: PortalEvaluationType, result: any, language: 'es' | 'en') {
-  if (!result) return null;
-
-  const score = Math.round(
-    type === 'technical'
-      ? result.totalScore || 0
-      : type === 'eq'
-        ? result.totalScore || result.overallEQ || 0
-        : type === 'dna'
-          ? result.totalDNAPercentile || 0
-          : type === 'acumen'
-            ? result.totalAcumenScore || 0
-            : type === 'values'
-              ? result.totalValuesScore || result.integrityScore || 0
-              : type === 'stress'
-                ? result.indiceResiliencia || result.resilienceIndex || 0
-                : 0
-  );
-
-  const text =
-    score >= 80
-      ? language === 'es'
-        ? 'Desempeño sobresaliente. La lectura general muestra una base fuerte y consistente.'
-        : 'Outstanding performance. The overall reading shows a strong and consistent base.'
-      : score >= 60
-        ? language === 'es'
-          ? 'Desempeño sólido. Hay una base positiva con oportunidades puntuales de mejora.'
-          : 'Solid performance. There is a positive base with specific opportunities for improvement.'
-        : score >= 40
-          ? language === 'es'
-            ? 'Desempeño en desarrollo. Conviene complementar con una revisión más profunda.'
-            : 'Developing performance. It is worth complementing with a deeper review.'
-          : language === 'es'
-            ? 'Desempeño bajo. La validación adicional es recomendable antes de avanzar.'
-            : 'Low performance. Additional validation is recommended before moving forward.';
-
-  return text;
-}
-
 function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en', t: (key: string) => string) {
   const result = record.result as any;
   if (!result) return null;
-  const executiveReading = renderExecutiveReading(record.type, result, language);
+  const executiveReading = getExecutiveReading(record.type, result, language);
 
   switch (record.type) {
     case 'disc':

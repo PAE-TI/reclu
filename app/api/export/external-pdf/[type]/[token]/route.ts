@@ -6,6 +6,7 @@ import { escapeHtml } from '@/lib/security';
 import { getBooleanSetting, getSystemSettingsMap } from '@/lib/system-settings';
 import { getPortalEmailFromRequest } from '@/lib/results-portal';
 import { getPersonalityInterpretation } from '@/lib/disc-calculator';
+import { getTechnicalExecutiveReading } from '@/lib/result-insights';
 
 const validTypes = ['disc', 'driving-forces', 'eq', 'dna', 'acumen', 'values', 'stress', 'technical'];
 
@@ -905,13 +906,7 @@ function generateTechnicalPDF(evaluation: any): string {
       : score >= 40
         ? 'Desempeño en desarrollo'
         : 'Desempeño bajo';
-  const executiveReading = score >= 80
-    ? 'La base técnica es consistente y fuerte para el contexto evaluado.'
-    : score >= 60
-      ? 'Hay buena base técnica con oportunidades puntuales de mejora.'
-      : score >= 40
-        ? 'Hay señales de comprensión, pero todavía se requiere refuerzo.'
-        : 'Conviene validar fundamentos antes de avanzar.';
+  const executiveReading = getTechnicalExecutiveReading(result, 'es');
 
   return `
     <!DOCTYPE html>
