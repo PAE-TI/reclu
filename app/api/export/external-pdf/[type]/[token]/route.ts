@@ -797,6 +797,21 @@ function generateTechnicalPDF(evaluation: any): string {
   });
 
   const categoryScores = result?.categoryScores ? Object.entries(result.categoryScores).sort(([, a], [, b]) => (b as number) - (a as number)) : [];
+  const score = Math.round(result?.totalScore || 0);
+  const performanceLabel = score >= 80
+    ? 'Desempeño sobresaliente'
+    : score >= 60
+      ? 'Desempeño sólido'
+      : score >= 40
+        ? 'Desempeño en desarrollo'
+        : 'Desempeño bajo';
+  const executiveReading = score >= 80
+    ? 'La base técnica es consistente y fuerte para el contexto evaluado.'
+    : score >= 60
+      ? 'Hay buena base técnica con oportunidades puntuales de mejora.'
+      : score >= 40
+        ? 'Hay señales de comprensión, pero todavía se requiere refuerzo.'
+        : 'Conviene validar fundamentos antes de avanzar.';
 
   return `
     <!DOCTYPE html>
@@ -852,9 +867,9 @@ function generateTechnicalPDF(evaluation: any): string {
         <div class="section">
           <h2 class="section-title">Desempeño general</h2>
           <div class="technical-score">
-            <div class="big">${Math.round(result?.totalScore || 0)}%</div>
+            <div class="big">${score}%</div>
             <div style="margin-top: 6px; color: #075985; font-size: 16px; font-weight: 700;">
-              ${escapeHtml(String(result?.performanceLevel || 'Pendiente'))}
+              ${escapeHtml(performanceLabel)}
             </div>
             <div style="margin-top: 8px; color: #0f172a;">
               ${Math.round(result?.correctAnswers || 0)} respuestas correctas de ${Math.round(result?.totalQuestions || 0)} preguntas
@@ -879,6 +894,34 @@ function generateTechnicalPDF(evaluation: any): string {
             <div class="technical-card">
               <div class="score-label">Categorías evaluadas</div>
               <div class="score-value">${categoryScores.length}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Lectura ejecutiva</h2>
+          <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
+            <div class="score-label" style="color: #1d4ed8;">Interpretación del resultado</div>
+            <div style="margin-top: 8px; color: #334155;">
+              ${executiveReading}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Rendimiento por dificultad</h2>
+          <div class="technical-grid">
+            <div class="technical-card">
+              <div class="score-label">Fácil</div>
+              <div class="score-value">${typeof result?.easyTotal === 'number' && result.easyTotal > 0 ? `${Math.round((result.easyCorrect / result.easyTotal) * 100)}%` : 'N/D'}</div>
+            </div>
+            <div class="technical-card">
+              <div class="score-label">Media</div>
+              <div class="score-value">${typeof result?.mediumTotal === 'number' && result.mediumTotal > 0 ? `${Math.round((result.mediumCorrect / result.mediumTotal) * 100)}%` : 'N/D'}</div>
+            </div>
+            <div class="technical-card">
+              <div class="score-label">Difícil</div>
+              <div class="score-value">${typeof result?.hardTotal === 'number' && result.hardTotal > 0 ? `${Math.round((result.hardCorrect / result.hardTotal) * 100)}%` : 'N/D'}</div>
             </div>
           </div>
         </div>

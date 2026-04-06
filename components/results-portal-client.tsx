@@ -133,32 +133,76 @@ function renderTechnicalDetails(result: any, language: 'es' | 'en') {
   if (!result) return null;
   const categoryEntries = Object.entries(result.categoryScores || {}).sort(([, a], [, b]) => (b as number) - (a as number));
   const performanceLabel = getPerformanceLevelLabel(result.performanceLevel || '', language);
+  const score = Math.round(result.totalScore || 0);
+  const easy = result.easyTotal > 0 ? Math.round((result.easyCorrect / result.easyTotal) * 100) : null;
+  const medium = result.mediumTotal > 0 ? Math.round((result.mediumCorrect / result.mediumTotal) * 100) : null;
+  const hard = result.hardTotal > 0 ? Math.round((result.hardCorrect / result.hardTotal) * 100) : null;
+  const executiveReading = language === 'es'
+    ? score >= 80
+      ? 'Desempeño sobresaliente. La base técnica es consistente y fuerte para el contexto evaluado.'
+      : score >= 60
+        ? 'Desempeño sólido. Hay buena base técnica con oportunidades puntuales de mejora.'
+        : score >= 40
+          ? 'Desempeño en desarrollo. Hay señales de comprensión, pero todavía se requiere refuerzo.'
+          : 'Desempeño bajo. Conviene validar fundamentos antes de avanzar.'
+    : score >= 80
+      ? 'Outstanding performance. The technical base is consistent and strong for the evaluated context.'
+      : score >= 60
+        ? 'Solid performance. There is a good technical base with specific opportunities for improvement.'
+        : score >= 40
+          ? 'Developing performance. There are signs of understanding, but reinforcement is still needed.'
+          : 'Low performance. It is advisable to validate fundamentals before moving forward.';
 
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
-      <div className="rounded-2xl bg-slate-50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Desempeño general</p>
-        <p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.totalScore || 0)}%</p>
-        <p className="text-sm text-slate-600">{result.correctAnswers || 0} aciertos de {result.totalQuestions || 0}</p>
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-2xl bg-slate-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Desempeño general</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{score}%</p>
+          <p className="text-sm text-slate-600">{result.correctAnswers || 0} aciertos de {result.totalQuestions || 0}</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{performanceLabel}</p>
+          <p className="text-sm text-slate-600">Lectura automática del rendimiento</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Tiempo promedio</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {typeof result.averageTimePerQuestion === 'number'
+              ? result.averageTimePerQuestion < 60
+                ? `${Math.round(result.averageTimePerQuestion)}s`
+                : `${Math.floor(result.averageTimePerQuestion / 60)}m ${Math.round(result.averageTimePerQuestion % 60)}s`
+              : 'N/D'}
+          </p>
+          <p className="text-sm text-slate-600">Por pregunta</p>
+        </div>
+        <div className="rounded-2xl bg-sky-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-sky-500">Lectura ejecutiva</p>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{executiveReading}</p>
+        </div>
       </div>
-      <div className="rounded-2xl bg-slate-50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p>
-        <p className="mt-2 text-2xl font-bold text-slate-900">{performanceLabel}</p>
-        <p className="text-sm text-slate-600">Lectura automática del rendimiento</p>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <p className="mb-3 text-sm font-semibold text-slate-900">Rendimiento por dificultad</p>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div className="rounded-xl bg-emerald-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Fácil</p>
+            <p className="mt-1 text-lg font-bold text-emerald-700">{easy ?? '—'}%</p>
+          </div>
+          <div className="rounded-xl bg-amber-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">Media</p>
+            <p className="mt-1 text-lg font-bold text-amber-700">{medium ?? '—'}%</p>
+          </div>
+          <div className="rounded-xl bg-rose-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-rose-600">Difícil</p>
+            <p className="mt-1 text-lg font-bold text-rose-700">{hard ?? '—'}%</p>
+          </div>
+        </div>
       </div>
-      <div className="rounded-2xl bg-slate-50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Tiempo promedio</p>
-        <p className="mt-2 text-2xl font-bold text-slate-900">
-          {typeof result.averageTimePerQuestion === 'number'
-            ? result.averageTimePerQuestion < 60
-              ? `${Math.round(result.averageTimePerQuestion)}s`
-              : `${Math.floor(result.averageTimePerQuestion / 60)}m ${Math.round(result.averageTimePerQuestion % 60)}s`
-            : 'N/D'}
-        </p>
-        <p className="text-sm text-slate-600">Por pregunta</p>
-      </div>
+
       {categoryEntries.length > 0 && (
-        <div className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="mb-3 text-sm font-semibold text-slate-900">Categorías principales</p>
           <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
             {categoryEntries.slice(0, 6).map(([label, value]) => (
@@ -619,12 +663,12 @@ export default function ResultsPortalClient() {
                               {expanded ? (
                                 <>
                                   <ChevronUp className="mr-2 h-4 w-4" />
-                                  {language === 'es' ? 'Ocultar' : 'Hide'}
+                                  {language === 'es' ? 'Ocultar detalles' : 'Hide details'}
                                 </>
                               ) : (
                                 <>
                                   <ChevronDown className="mr-2 h-4 w-4" />
-                                  {language === 'es' ? 'Ver detalle' : 'View detail'}
+                                  {language === 'es' ? 'Ver detalles' : 'View details'}
                                 </>
                               )}
                             </Button>
