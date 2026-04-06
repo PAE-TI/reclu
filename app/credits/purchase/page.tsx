@@ -64,6 +64,7 @@ export default function PurchaseCreditsPage() {
     paymentProvider?: 'PAYPAL' | 'STRIPE';
   } | null>(null);
   const stripeCompletionHandled = useRef(false);
+  const stripeCompletionTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -72,22 +73,6 @@ export default function PurchaseCreditsPage() {
       fetchSettings();
     }
   }, [status, router]);
-
-  useEffect(() => {
-    const sessionId = searchParams?.get('stripe_session_id');
-    const cancelled = searchParams?.get('stripe_cancelled');
-
-    if (cancelled && !purchaseComplete) {
-      toast.error(t('purchase.paymentCancelled'));
-      router.replace('/credits/purchase');
-      return;
-    }
-
-    if (!sessionId || stripeCompletionHandled.current || purchaseComplete) return;
-
-    stripeCompletionHandled.current = true;
-    completeStripePurchase(sessionId);
-  }, [searchParams, purchaseComplete, router, t]);
 
   const fetchSettings = async () => {
     try {
@@ -116,7 +101,7 @@ export default function PurchaseCreditsPage() {
     }
   };
 
-  const completeStripePurchase = async (sessionId: string) => {
+  const completeStripePurchase = useCallback(async (sessionId: string, attempt = 0): Promise<void> => {
     setProcessing(true);
     try {
       const response = await fetch('/api/credits/purchase/stripe/complete', {
@@ -127,22 +112,69 @@ export default function PurchaseCreditsPage() {
 
       const result = await response.json();
 
+      if (response.status === 202 || result.processing) {
+        if (attempt < 15 && !purchaseComplete) {
+          if (stripeCompletionTimer.current) {
+            window.clearTimeout(stripeCompletionTimer.current);
+          }
+          stripeCompletionTimer.current = window.setTimeout(() => {
+            void completeStripePurchase(sessionId, attempt + 1);
+          }, 2000);
+          return;
+        }
+
+        throw new Error(result.message || t('purchase.paymentError'));
+      }
+
       if (!response.ok) {
         throw new Error(result.error || t('purchase.errorCapturing'));
       }
 
       setPurchaseResult(result);
       setPurchaseComplete(true);
+      if (stripeCompletionTimer.current) {
+        window.clearTimeout(stripeCompletionTimer.current);
+        stripeCompletionTimer.current = null;
+      }
       window.dispatchEvent(new Event('credits-updated'));
       toast.success(t('purchase.creditsAddedToast').replace('{amount}', result.creditAmount.toString()));
+      setProcessing(false);
       router.replace('/credits/purchase');
     } catch (error) {
+      if (stripeCompletionTimer.current) {
+        window.clearTimeout(stripeCompletionTimer.current);
+        stripeCompletionTimer.current = null;
+      }
+      setProcessing(false);
       toast.error(error instanceof Error ? error.message : t('purchase.paymentError'));
       router.replace('/credits/purchase');
-    } finally {
-      setProcessing(false);
     }
-  };
+  }, [purchaseComplete, router, t]);
+
+  useEffect(() => {
+    const sessionId = searchParams?.get('stripe_session_id');
+    const cancelled = searchParams?.get('stripe_cancelled');
+
+    if (cancelled && !purchaseComplete) {
+      toast.error(t('purchase.paymentCancelled'));
+      router.replace('/credits/purchase');
+      return;
+    }
+
+    if (!sessionId || stripeCompletionHandled.current || purchaseComplete) return;
+
+    stripeCompletionHandled.current = true;
+    void completeStripePurchase(sessionId);
+  }, [searchParams, purchaseComplete, completeStripePurchase, router, t]);
+
+  useEffect(() => {
+    return () => {
+      if (stripeCompletionTimer.current) {
+        window.clearTimeout(stripeCompletionTimer.current);
+        stripeCompletionTimer.current = null;
+      }
+    };
+  }, []);
 
   const renderPayPalButton = useCallback(() => {
     if (!settings?.paypalClientId || !window.paypal) return;

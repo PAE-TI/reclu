@@ -53,6 +53,34 @@ export async function POST(request: NextRequest) {
     const origin = request.headers.get('origin') || new URL(request.url).origin;
     const stripe = new Stripe(stripeSecretSetting.value);
 
+    const recentPendingPurchase = await prisma.creditPurchase.findFirst({
+      where: {
+        userId: user.id,
+        paymentProvider: 'STRIPE',
+        creditAmount,
+        status: 'PENDING',
+        stripeCheckoutSessionId: { not: null },
+        createdAt: {
+          gte: new Date(Date.now() - 30 * 60 * 1000),
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (recentPendingPurchase?.stripeCheckoutSessionId) {
+      const existingSession = await stripe.checkout.sessions.retrieve(recentPendingPurchase.stripeCheckoutSessionId);
+
+      if (existingSession && existingSession.status !== 'expired') {
+        return NextResponse.json({
+          success: true,
+          url: existingSession.url,
+          sessionId: existingSession.id,
+          purchaseId: recentPendingPurchase.id,
+          reused: true,
+        });
+      }
+    }
+
     const purchase = await prisma.creditPurchase.create({
       data: {
         userId: user.id,
@@ -74,6 +102,13 @@ export async function POST(request: NextRequest) {
         purchaseId: purchase.id,
         userId: user.id,
         creditAmount: String(creditAmount),
+      },
+      payment_intent_data: {
+        metadata: {
+          purchaseId: purchase.id,
+          userId: user.id,
+          creditAmount: String(creditAmount),
+        },
       },
       line_items: [
         {

@@ -13,7 +13,7 @@ export async function GET() {
     const settings = await prisma.systemSettings.findMany({
       where: {
         key: {
-          in: ['stripe_secret_key', 'stripe_mode', 'stripe_enabled'],
+          in: ['stripe_secret_key', 'stripe_webhook_secret', 'stripe_mode', 'stripe_enabled'],
         },
       },
     });
@@ -23,6 +23,9 @@ export async function GET() {
       if (setting.key === 'stripe_secret_key') {
         settingsMap[stripeSecretKeyConfigKey] = setting.value ? `********${setting.value.slice(-4)}` : '';
         settingsMap[stripeSecretKeyConfiguredKey] = setting.value ? 'true' : 'false';
+      } else if (setting.key === 'stripe_webhook_secret') {
+        settingsMap[stripeWebhookSecretConfigKey] = setting.value ? `********${setting.value.slice(-4)}` : '';
+        settingsMap[stripeWebhookSecretConfiguredKey] = setting.value ? 'true' : 'false';
       } else {
         settingsMap[setting.key] = setting.value;
       }
@@ -32,6 +35,8 @@ export async function GET() {
       settings: {
         secretKeyMasked: settingsMap[stripeSecretKeyConfigKey] || '',
         secretKeyConfigured: settingsMap[stripeSecretKeyConfiguredKey] === 'true',
+        webhookSecretMasked: settingsMap[stripeWebhookSecretConfigKey] || '',
+        webhookSecretConfigured: settingsMap[stripeWebhookSecretConfiguredKey] === 'true',
         mode: settingsMap.stripe_mode === 'live' ? 'live' : 'test',
         purchasesEnabled: settingsMap.stripe_enabled === 'true',
       },
@@ -52,7 +57,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { key, value } = body;
 
-    const allowedKeys = ['stripe_secret_key', 'stripe_mode', 'stripe_enabled'];
+    const allowedKeys = ['stripe_secret_key', 'stripe_webhook_secret', 'stripe_mode', 'stripe_enabled'];
     if (!allowedKeys.includes(key)) {
       return NextResponse.json({ error: 'Clave no permitida' }, { status: 400 });
     }
@@ -80,3 +85,5 @@ export async function PUT(request: NextRequest) {
 
 const stripeSecretKeyConfigKey = 'stripe_secret_key';
 const stripeSecretKeyConfiguredKey = 'stripe_secret_key_configured';
+const stripeWebhookSecretConfigKey = 'stripe_webhook_secret';
+const stripeWebhookSecretConfiguredKey = 'stripe_webhook_secret_configured';

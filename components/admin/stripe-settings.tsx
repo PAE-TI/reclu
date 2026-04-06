@@ -13,6 +13,8 @@ import toast from 'react-hot-toast';
 interface StripeSettings {
   secretKeyMasked: string;
   secretKeyConfigured: boolean;
+  webhookSecretMasked: string;
+  webhookSecretConfigured: boolean;
   mode: 'test' | 'live';
   purchasesEnabled: boolean;
 }
@@ -23,7 +25,9 @@ export function StripeSettingsCard() {
   const [saving, setSaving] = useState<string | null>(null);
 
   const [secretKey, setSecretKey] = useState('');
+  const [webhookSecret, setWebhookSecret] = useState('');
   const [showSecret, setShowSecret] = useState(false);
+  const [showWebhookSecret, setShowWebhookSecret] = useState(false);
   const [mode, setMode] = useState<'test' | 'live'>('test');
   const [purchasesEnabled, setPurchasesEnabled] = useState(false);
 
@@ -79,6 +83,7 @@ export function StripeSettingsCard() {
   }
 
   const isStripeConfigured = Boolean(settings?.secretKeyConfigured);
+  const isWebhookConfigured = Boolean(settings?.webhookSecretConfigured);
 
   return (
     <Card className="mb-8 border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-50">
@@ -164,6 +169,47 @@ export function StripeSettingsCard() {
             </div>
 
             <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Webhook Secret</label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    type={showWebhookSecret ? 'text' : 'password'}
+                    value={webhookSecret}
+                    onChange={(e) => setWebhookSecret(e.target.value)}
+                    placeholder={settings?.webhookSecretConfigured ? '•••••••• (ya configurado)' : 'whsec_...'}
+                    className="font-mono text-sm pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowWebhookSecret(!showWebhookSecret)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showWebhookSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    saveSetting('stripe_webhook_secret', webhookSecret, 'Webhook Secret guardado');
+                    setWebhookSecret('');
+                  }}
+                  disabled={saving === 'stripe_webhook_secret' || !webhookSecret}
+                  className="border-sky-300 text-sky-700 hover:bg-sky-100"
+                >
+                  {saving === 'stripe_webhook_secret' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                </Button>
+              </div>
+              {settings?.webhookSecretConfigured && (
+                <p className="text-xs text-cyan-600 mt-1">✓ Webhook configurado (termina en {settings.webhookSecretMasked.slice(-4)})</p>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Configúralo para confirmar pagos aunque el usuario cierre la pestaña. Endpoint: <span className="font-mono text-cyan-700">/api/webhooks/stripe</span>.
+                Es el modo más robusto y recomendado.
+              </p>
+            </div>
+
+            <div>
               <label className="text-sm font-medium text-gray-700 mb-1 block">Modo</label>
               <Select
                 value={mode}
@@ -198,6 +244,9 @@ export function StripeSettingsCard() {
               <div className="mt-4 flex items-center gap-2">
                 <Badge className={isStripeConfigured ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}>
                   {isStripeConfigured ? 'Listo para usar' : 'Falta configuración'}
+                </Badge>
+                <Badge className={isWebhookConfigured ? 'bg-cyan-100 text-cyan-700' : 'bg-gray-100 text-gray-600'}>
+                  {isWebhookConfigured ? 'Webhook listo' : 'Webhook pendiente'}
                 </Badge>
                 <Badge className={purchasesEnabled ? 'bg-sky-100 text-sky-700' : 'bg-gray-100 text-gray-600'}>
                   {purchasesEnabled ? 'Activo' : 'Inactivo'}
