@@ -160,13 +160,6 @@ export default function PublicHeader() {
             </a>
             <a href="/#beneficios" className="text-gray-600 hover:text-indigo-600 transition-colors text-sm font-medium">{t('header.benefits')}</a>
             <a href="/#faq" className="text-gray-600 hover:text-indigo-600 transition-colors text-sm font-medium">{t('header.faq')}</a>
-            <Link
-              href="/mis-resultados"
-              className="flex items-center gap-1.5 text-gray-600 hover:text-indigo-600 transition-colors text-sm font-medium"
-            >
-              <FileCode className="w-4 h-4" />
-              {language === 'es' ? 'Ver mis resultados' : 'View my results'}
-            </Link>
           </div>
 
           {/* Auth Buttons & Language Selector */}
@@ -202,11 +195,6 @@ export default function PublicHeader() {
 
             <Link href="/auth/signin">
               <Button variant="ghost" className="text-gray-700 hover:text-indigo-600">{t('header.login')}</Button>
-            </Link>
-            <Link href="/mis-resultados">
-              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
-                {language === 'es' ? 'Ver mis resultados' : 'View my results'}
-              </Button>
             </Link>
             <Link href="/auth/signup">
               <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25">
@@ -247,17 +235,6 @@ export default function PublicHeader() {
             
             {/* Evaluaciones - Desplegable */}
             <div className="px-4">
-              <Link
-                href="/mis-resultados"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="mb-2 flex items-center justify-between rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3 text-indigo-700"
-              >
-                <div className="flex items-center gap-3">
-                  <FileCode className="w-5 h-5" />
-                  <span className="font-medium">{language === 'es' ? 'Ver mis resultados' : 'View my results'}</span>
-                </div>
-                <ChevronDown className="w-4 h-4 -rotate-90" />
-              </Link>
               <button
                 onClick={() => setIsMobileEvaluationsOpen(!isMobileEvaluationsOpen)}
                 className={`w-full flex items-center justify-between px-4 py-2 rounded-lg font-medium transition-colors ${
