@@ -11,9 +11,35 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password, firstName, lastName, language } = body;
 
-    if (!email || !password || !firstName || !lastName) {
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    const safeFirstName = typeof firstName === 'string' ? firstName.trim() : '';
+    const safeLastName = typeof lastName === 'string' ? lastName.trim() : '';
+    const safePassword = typeof password === 'string' ? password : '';
+
+    if (!normalizedEmail || !safePassword || !safeFirstName || !safeLastName) {
       return NextResponse.json(
         { error: 'Todos los campos son requeridos' },
+        { status: 400 }
+      );
+    }
+
+    if (safeFirstName.length > 100 || safeLastName.length > 100) {
+      return NextResponse.json(
+        { error: 'El nombre es demasiado largo' },
+        { status: 400 }
+      );
+    }
+
+    if (safePassword.length < 8) {
+      return NextResponse.json(
+        { error: 'La contraseña debe tener al menos 8 caracteres' },
+        { status: 400 }
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return NextResponse.json(
+        { error: 'El email no es válido' },
         { status: 400 }
       );
     }
@@ -23,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar if usuario ya existe
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -40,16 +66,16 @@ export async function POST(request: NextRequest) {
     const isActiveByDefault = defaultActiveSetting?.value !== 'false';
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(safePassword, 12);
 
     // Crear usuario
     const user = await prisma.user.create({
       data: {
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
-        firstName,
-        lastName,
-        name: `${firstName} ${lastName}`.trim(),
+        firstName: safeFirstName,
+        lastName: safeLastName,
+        name: `${safeFirstName} ${safeLastName}`.trim(),
         isActive: isActiveByDefault,
         language: userLanguage,
       },

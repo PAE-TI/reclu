@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { escapeHtml } from '@/lib/security';
 
 const validTypes = ['disc', 'driving-forces', 'eq', 'dna', 'acumen', 'values', 'stress'];
 
@@ -166,6 +167,7 @@ function formatDate(date: Date | string): string {
 // DISC PDF Generator
 function generateDISCPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   const getDimensionColor = (dimension: string) => {
     const colors: Record<string, { bg: string; color: string; border: string }> = {
       'D': { bg: '#fee2e2', color: '#dc2626', border: '#fecaca' },
@@ -183,7 +185,7 @@ function generateDISCPDF(evaluation: any): string {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte DISC - ${evaluation.recipientName}</title>
+      <title>Reporte DISC - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -191,7 +193,7 @@ function generateDISCPDF(evaluation: any): string {
         <div class="header">
           <h1>Reporte de Evaluación DISC</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -267,6 +269,7 @@ function generateDISCPDF(evaluation: any): string {
 // Driving Forces PDF Generator
 function generateDrivingForcesPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   const motivators = [
     { key: 'theoretical', name: 'Teórico', color: '#6366f1' },
     { key: 'utilitarian', name: 'Utilitario', color: '#f59e0b' },
@@ -281,7 +284,7 @@ function generateDrivingForcesPDF(evaluation: any): string {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte Fuerzas Motivadoras - ${evaluation.recipientName}</title>
+      <title>Reporte Fuerzas Motivadoras - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -289,7 +292,7 @@ function generateDrivingForcesPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #8b5cf6;">
           <h1 style="color: #8b5cf6;">Reporte de Fuerzas Motivadoras</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -341,6 +344,7 @@ function generateDrivingForcesPDF(evaluation: any): string {
 // EQ PDF Generator
 function generateEQPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   const dimensions = [
     { key: 'selfAwareness', name: 'Autoconciencia', color: '#f43f5e' },
     { key: 'selfRegulation', name: 'Autorregulación', color: '#8b5cf6' },
@@ -354,7 +358,7 @@ function generateEQPDF(evaluation: any): string {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte Inteligencia Emocional - ${evaluation.recipientName}</title>
+      <title>Reporte Inteligencia Emocional - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -362,7 +366,7 @@ function generateEQPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #f43f5e;">
           <h1 style="color: #f43f5e;">Reporte de Inteligencia Emocional</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -423,6 +427,7 @@ function generateEQPDF(evaluation: any): string {
 // DNA-25 PDF Generator
 function generateDNAPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   const categories = [
     { key: 'thinking', name: 'Pensamiento', color: '#6366f1' },
     { key: 'communication', name: 'Comunicación', color: '#f59e0b' },
@@ -436,7 +441,7 @@ function generateDNAPDF(evaluation: any): string {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte DNA-25 - ${evaluation.recipientName}</title>
+      <title>Reporte DNA-25 - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -444,7 +449,7 @@ function generateDNAPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #14b8a6;">
           <h1 style="color: #14b8a6;">Reporte DNA-25 Competencias</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -496,13 +501,14 @@ function generateDNAPDF(evaluation: any): string {
 // Acumen PDF Generator
 function generateAcumenPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   
   return `
     <!DOCTYPE html>
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte Acumen (ACI) - ${evaluation.recipientName}</title>
+      <title>Reporte Acumen (ACI) - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -510,7 +516,7 @@ function generateAcumenPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #f59e0b;">
           <h1 style="color: #f59e0b;">Reporte Acumen (ACI)</h1>
           <div class="subtitle">Índice de Capacidad de Juicio</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -570,13 +576,14 @@ function generateAcumenPDF(evaluation: any): string {
 // Values PDF Generator
 function generateValuesPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   
   return `
     <!DOCTYPE html>
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte Valores e Integridad - ${evaluation.recipientName}</title>
+      <title>Reporte Valores e Integridad - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -584,7 +591,7 @@ function generateValuesPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #8b5cf6;">
           <h1 style="color: #8b5cf6;">Reporte de Valores e Integridad</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 
@@ -643,6 +650,7 @@ function generateValuesPDF(evaluation: any): string {
 // Stress PDF Generator
 function generateStressPDF(evaluation: any): string {
   const result = evaluation.result;
+  const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
   const dimensions = [
     { key: 'workStress', name: 'Estrés Laboral', color: '#ef4444' },
     { key: 'emotionalManagement', name: 'Manejo Emocional', color: '#f59e0b' },
@@ -656,7 +664,7 @@ function generateStressPDF(evaluation: any): string {
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Reporte Estrés y Resiliencia - ${evaluation.recipientName}</title>
+      <title>Reporte Estrés y Resiliencia - ${safeRecipientName}</title>
       <style>${getBaseStyles()}</style>
     </head>
     <body>
@@ -664,7 +672,7 @@ function generateStressPDF(evaluation: any): string {
         <div class="header" style="border-bottom-color: #f97316;">
           <h1 style="color: #f97316;">Reporte de Estrés y Resiliencia</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.recipientName}</div>
+          <div class="subtitle">${safeRecipientName}</div>
           <div class="date">Completado el ${formatDate(evaluation.completedAt)}</div>
         </div>
 

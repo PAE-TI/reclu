@@ -166,6 +166,8 @@ export async function POST(
       );
     }
 
+    const uniqueQuestionIds = new Set<string>();
+
     // Validar que todas las respuestas tengan el formato correcto
     for (const response of responses) {
       if (!response.questionId || 
@@ -173,6 +175,28 @@ export async function POST(
           typeof response.leastValue !== 'number') {
         return NextResponse.json(
           { error: 'Formato de respuestas inválido' },
+          { status: 400 }
+        );
+      }
+
+      if (uniqueQuestionIds.has(response.questionId)) {
+        return NextResponse.json(
+          { error: 'No se permiten preguntas repetidas' },
+          { status: 400 }
+        );
+      }
+      uniqueQuestionIds.add(response.questionId);
+
+      if (response.mostValue < 1 || response.mostValue > 4 || response.leastValue < 1 || response.leastValue > 4) {
+        return NextResponse.json(
+          { error: 'Valores fuera de rango' },
+          { status: 400 }
+        );
+      }
+
+      if (response.mostValue === response.leastValue) {
+        return NextResponse.json(
+          { error: 'Las selecciones de más y menos parecido deben ser diferentes' },
           { status: 400 }
         );
       }

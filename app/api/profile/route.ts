@@ -18,6 +18,9 @@ interface UpdateProfileData {
   confirmPassword?: string;
 }
 
+const MAX_NAME_LENGTH = 100;
+const MAX_TEXT_LENGTH = 120;
+
 // GET - Obtener información del perfil
 export async function GET() {
   try {
@@ -92,9 +95,37 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    if (data.firstName && data.firstName.trim().length > MAX_NAME_LENGTH) {
+      return NextResponse.json(
+        { error: 'El nombre es demasiado largo' },
+        { status: 400 }
+      );
+    }
+
     if (data.lastName && data.lastName.trim().length < 2) {
       return NextResponse.json(
         { error: 'El apellido debe tener al menos 2 caracteres' },
+        { status: 400 }
+      );
+    }
+
+    if (data.lastName && data.lastName.trim().length > MAX_NAME_LENGTH) {
+      return NextResponse.json(
+        { error: 'El apellido es demasiado largo' },
+        { status: 400 }
+      );
+    }
+
+    if (data.company && data.company.trim().length > MAX_TEXT_LENGTH) {
+      return NextResponse.json(
+        { error: 'La empresa es demasiado larga' },
+        { status: 400 }
+      );
+    }
+
+    if (data.jobTitle && data.jobTitle.trim().length > MAX_TEXT_LENGTH) {
+      return NextResponse.json(
+        { error: 'El cargo es demasiado largo' },
         { status: 400 }
       );
     }
@@ -118,6 +149,13 @@ export async function PUT(req: NextRequest) {
       if (data.newPassword.length < 6) {
         return NextResponse.json(
           { error: 'La nueva contraseña debe tener al menos 6 caracteres' },
+          { status: 400 }
+        );
+      }
+
+      if (data.newPassword.length > 128) {
+        return NextResponse.json(
+          { error: 'La nueva contraseña es demasiado larga' },
           { status: 400 }
         );
       }
@@ -156,8 +194,8 @@ export async function PUT(req: NextRequest) {
     
     // Only non-facilitators can update company and jobTitle
     if (!isFacilitator) {
-      if (data.company !== undefined) updateData.company = data.company.trim() || null;
-      if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle.trim() || null;
+      if (data.company !== undefined) updateData.company = data.company.trim().slice(0, MAX_TEXT_LENGTH) || null;
+      if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle.trim().slice(0, MAX_TEXT_LENGTH) || null;
     }
     
     // Actualizar name combinado si se proporciona alguno de los nombres

@@ -7,6 +7,8 @@ import { emailService } from '@/lib/email';
 import { getTeamUserIds } from '@/lib/team';
 import { JOB_POSITIONS } from '@/lib/job-positions';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // GET - Obtener evaluaciones técnicas enviadas
 export async function GET(request: NextRequest) {
   try {
@@ -63,6 +65,44 @@ export async function POST(request: NextRequest) {
     if (!recipientName || !recipientEmail || !jobPositionId) {
       return NextResponse.json(
         { error: 'Nombre, email y cargo son requeridos' },
+        { status: 400 }
+      );
+    }
+
+    const safeRecipientName = String(recipientName).trim();
+    const safeRecipientEmail = String(recipientEmail).trim().toLowerCase();
+
+    if (safeRecipientName.length < 2 || safeRecipientName.length > 120) {
+      return NextResponse.json(
+        { error: 'El nombre del destinatario no es válido' },
+        { status: 400 }
+      );
+    }
+
+    if (!EMAIL_REGEX.test(safeRecipientEmail)) {
+      return NextResponse.json(
+        { error: 'El email del destinatario no es válido' },
+        { status: 400 }
+      );
+    }
+
+    if (!JOB_POSITIONS.some(position => position.id === jobPositionId)) {
+      return NextResponse.json(
+        { error: 'El cargo seleccionado no es válido' },
+        { status: 400 }
+      );
+    }
+
+    if (typeof title === 'string' && title.length > 180) {
+      return NextResponse.json(
+        { error: 'El título es demasiado largo' },
+        { status: 400 }
+      );
+    }
+
+    if (typeof description === 'string' && description.length > 500) {
+      return NextResponse.json(
+        { error: 'La descripción es demasiado larga' },
         { status: 400 }
       );
     }
@@ -132,8 +172,8 @@ export async function POST(request: NextRequest) {
       data: {
         title: title || `Evaluación Técnica - ${jobPositionTitle}`,
         description: description || `Evaluación técnica para el cargo de ${jobPositionTitle}`,
-        recipientName,
-        recipientEmail: recipientEmail.toLowerCase(),
+        recipientName: safeRecipientName,
+        recipientEmail: safeRecipientEmail,
         senderUserId: session.user.id,
         jobPositionId: resolvedJobPositionId,
         jobPositionTitle,

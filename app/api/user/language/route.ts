@@ -29,6 +29,20 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const requestUrl = new URL(request.url);
+    const origin = request.headers.get('origin') || request.headers.get('referer');
+    if (!origin) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
+    }
+
+    try {
+      if (new URL(origin).origin !== requestUrl.origin) {
+        return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
+    }
+
     const { language } = await request.json();
     
     if (!language || !['es', 'en'].includes(language)) {

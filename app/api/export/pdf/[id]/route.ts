@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { escapeHtml } from '@/lib/security';
 
 export async function GET(
   request: NextRequest,
@@ -64,6 +65,13 @@ export async function GET(
 }
 
 function generateReportHTML(evaluation: any, result: any, interpretation: any): string {
+  const safeEvaluationTitle = escapeHtml(String(evaluation.title || 'Reporte DISC'));
+  const safeRecipientName = escapeHtml(String(`${evaluation.user.firstName} ${evaluation.user.lastName}`.trim() || ''));
+  const safePersonalityTitle = escapeHtml(String(interpretation?.title || `Tipo ${result.personalityType}`));
+  const safePersonalityDescription = escapeHtml(String(interpretation?.description || 'Tu perfil de personalidad dominante'));
+  const safePrimaryStyle = escapeHtml(String(result.primaryStyle || 'N/A'));
+  const safeSecondaryStyle = result.secondaryStyle ? escapeHtml(String(result.secondaryStyle)) : '';
+  const safePersonalityType = escapeHtml(String(result.personalityType || 'N/A'));
   const completedDate = new Date(evaluation.completedAt!).toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'long',
@@ -354,9 +362,9 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
         <div class="header">
           <h1>Reporte de Evaluación DISC</h1>
           <div class="subtitle">Reclu System</div>
-          <div class="subtitle">${evaluation.title}</div>
+          <div class="subtitle">${safeEvaluationTitle}</div>
           <div class="date">Completado el ${completedDate}</div>
-          <div class="date">${evaluation.user.firstName} ${evaluation.user.lastName}</div>
+          <div class="date">${safeRecipientName}</div>
         </div>
 
         <!-- Personality Type Section -->
@@ -364,19 +372,19 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
           <h2 class="section-title">Perfil de Personalidad</h2>
           <div class="personality-card">
             <div class="personality-type">
-              ${interpretation?.title || `Tipo ${result.personalityType}`}
+              ${safePersonalityTitle}
             </div>
             <div class="personality-description">
-              ${interpretation?.description || 'Tu perfil de personalidad dominante'}
+              ${safePersonalityDescription}
             </div>
             <div>
-              <strong>Estilo Principal:</strong> ${result.primaryStyle}
-              ${result.secondaryStyle ? `<br><strong>Estilo Secundario:</strong> ${result.secondaryStyle}` : ''}
+              <strong>Estilo Principal:</strong> ${safePrimaryStyle}
+              ${safeSecondaryStyle ? `<br><strong>Estilo Secundario:</strong> ${safeSecondaryStyle}` : ''}
               <br><strong>Intensidad:</strong> ${result.styleIntensity.toFixed(1)}%
             </div>
             <div class="style-badges">
-              <div class="style-badge">${result.primaryStyle}</div>
-              ${result.secondaryStyle ? `<div class="style-badge" style="width: 45px; height: 45px; font-size: 18px;">${result.secondaryStyle}</div>` : ''}
+              <div class="style-badge">${safePrimaryStyle}</div>
+              ${safeSecondaryStyle ? `<div class="style-badge" style="width: 45px; height: 45px; font-size: 18px;">${safeSecondaryStyle}</div>` : ''}
             </div>
           </div>
         </div>
@@ -525,7 +533,7 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
         <div class="section">
           <h2 class="section-title">Resumen de la Evaluación</h2>
           <div class="summary-stats">
-            <div><strong>Evaluación:</strong> ${evaluation.title}</div>
+            <div><strong>Evaluación:</strong> ${safeEvaluationTitle}</div>
             <div class="stats-grid">
               <div class="stat-item">
                 <div class="stat-value">${evaluation.responses.length}</div>
@@ -536,7 +544,7 @@ function generateReportHTML(evaluation: any, result: any, interpretation: any): 
                 <div class="stat-label">Intensidad del Estilo</div>
               </div>
               <div class="stat-item">
-                <div class="stat-value">${result.personalityType}</div>
+                <div class="stat-value">${safePersonalityType}</div>
                 <div class="stat-label">Tipo de Personalidad</div>
               </div>
             </div>

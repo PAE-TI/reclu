@@ -4,7 +4,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { prisma } from './db';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const authOptions: NextAuthOptions = {
+  useSecureCookies: isProduction,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -18,8 +21,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
+          const email = credentials.email.trim().toLowerCase();
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+            where: { email },
           });
 
           if (!user || !user.password) {
@@ -69,12 +73,12 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: isProduction ? `__Secure-next-auth.session-token` : `next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false,
+        secure: isProduction,
       },
     },
   },

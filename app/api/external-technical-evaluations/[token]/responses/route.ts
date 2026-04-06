@@ -68,6 +68,58 @@ export async function POST(
       );
     }
 
+    const customQuestionIds = Array.isArray(evaluation.questionSetConfig)
+      ? []
+      : ((evaluation.questionSetConfig as { questionIds?: string[] } | null)?.questionIds || []);
+    const allowedQuestionIds = customQuestionIds.length > 0
+      ? customQuestionIds
+      : (await prisma.technicalQuestion.findMany({
+          where: {
+            jobPositionId: evaluation.jobPositionId,
+            isActive: true,
+          },
+          select: { id: true },
+        })).map(question => question.id);
+
+    const uniqueQuestionIds = new Set<string>();
+    for (const response of responses) {
+      if (!response.questionId || !response.selectedAnswer) {
+        return NextResponse.json(
+          { error: 'Formato de respuestas inválido' },
+          { status: 400 }
+        );
+      }
+
+      if (uniqueQuestionIds.has(response.questionId)) {
+        return NextResponse.json(
+          { error: 'No se permiten preguntas repetidas' },
+          { status: 400 }
+        );
+      }
+      uniqueQuestionIds.add(response.questionId);
+
+      if (!['A', 'B', 'C', 'D'].includes(response.selectedAnswer)) {
+        return NextResponse.json(
+          { error: 'Respuesta seleccionada inválida' },
+          { status: 400 }
+        );
+      }
+
+      if (!allowedQuestionIds.includes(response.questionId)) {
+        return NextResponse.json(
+          { error: 'Las respuestas no coinciden con el set de preguntas asignado' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (responses.length !== allowedQuestionIds.length) {
+      return NextResponse.json(
+        { error: 'El número de respuestas no coincide con el set asignado' },
+        { status: 400 }
+      );
+    }
+
     // Get all questions with correct answers
     const questionIds = responses.map(r => r.questionId);
     const questions = await prisma.technicalQuestion.findMany({

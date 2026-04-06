@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { isSameOriginRequest } from '@/lib/security';
 
 export async function GET() {
   try {
@@ -30,6 +31,10 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    if (!isSameOriginRequest(request)) {
+      return NextResponse.json({ error: 'Origen inválido' }, { status: 403 });
     }
 
     const { themePreference } = await request.json();
