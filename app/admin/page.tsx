@@ -56,6 +56,7 @@ import {
   History,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { CreditPricingCard } from '@/components/admin/credit-pricing-card';
 import { PayPalSettingsCard } from '@/components/admin/paypal-settings';
 import { StripeSettingsCard } from '@/components/admin/stripe-settings';
 import { CreditSalesCard } from '@/components/admin/credit-sales';
@@ -1359,6 +1360,7 @@ export default function AdminPage() {
             </CardContent>
           </Card>
 
+          <CreditPricingCard />
           <PayPalSettingsCard />
           <StripeSettingsCard />
           <CreditSalesCard />
