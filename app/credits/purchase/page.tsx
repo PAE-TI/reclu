@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
@@ -99,12 +99,11 @@ export default function PurchaseCreditsPage() {
           setCreditAmount(Math.max(data.minCredits, 50));
         }
         setSelectedProvider((current) => {
-          if (current && (
-            (current === 'PAYPAL' && data.paypalEnabled) ||
-            (current === 'STRIPE' && data.stripeEnabled)
-          )) {
-            return current;
-          }
+          const hasCurrent =
+            current &&
+            ((current === 'PAYPAL' && data.paypalEnabled) ||
+              (current === 'STRIPE' && data.stripeEnabled));
+          if (hasCurrent) return current;
           if (data.stripeEnabled) return 'STRIPE';
           if (data.paypalEnabled) return 'PAYPAL';
           return null;
@@ -272,40 +271,36 @@ export default function PurchaseCreditsPage() {
   const canUsePayPal = Boolean(settings?.paypalEnabled && settings?.paypalClientId);
   const canUseStripe = Boolean(settings?.stripeEnabled && settings?.stripeConfigured);
 
-  const providerCards = [
-    {
-      id: 'PAYPAL' as const,
-      name: 'PayPal',
-      title: language === 'es' ? 'Rápido y familiar' : 'Fast and familiar',
-      description: language === 'es'
-        ? 'Ideal si prefieres una experiencia conocida con soporte de tarjeta o cuenta PayPal.'
-        : 'Ideal if you prefer a familiar experience with PayPal account or card support.',
-      badge: language === 'es' ? 'Más usado' : 'Most familiar',
-      accent: 'from-amber-500 to-yellow-500',
-      border: 'border-amber-200',
-      bg: 'bg-amber-50',
-      available: canUsePayPal,
-      features: language === 'es'
-        ? ['Checkout estándar de PayPal', 'Pago con tarjeta si está habilitado', 'Flujo directo y conocido']
-        : ['Standard PayPal checkout', 'Card payment if enabled', 'Direct familiar flow'],
-    },
-    {
-      id: 'STRIPE' as const,
-      name: 'Stripe',
-      title: language === 'es' ? 'Moderno y elegante' : 'Modern and elegant',
-      description: language === 'es'
-        ? 'Recomendado si buscas una experiencia más limpia, rápida y optimizada para tarjeta.'
-        : 'Recommended if you want a cleaner, faster, card-first checkout experience.',
-      badge: language === 'es' ? 'Recomendado' : 'Recommended',
-      accent: 'from-sky-500 to-cyan-500',
-      border: 'border-sky-200',
-      bg: 'bg-sky-50',
-      available: canUseStripe,
-      features: language === 'es'
-        ? ['Checkout de tarjeta profesional', 'Redirección segura a Stripe', 'Experiencia más moderna']
-        : ['Professional card checkout', 'Secure redirect to Stripe', 'More modern experience'],
-    },
-  ];
+  const providerCards = useMemo(() => {
+    return [
+      {
+        id: 'PAYPAL' as const,
+        name: 'PayPal',
+        title: language === 'es' ? 'Rápido y conocido' : 'Fast and familiar',
+        description: language === 'es'
+          ? 'Ideal si prefieres pagar con una experiencia conocida y sencilla.'
+          : 'Great if you prefer a familiar, straightforward checkout.',
+        badge: language === 'es' ? 'Simple' : 'Simple',
+        available: canUsePayPal,
+        accent: 'from-amber-500 to-orange-500',
+      },
+      {
+        id: 'STRIPE' as const,
+        name: 'Stripe',
+        title: language === 'es' ? 'Más ágil para tarjeta' : 'Best for card payments',
+        description: language === 'es'
+          ? 'Recomendado por su flujo más limpio y directo para tarjeta.'
+          : 'Recommended for a cleaner, faster card-first experience.',
+        badge: language === 'es' ? 'Recomendado' : 'Recommended',
+        available: canUseStripe,
+        accent: 'from-sky-500 to-cyan-500',
+      },
+    ];
+  }, [canUsePayPal, canUseStripe, language]);
+
+  const availableProviders = providerCards.filter((provider) => provider.available);
+  const selectedProviderCard = providerCards.find((provider) => provider.id === selectedProvider) || null;
+  const hasOnlyOneProvider = availableProviders.length === 1;
 
   // Calcular escalas dinámicas basadas en min/max
   const calculatePresetAmounts = (): number[] => {
@@ -458,308 +453,329 @@ export default function PurchaseCreditsPage() {
         />
       )}
       
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Header with gradient */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl shadow-lg">
-              <CreditCard className="w-7 h-7 text-white" />
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8 rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50 p-6 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1 text-xs font-medium text-indigo-700 shadow-sm">
+              <Sparkles className="h-3.5 w-3.5" />
+              {language === 'es' ? 'Compra guiada' : 'Guided checkout'}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">{t('purchase.title')}</h1>
-              <p className="text-gray-600">{t('purchase.subtitle')}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Selector de cantidad */}
-          <div className="lg:col-span-2">
-            <Card className="border-indigo-200/50 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg">
-                    <Coins className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-indigo-900">{t('purchase.selectAmount')}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6 pt-6">
-                {/* Preset buttons */}
-                <div className="grid grid-cols-5 gap-2">
-                  {presetAmounts.map((amount) => (
-                    <Button
-                      key={amount}
-                      variant={creditAmount === amount ? 'default' : 'outline'}
-                      onClick={() => setCreditAmount(amount)}
-                      className={creditAmount === amount 
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border-0 shadow-md' 
-                        : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300'}
-                    >
-                      {amount}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Custom amount */}
-                <div>
-                  <label className="text-sm font-medium text-indigo-900 mb-2 block">
-                    {t('purchase.customAmount')}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min={settings?.minCredits}
-                      max={settings?.maxCredits}
-                      value={creditAmount}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value) || settings?.minCredits || 10;
-                        setCreditAmount(Math.min(Math.max(val, settings?.minCredits || 10), settings?.maxCredits || 1000));
-                      }}
-                      className="text-center text-lg font-semibold w-32 border-indigo-200 focus:border-indigo-400 focus:ring-indigo-400"
-                    />
-                    <span className="text-indigo-700">{t('purchase.credits')}</span>
-                  </div>
-                  <p className="text-xs text-indigo-500 mt-1">
-                    {t('purchase.minMax').replace('{min}', String(settings?.minCredits)).replace('{max}', String(settings?.maxCredits))}
-                  </p>
-                </div>
-
-                {/* Price breakdown */}
-                <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-xl p-5 shadow-lg">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-indigo-300">{t('purchase.pricePerCredit')}</span>
-                    <span className="font-medium text-white">${settings?.pricePerCredit.toFixed(2)} USD</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-indigo-300">{t('purchase.quantity')}</span>
-                    <span className="font-medium text-white">{creditAmount} {t('purchase.credits')}</span>
-                  </div>
-                  <div className="border-t border-white/20 pt-3 mt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-white">{t('purchase.total')}</span>
-                      <div className="text-right">
-                        <span className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">${totalPrice}</span>
-                        <span className="text-emerald-300 ml-1">USD</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 space-y-5">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {providerCards.map((provider) => (
-                      <button
-                        key={provider.id}
-                        type="button"
-                        onClick={() => provider.available && setSelectedProvider(provider.id)}
-                        disabled={!provider.available}
-                        className={`group rounded-3xl border p-5 text-left transition-all ${
-                          selectedProvider === provider.id
-                            ? `${provider.border} ${provider.bg} shadow-lg ring-2 ring-offset-2 ring-slate-100`
-                            : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
-                        } ${!provider.available ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                              {provider.name}
-                            </p>
-                            <h3 className="mt-2 text-lg font-semibold text-slate-900">{provider.title}</h3>
-                          </div>
-                          <Badge className={selectedProvider === provider.id ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}>
-                            {provider.badge}
-                          </Badge>
-                        </div>
-                        <p className="mt-3 text-sm leading-6 text-slate-600">{provider.description}</p>
-                        <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                          {provider.features.map((feature) => (
-                            <li key={feature} className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-emerald-500" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-5 flex items-center justify-between">
-                          <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                            {provider.available
-                              ? (language === 'es' ? 'Disponible' : 'Available')
-                              : (language === 'es' ? 'No disponible' : 'Unavailable')}
-                          </span>
-                          <span className={`h-2.5 w-2.5 rounded-full ${provider.available ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {!selectedProvider && (
-                    <Alert className="border-slate-200 bg-slate-50">
-                      <AlertCircle className="h-4 w-4 text-slate-600" />
-                      <AlertDescription className="text-slate-700 text-sm">
-                        {language === 'es'
-                          ? 'Selecciona un método de pago para continuar.'
-                          : 'Choose a payment method to continue.'}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {selectedProvider === 'PAYPAL' && canUsePayPal && (
-                    <div className="rounded-3xl border border-amber-100 bg-white p-5 shadow-sm">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-slate-900">PayPal</p>
-                          <p className="text-sm text-slate-500">
-                            {language === 'es'
-                              ? 'Pago rápido con PayPal o tarjeta.'
-                              : 'Fast checkout with PayPal or card.'}
-                          </p>
-                        </div>
-                        <Badge className="bg-amber-100 text-amber-700">PayPal</Badge>
-                      </div>
-                      {processing && (
-                        <div className="flex items-center justify-center py-6 rounded-2xl bg-amber-50">
-                          <Loader2 className="w-6 h-6 animate-spin text-amber-600 mr-3" />
-                          <span className="text-amber-700 font-medium">{t('purchase.processing')}</span>
-                        </div>
-                      )}
-                      <div id="paypal-button-container" className={processing ? 'hidden' : ''}></div>
-                      {!paypalLoaded && !processing && settings?.paypalClientId && !paypalError && (
-                        <div className="flex flex-col items-center justify-center py-6 rounded-2xl bg-amber-50">
-                          <Loader2 className="w-6 h-6 animate-spin text-amber-500 mb-2" />
-                          <span className="text-amber-700">{t('purchase.loadingPaypal')}</span>
-                        </div>
-                      )}
-                      {paypalError && !paypalLoaded && (
-                        <Alert className="border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50">
-                          <AlertCircle className="h-4 w-4 text-amber-600" />
-                          <AlertDescription className="text-amber-800 text-sm">
-                            <div className="flex flex-col gap-2">
-                              <span>{t('purchase.paypalError')}</span>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.location.reload()}
-                                className="w-fit border-amber-300 text-amber-700 hover:bg-amber-100"
-                              >
-                                {t('purchase.reloadPage')}
-                              </Button>
-                            </div>
-                          </AlertDescription>
-                        </Alert>
-                      )}
-                    </div>
-                  )}
-
-                  {selectedProvider === 'STRIPE' && canUseStripe && (
-                    <div className="rounded-3xl border border-sky-100 bg-white p-5 shadow-sm">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-slate-900">Stripe</p>
-                          <p className="text-sm text-slate-500">
-                            {language === 'es'
-                              ? 'Checkout moderno y más limpio para tarjetas.'
-                              : 'Modern, clean card-first checkout.'}
-                          </p>
-                        </div>
-                        <Badge className="bg-sky-100 text-sky-700">Stripe</Badge>
-                      </div>
-                      <div className="rounded-2xl bg-sky-50 p-4">
-                        <Button
-                          onClick={handleStripeCheckout}
-                          disabled={stripeProcessing || processing}
-                          className="w-full bg-sky-600 hover:bg-sky-700 text-white"
-                        >
-                          {stripeProcessing ? (
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          ) : (
-                            <CreditCard className="w-4 h-4 mr-2" />
-                          )}
-                          {stripeProcessing
-                            ? (language === 'es' ? 'Redirigiendo...' : 'Redirecting...')
-                            : (language === 'es' ? 'Continuar con Stripe' : 'Continue with Stripe')}
-                        </Button>
-                      </div>
-                      <p className="mt-3 text-xs text-slate-500">
-                        {settings.stripeMode === 'live'
-                          ? (language === 'es' ? 'Modo producción activo.' : 'Live mode active.')
-                          : (language === 'es' ? 'Modo de pruebas activo.' : 'Test mode active.')}
-                      </p>
-                    </div>
-                  )}
-
-                  {!selectedProvider && !canUsePayPal && !canUseStripe && (
-                    <Alert className="border-red-300 bg-gradient-to-r from-red-50 to-rose-50">
-                      <AlertCircle className="h-4 w-4 text-red-600" />
-                      <AlertDescription className="text-red-800 text-sm">
-                        {t('purchase.notAvailableDesc')}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Info sidebar */}
-          <div className="space-y-4">
-            <Card className="border-0 bg-gradient-to-br from-indigo-600 to-purple-600 shadow-xl overflow-hidden">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="p-2 bg-white/20 rounded-lg">
-                    <Gift className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-white">{t('purchase.whatCreditsFor')}</h3>
-                </div>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
-                      <CheckCircle className="w-3 h-3 text-emerald-300" />
-                    </div>
-                    <span className="text-white/90">{t('purchase.sendEvaluations')}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
-                      <CheckCircle className="w-3 h-3 text-emerald-300" />
-                    </div>
-                    <span className="text-white/90">{t('purchase.generateReports')}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
-                      <CheckCircle className="w-3 h-3 text-emerald-300" />
-                    </div>
-                    <span className="text-white/90">{t('purchase.accessIntegrated')}</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-emerald-200/50 bg-gradient-to-br from-emerald-50 to-green-50 shadow-lg">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg">
-                    <Shield className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-emerald-900">{t('purchase.securePayment')}</h3>
-                </div>
-                <p className="text-sm text-emerald-700">
-                  {t('purchase.securePaymentDesc')}
+            <div className="flex items-start gap-4">
+              <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 p-3 shadow-lg">
+                <CreditCard className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t('purchase.title')}</h1>
+                <p className="mt-2 text-base text-slate-600">
+                  {language === 'es'
+                    ? 'Elige la cantidad, revisa el total y paga en un solo paso.'
+                    : 'Pick an amount, review the total, and pay in one step.'}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+          </div>
 
-            <Card className="border-purple-200/50 bg-gradient-to-br from-purple-50 to-indigo-50 shadow-lg">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-purple-900">{t('purchase.creditsNoExpire')}</h3>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-3 gap-3 lg:min-w-[360px]">
+            <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{language === 'es' ? 'Créditos' : 'Credits'}</p>
+              <p className="mt-1 text-2xl font-bold text-slate-900">{creditAmount}</p>
+            </div>
+            <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{language === 'es' ? 'Total' : 'Total'}</p>
+              <p className="mt-1 text-2xl font-bold text-slate-900">${totalPrice}</p>
+            </div>
+            <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{language === 'es' ? 'Método' : 'Method'}</p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">
+                {selectedProviderCard?.name || (language === 'es' ? 'Auto' : 'Auto')}
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-6">
+          <Card className="border-indigo-200/50 shadow-lg overflow-hidden">
+            <CardHeader className="border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+              <CardTitle className="flex items-center gap-2">
+                <div className="rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 p-2">
+                  <Coins className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-indigo-900">{t('purchase.selectAmount')}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                {presetAmounts.map((amount) => (
+                  <Button
+                    key={amount}
+                    variant={creditAmount === amount ? 'default' : 'outline'}
+                    onClick={() => setCreditAmount(amount)}
+                    className={creditAmount === amount
+                      ? 'h-12 bg-gradient-to-r from-indigo-600 to-purple-600 border-0 shadow-md'
+                      : 'h-12 border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50'}
+                  >
+                    {amount}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  {t('purchase.customAmount')}
+                </label>
+                <div className="flex items-center gap-3">
+                  <Input
+                    type="number"
+                    min={settings?.minCredits}
+                    max={settings?.maxCredits}
+                    value={creditAmount}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || settings?.minCredits || 10;
+                      setCreditAmount(Math.min(Math.max(val, settings?.minCredits || 10), settings?.maxCredits || 1000));
+                    }}
+                    className="h-12 w-36 text-center text-lg font-semibold border-slate-200 focus:border-indigo-400 focus:ring-indigo-400"
+                  />
+                  <span className="text-sm font-medium text-slate-600">{t('purchase.credits')}</span>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  {t('purchase.minMax').replace('{min}', String(settings?.minCredits)).replace('{max}', String(settings?.maxCredits))}
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-6 text-white shadow-xl">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-sm text-indigo-200">{t('purchase.pricePerCredit')}</p>
+                    <p className="mt-1 text-lg font-semibold">${settings?.pricePerCredit.toFixed(2)} USD</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-indigo-200">{t('purchase.quantity')}</p>
+                    <p className="mt-1 text-lg font-semibold">{creditAmount} {t('purchase.credits')}</p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <p className="text-sm text-indigo-200">{t('purchase.total')}</p>
+                    <p className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">${totalPrice}</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200 shadow-lg overflow-hidden">
+            <CardHeader className="border-b border-slate-100 bg-white">
+              <CardTitle className="flex items-center gap-2">
+                <div className="rounded-lg bg-slate-100 p-2">
+                  <CreditCard className="h-4 w-4 text-slate-700" />
+                </div>
+                <span className="text-slate-900">{language === 'es' ? 'Método de pago' : 'Payment method'}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5 p-6">
+              {hasOnlyOneProvider ? (
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-medium text-slate-500">{language === 'es' ? 'Se usará automáticamente' : 'Will be used automatically'}</p>
+                  <div className="mt-3 flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900">{availableProviders[0].name}</h3>
+                      <p className="mt-1 text-sm text-slate-600">{availableProviders[0].description}</p>
+                    </div>
+                    <Badge className="bg-slate-900 text-white">{availableProviders[0].badge}</Badge>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {providerCards.map((provider) => (
+                    <button
+                      key={provider.id}
+                      type="button"
+                      onClick={() => provider.available && setSelectedProvider(provider.id)}
+                      disabled={!provider.available}
+                      className={`rounded-3xl border p-4 text-left transition-all ${
+                        selectedProvider === provider.id
+                          ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                          : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                      } ${!provider.available ? 'cursor-not-allowed opacity-40' : ''}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className={`text-xs uppercase tracking-[0.2em] ${selectedProvider === provider.id ? 'text-white/70' : 'text-slate-400'}`}>
+                            {provider.name}
+                          </p>
+                          <h3 className="mt-2 text-base font-semibold">{provider.title}</h3>
+                        </div>
+                        <Badge className={selectedProvider === provider.id ? 'bg-white text-slate-900' : 'bg-slate-100 text-slate-700'}>
+                          {provider.badge}
+                        </Badge>
+                      </div>
+                      <p className={`mt-2 text-sm leading-6 ${selectedProvider === provider.id ? 'text-white/80' : 'text-slate-600'}`}>
+                        {provider.description}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {selectedProvider === 'PAYPAL' && canUsePayPal && (
+                <div className="rounded-3xl border border-amber-100 bg-amber-50/60 p-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">PayPal</p>
+                      <p className="mt-1 text-sm text-amber-800">
+                        {language === 'es'
+                          ? 'Pago simple y reconocido. Ideal si quieres continuar rápido.'
+                          : 'A familiar, simple checkout if you want to move fast.'}
+                      </p>
+                    </div>
+                    <Badge className="bg-amber-100 text-amber-700">{language === 'es' ? 'Listo' : 'Ready'}</Badge>
+                  </div>
+                  {processing && (
+                    <div className="flex items-center justify-center rounded-2xl bg-white py-6">
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin text-amber-600" />
+                      <span className="font-medium text-amber-700">{t('purchase.processing')}</span>
+                    </div>
+                  )}
+                  <div id="paypal-button-container" className={processing ? 'hidden' : ''}></div>
+                  {!paypalLoaded && !processing && settings?.paypalClientId && !paypalError && (
+                    <div className="flex items-center justify-center rounded-2xl bg-white py-6">
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin text-amber-500" />
+                      <span className="text-sm text-amber-700">{t('purchase.loadingPaypal')}</span>
+                    </div>
+                  )}
+                  {paypalError && !paypalLoaded && (
+                    <Alert className="border-amber-300 bg-white">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-sm text-amber-800">
+                        <div className="flex flex-col gap-2">
+                          <span>{t('purchase.paypalError')}</span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.location.reload()}
+                            className="w-fit border-amber-300 text-amber-700 hover:bg-amber-100"
+                          >
+                            {t('purchase.reloadPage')}
+                          </Button>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              )}
+
+              {selectedProvider === 'STRIPE' && canUseStripe && (
+                <div className="rounded-3xl border border-sky-100 bg-sky-50/70 p-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700">Stripe</p>
+                      <p className="mt-1 text-sm text-sky-800">
+                        {language === 'es'
+                          ? 'Recomendado para una experiencia rápida con tarjeta.'
+                          : 'Recommended for a fast card-first experience.'}
+                      </p>
+                    </div>
+                    <Badge className="bg-sky-100 text-sky-700">{language === 'es' ? 'Recomendado' : 'Recommended'}</Badge>
+                  </div>
+                  <Button
+                    onClick={handleStripeCheckout}
+                    disabled={stripeProcessing || processing}
+                    className="h-12 w-full bg-sky-600 text-white hover:bg-sky-700"
+                  >
+                    {stripeProcessing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <CreditCard className="mr-2 h-4 w-4" />
+                    )}
+                    {stripeProcessing
+                      ? (language === 'es' ? 'Preparando pago...' : 'Preparing payment...')
+                      : (language === 'es' ? 'Pagar con Stripe' : 'Pay with Stripe')}
+                  </Button>
+                  <p className="mt-3 text-xs text-slate-500">
+                    {settings.stripeMode === 'live'
+                      ? (language === 'es' ? 'Pagos reales habilitados.' : 'Live payments enabled.')
+                      : (language === 'es' ? 'Modo de prueba activo.' : 'Test mode active.')}
+                  </p>
+                </div>
+              )}
+
+              {!selectedProvider && !canUsePayPal && !canUseStripe && (
+                <Alert className="border-red-300 bg-rose-50">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-sm text-red-800">
+                    {t('purchase.notAvailableDesc')}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="space-y-4 xl:sticky xl:top-6">
+          <Card className="border-0 bg-gradient-to-br from-indigo-600 to-purple-600 shadow-xl overflow-hidden">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Gift className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-semibold text-white">{language === 'es' ? 'Créditos para' : 'Credits for'}</h3>
+              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-3">
+                  <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
+                    <CheckCircle className="w-3 h-3 text-emerald-300" />
+                  </div>
+                  <span className="text-white/90">{t('purchase.sendEvaluations')}</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
+                    <CheckCircle className="w-3 h-3 text-emerald-300" />
+                  </div>
+                  <span className="text-white/90">{t('purchase.generateReports')}</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="p-1 bg-emerald-400/20 rounded-full mt-0.5">
+                    <CheckCircle className="w-3 h-3 text-emerald-300" />
+                  </div>
+                  <span className="text-white/90">{t('purchase.accessIntegrated')}</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-emerald-200/50 bg-gradient-to-br from-emerald-50 to-green-50 shadow-lg">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="font-semibold text-emerald-900">{t('purchase.securePayment')}</h3>
+              </div>
+              <p className="text-sm text-emerald-700">
+                {t('purchase.securePaymentDesc')}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200 bg-white shadow-lg">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="rounded-lg bg-slate-100 p-2">
+                  <Sparkles className="w-4 h-4 text-slate-700" />
+                </div>
+                <h3 className="font-semibold text-slate-900">{t('purchase.creditsNoExpire')}</h3>
+              </div>
+              <p className="text-sm text-slate-600">
+                {language === 'es'
+                  ? 'Compra solo lo que necesitas y úsalo cuando quieras.'
+                  : 'Buy only what you need and use it whenever you want.'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
     </>
   );
 }
