@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ResultSummaryCard } from '@/components/result-summary-card';
+import { getTechnicalExecutiveReading } from '@/lib/result-insights';
 import {
   FileCode,
   AlertCircle,
@@ -189,56 +190,25 @@ export default function ExternalTechnicalEvaluationResultsPage() {
 
     let label = '';
     let tone: 'emerald' | 'sky' | 'amber' | 'orange' | 'red' = 'sky';
-    let summary = '';
-    let recommendation = '';
 
     if (score >= 85) {
       label = language === 'es' ? 'Desempeño sobresaliente' : 'Outstanding performance';
       tone = 'emerald';
-      summary = language === 'es'
-        ? 'La persona demuestra un dominio técnico muy sólido y consistente. El resultado indica que puede resolver con seguridad la mayor parte de los retos del cargo y, además, sostener un rendimiento alto en escenarios complejos.'
-        : 'The candidate shows very solid and consistent technical command. The result suggests they can handle most role challenges confidently and sustain high performance in complex scenarios.';
-      recommendation = language === 'es'
-        ? 'Es un perfil para avanzar con alta confianza. Conviene enfocarlo en profundidad técnica, impacto en negocio y ajuste con el equipo.'
-        : 'This is a profile to advance with high confidence. Focus the next step on technical depth, business impact, and team fit.';
     } else if (score >= 70) {
       label = language === 'es' ? 'Perfil sólido' : 'Solid profile';
       tone = 'sky';
-      summary = language === 'es'
-        ? 'El desempeño es bueno y consistente. La base técnica está presente, aunque todavía hay áreas puntuales donde puede ganar precisión o velocidad de respuesta.'
-        : 'Performance is good and consistent. The technical base is present, although there are still specific areas where the candidate can gain precision or speed.';
-      recommendation = language === 'es'
-        ? 'Puede avanzar en el proceso, idealmente contrastando con una entrevista técnica enfocada en los temas de menor puntaje.'
-        : 'They can advance in the process, ideally paired with a technical interview focused on the lower-scoring topics.';
     } else if (score >= 55) {
       label = language === 'es' ? 'Base en desarrollo' : 'Developing base';
       tone = 'amber';
-      summary = language === 'es'
-        ? 'Existe una base funcional, pero el dominio todavía es irregular. El resultado sugiere que puede desempeñarse mejor en contextos guiados que en escenarios técnicos exigentes.'
-        : 'There is a functional base, but mastery is still uneven. The result suggests the candidate may perform better in guided contexts than in demanding technical scenarios.';
-      recommendation = language === 'es'
-        ? 'Recomendado evaluar con preguntas prácticas adicionales o una prueba complementaria en los temas más débiles.'
-        : 'Recommended to assess with additional practical questions or a complementary test in the weakest topics.';
     } else if (score >= 40) {
       label = language === 'es' ? 'Requiere refuerzo' : 'Needs reinforcement';
       tone = 'orange';
-      summary = language === 'es'
-        ? 'El resultado muestra brechas importantes en el dominio técnico. Hay señales de comprensión parcial, pero todavía no existe la consistencia necesaria para desempeñarse con autonomía total.'
-        : 'The result shows important gaps in technical command. There are signs of partial understanding, but not yet the consistency needed to perform fully autonomously.';
-      recommendation = language === 'es'
-        ? 'Lo más útil es revisar fundamentos, ejercicios prácticos y una segunda validación antes de tomar una decisión final.'
-        : 'The best next step is to review fundamentals, practical exercises, and a second validation before making a final decision.';
     } else {
       label = language === 'es' ? 'Alto riesgo técnico' : 'High technical risk';
       tone = 'red';
-      summary = language === 'es'
-        ? 'El nivel observado indica una brecha muy amplia frente a lo esperado para el cargo. La persona aún no muestra la base mínima consistente para resolver con soltura la mayoría de las preguntas.'
-        : 'The observed level indicates a very wide gap versus the expected role requirements. The candidate has not yet shown a consistent minimum base to solve most questions comfortably.';
-      recommendation = language === 'es'
-        ? 'Conviene no avanzar sin una validación adicional o un plan claro de refuerzo, porque el riesgo de ejecución es alto.'
-        : 'It is advisable not to advance without additional validation or a clear upskilling plan, because the execution risk is high.';
     }
 
+    const executiveReading = getTechnicalExecutiveReading(result, language);
     const difficultyComparison =
       easyPct !== null && hardPct !== null
         ? (hardPct >= easyPct - 10
@@ -253,8 +223,7 @@ export default function ExternalTechnicalEvaluationResultsPage() {
     return {
       label,
       tone,
-      summary,
-      recommendation,
+      executiveReading,
       bestCategory: bestCategory ? { name: bestCategory[0], score: bestCategory[1] } : null,
       weakestCategory: weakestCategory ? { name: weakestCategory[0], score: weakestCategory[1] } : null,
       easyPct,
@@ -549,14 +518,20 @@ export default function ExternalTechnicalEvaluationResultsPage() {
               </div>
 
               <p className="mt-4 text-sm leading-6 text-slate-700">
-                {analysis.summary}
+                {analysis.executiveReading}
               </p>
               <div className="mt-4 rounded-2xl border border-white/70 bg-white p-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  {language === 'es' ? 'Recomendación para decisión' : 'Decision guidance'}
+                  {language === 'es' ? 'Enfoque sugerido' : 'Suggested focus'}
                 </p>
                 <p className="mt-1 text-sm leading-6 text-slate-700">
-                  {analysis.recommendation}
+                  {analysis.weakestCategory
+                    ? (language === 'es'
+                        ? `Priorizar ${analysis.weakestCategory.name} para cerrar la brecha más visible.`
+                        : `Prioritize ${analysis.weakestCategory.name} to close the most visible gap.`)
+                    : (language === 'es'
+                        ? 'No hay una brecha clara que requiera prioridad inmediata.'
+                        : 'There is no clear gap requiring immediate priority.')}
                 </p>
               </div>
             </div>
@@ -664,7 +639,7 @@ export default function ExternalTechnicalEvaluationResultsPage() {
                   {analysis.label}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {analysis.summary}
+                  {analysis.executiveReading}
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                   <Badge className={
