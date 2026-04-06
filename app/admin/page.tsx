@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogContent,
@@ -541,819 +542,865 @@ export default function AdminPage() {
         <p className="text-gray-600">Gestiona los usuarios registrados en la plataforma</p>
       </div>
 
-      {/* System Settings */}
-      <Card className="mb-4 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Settings className="w-5 h-5 text-amber-600" />
-            <span className="text-amber-900">Registro y acceso</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Permitir nuevos registros</h4>
-                  <p className="text-sm text-gray-600">
-                    {signupEnabled
-                      ? 'Los usuarios pueden crear una cuenta desde la página pública.'
-                      : 'El registro público está deshabilitado temporalmente.'
-                    }
-                  </p>
-                </div>
-                <Switch
-                  checked={signupEnabled}
-                  onCheckedChange={updateSignupEnabled}
-                  disabled={savingSettings}
-                  className="data-[state=checked]:bg-green-500"
-                />
-              </div>
-            </div>
+      <Tabs defaultValue="overview" className="w-full mb-8">
+        <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-2 bg-transparent p-0 h-auto">
+          <TabsTrigger value="overview" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Resumen
+          </TabsTrigger>
+          <TabsTrigger value="users" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Usuarios
+          </TabsTrigger>
+          <TabsTrigger value="security" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Seguridad
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Créditos y pagos
+          </TabsTrigger>
+          <TabsTrigger value="audit" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Auditoría
+          </TabsTrigger>
+          <TabsTrigger value="technical" className="rounded-xl border border-slate-200 bg-white px-4 py-2 data-[state=active]:border-indigo-300 data-[state=active]:bg-indigo-50">
+            Pruebas técnicas
+          </TabsTrigger>
+        </TabsList>
 
-            <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Activación automática de nuevos usuarios</h4>
-                  <p className="text-sm text-gray-600">
-                    {defaultUserActive
-                      ? 'Los nuevos usuarios pueden acceder inmediatamente después de registrarse.'
-                      : 'Los nuevos usuarios deben ser activados manualmente por un administrador antes de poder acceder.'
-                    }
-                  </p>
-                </div>
-                <Switch
-                  checked={defaultUserActive}
-                  onCheckedChange={updateDefaultUserActive}
-                  disabled={savingSettings}
-                  className="data-[state=checked]:bg-green-500"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Credits Configuration */}
-      <Card className="mb-8 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Coins className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-900">Configuración de Créditos</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Créditos iniciales para nuevos usuarios</h4>
-              <p className="text-sm text-gray-600 mb-3">
-                Cantidad de créditos que recibe automáticamente un usuario al registrarse.
-              </p>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min="0"
-                  value={defaultCredits}
-                  onChange={(e) => setDefaultCredits(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-24 text-center font-semibold"
-                  disabled={savingSettings}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateDefaultCredits(defaultCredits)}
-                  disabled={savingSettings}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
-                >
-                  {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                </Button>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Créditos por evaluación enviada</h4>
-              <p className="text-sm text-gray-600 mb-3">
-                Cantidad de créditos que se descuentan al enviar una evaluación (cualquier tipo).
-              </p>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min="1"
-                  value={creditsPerEvaluation}
-                  onChange={(e) => setCreditsPerEvaluation(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-24 text-center font-semibold"
-                  disabled={savingSettings}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateCreditsPerEvaluation(creditsPerEvaluation)}
-                  disabled={savingSettings}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
-                >
-                  {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="mb-8 border-rose-200 bg-gradient-to-br from-rose-50 to-pink-50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Shield className="w-5 h-5 text-rose-600" />
-            <span className="text-rose-900">Seguridad de la plataforma</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Longitud mínima de contraseña</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Se aplica a nuevos registros y cambios de contraseña.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="8"
-                      max="64"
-                      value={passwordMinLength}
-                      onChange={(e) => setPasswordMinLength(Math.max(8, parseInt(e.target.value) || 8))}
-                      className="w-24 text-center font-semibold"
-                      disabled={savingSettings}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updatePasswordMinLength(passwordMinLength)}
-                      disabled={savingSettings}
-                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
-                    >
-                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Intentos fallidos de acceso</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Bloquea temporalmente la cuenta cuando supera el límite.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={loginMaxAttempts}
-                      onChange={(e) => setLoginMaxAttempts(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-24 text-center font-semibold"
-                      disabled={savingSettings}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateLoginMaxAttempts(loginMaxAttempts)}
-                      disabled={savingSettings}
-                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
-                    >
-                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Tiempo de bloqueo</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Tiempo en minutos antes de permitir nuevos intentos.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="1"
-                      max="1440"
-                      value={loginLockoutMinutes}
-                      onChange={(e) => setLoginLockoutMinutes(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-24 text-center font-semibold"
-                      disabled={savingSettings}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateLoginLockoutMinutes(loginLockoutMinutes)}
-                      disabled={savingSettings}
-                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
-                    >
-                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Vigencia de pruebas técnicas</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Tiempo por defecto para que una evaluación técnica siga disponible.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="1"
-                      max="365"
-                      value={technicalEvaluationExpiryDays}
-                      onChange={(e) => setTechnicalEvaluationExpiryDays(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-24 text-center font-semibold"
-                      disabled={savingSettings}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateTechnicalEvaluationExpiryDays(technicalEvaluationExpiryDays)}
-                      disabled={savingSettings}
-                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
-                    >
-                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Exportación PDF externa</h4>
-                  <p className="text-sm text-gray-600">
-                    Permite descargar reportes PDF desde resultados de pruebas externas y técnicas.
-                  </p>
-                </div>
-                <Switch
-                  checked={allowExternalPdfExport}
-                  onCheckedChange={updateAllowExternalPdfExport}
-                  disabled={savingSettings}
-                  className="data-[state=checked]:bg-rose-500"
-                />
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5 xl:col-span-2">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Retención de auditoría</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Días sugeridos para conservar eventos y registros críticos de seguridad.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="7"
-                      max="3650"
-                      value={auditRetentionDays}
-                      onChange={(e) => setAuditRetentionDays(Math.max(7, parseInt(e.target.value) || 7))}
-                      className="w-28 text-center font-semibold"
-                      disabled={savingSettings}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateAuditRetentionDays(auditRetentionDays)}
-                      disabled={savingSettings}
-                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
-                    >
-                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="mb-8 border-slate-200 bg-gradient-to-br from-slate-50 to-white">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <History className="w-5 h-5 text-slate-600" />
-            <span className="text-slate-900">Auditoría reciente</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loadingAudit ? (
-            <div className="flex items-center gap-2 text-slate-500 py-6">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Cargando eventos de auditoría...</span>
-            </div>
-          ) : auditLogs.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-5 text-sm text-slate-600">
-              Aún no hay eventos de auditoría registrados.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {auditLogs.map((log) => (
-                <div key={log.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-xl bg-slate-100 text-slate-600">
-                      <ShieldAlert className="w-4 h-4" />
+        <TabsContent value="overview" className="space-y-6">
+          {stats && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Users className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200">
-                          {log.action}
-                        </Badge>
-                        <span className="text-sm font-medium text-slate-900">{log.summary}</span>
-                      </div>
-                      <div className="text-xs text-slate-500 flex flex-wrap gap-x-3 gap-y-1">
-                        <span>{log.actor.name || log.actor.email}</span>
-                        <span>{log.entityType}{log.entityId ? ` · ${log.entityId}` : ''}</span>
-                        <span>{formatDate(log.createdAt)}</span>
-                      </div>
+                      <p className="text-2xl font-bold text-blue-700">{stats.totalUsers}</p>
+                      <p className="text-xs text-blue-600">Total Usuarios</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <Clock3 className="w-3.5 h-3.5" />
-                    <span>{new Date(log.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-indigo-50 to-violet-50 border-indigo-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-indigo-100 rounded-lg">
+                      <Building2 className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-indigo-700">{stats.mainUsers}</p>
+                      <p className="text-xs text-indigo-600">Principales</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-100 rounded-lg">
+                      <UsersRound className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-amber-700">{stats.facilitatorUsers}</p>
+                      <p className="text-xs text-amber-600">Facilitadores</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <UserCheck className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-green-700">{stats.activeUsers}</p>
+                      <p className="text-xs text-green-600">Activos</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-red-100 rounded-lg">
+                      <UserX className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-red-700">{stats.inactiveUsers}</p>
+                      <p className="text-xs text-red-600">Inactivos</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <Crown className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-purple-700">{stats.adminUsers}</p>
+                      <p className="text-xs text-purple-600">Admins</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
-        </CardContent>
-      </Card>
 
-      {/* PayPal Settings */}
-      <PayPalSettingsCard />
-
-      {/* Credit Sales */}
-      <CreditSalesCard />
-
-      {/* Technical Questions */}
-      <Card className="mb-8 border-sky-200 bg-gradient-to-br from-sky-50 to-blue-50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Code className="w-5 h-5 text-sky-600" />
-            <span className="text-sky-900">Gestión de Pruebas Técnicas</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900 mb-1">Banco de Preguntas Técnicas</h4>
-              <p className="text-sm text-gray-600">
-                Administra las preguntas técnicas para evaluaciones por cargo. Crea, edita y elimina preguntas con soporte bilingüe.
-              </p>
-            </div>
-            <Button
-              onClick={() => router.push('/admin/technical-questions')}
-              className="bg-sky-600 hover:bg-sky-700"
-            >
-              <FileCode className="w-4 h-4 mr-2" />
-              Gestionar Preguntas
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-blue-700">{stats.totalUsers}</p>
-                  <p className="text-xs text-blue-600">Total Usuarios</p>
-                </div>
+          <Card className="border-slate-200 bg-white/80">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Settings className="w-5 h-5 text-slate-600" />
+                <span className="text-slate-900">Estado general</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Registro</p>
+                <p className="font-semibold text-slate-900">{signupEnabled ? 'Habilitado' : 'Deshabilitado'}</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Password min.</p>
+                <p className="font-semibold text-slate-900">{passwordMinLength} caracteres</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Pruebas técnicas</p>
+                <p className="font-semibold text-slate-900">{technicalEvaluationExpiryDays} días de vigencia</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">PDF externo</p>
+                <p className="font-semibold text-slate-900">{allowExternalPdfExport ? 'Habilitado' : 'Deshabilitado'}</p>
               </div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-gradient-to-br from-indigo-50 to-violet-50 border-indigo-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <Building2 className="w-5 h-5 text-indigo-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-indigo-700">{stats.mainUsers}</p>
-                  <p className="text-xs text-indigo-600">Principales</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <UsersRound className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-amber-700">{stats.facilitatorUsers}</p>
-                  <p className="text-xs text-amber-600">Facilitadores</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <UserCheck className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-green-700">{stats.activeUsers}</p>
-                  <p className="text-xs text-green-600">Activos</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <UserX className="w-5 h-5 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-red-700">{stats.inactiveUsers}</p>
-                  <p className="text-xs text-red-600">Inactivos</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Crown className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-purple-700">{stats.adminUsers}</p>
-                  <p className="text-xs text-purple-600">Admins</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        </TabsContent>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Buscar por nombre, email o empresa..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="pl-10"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(value: 'all' | 'active' | 'inactive') => {
-                setStatusFilter(value);
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="active">Activos</SelectItem>
-                <SelectItem value="inactive">Inactivos</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={roleFilter}
-              onValueChange={(value: 'all' | 'USER' | 'ADMIN' | 'FACILITATOR') => {
-                setRoleFilter(value);
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Rol" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los roles</SelectItem>
-                <SelectItem value="USER">Usuario</SelectItem>
-                <SelectItem value="ADMIN">Administrador</SelectItem>
-                <SelectItem value="FACILITATOR">Facilitador</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Users List */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Users className="w-5 h-5 text-indigo-600" />
-              Usuarios Registrados
-            </CardTitle>
-            <Badge variant="outline" className="bg-white">
-              {filteredUsers.length} usuarios
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {/* Table Header - Desktop */}
-          <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            <div className="col-span-3">Usuario</div>
-            <div className="col-span-3">Organización</div>
-            <div className="col-span-2">Tipo / Rol</div>
-            <div className="col-span-1">Estado</div>
-            <div className="col-span-1">Créditos</div>
-            <div className="col-span-1">Eval.</div>
-            <div className="col-span-1 text-right">Acciones</div>
-          </div>
-
-          {/* User Cards */}
-          <div className="divide-y divide-gray-100">
-            {paginatedUsers.map((user) => {
-              const isFacilitator = user.ownerId !== null;
-              const ownerName = user.owner 
-                ? (user.owner.firstName && user.owner.lastName 
-                    ? `${user.owner.firstName} ${user.owner.lastName}` 
-                    : user.owner.email)
-                : null;
-              const ownerCompany = user.owner?.company || 'Sin empresa';
-              
-              return (
-                <div 
-                  key={user.id} 
-                  className={`lg:grid lg:grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50/80 transition-colors ${
-                    isFacilitator ? 'bg-gradient-to-r from-amber-50/40 to-transparent' : ''
-                  }`}
+        <TabsContent value="users" className="space-y-6">
+          {/* Filters */}
+          <Card className="mb-0">
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    placeholder="Buscar por nombre, email o empresa..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="pl-10"
+                  />
+                </div>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value: 'all' | 'active' | 'inactive') => {
+                    setStatusFilter(value);
+                    setCurrentPage(1);
+                  }}
                 >
-                  {/* Usuario Column */}
-                  <div className="col-span-3 flex items-center gap-3 mb-3 lg:mb-0">
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-semibold relative shadow-sm ${
-                      user.role === 'ADMIN' 
-                        ? 'bg-gradient-to-br from-purple-500 to-violet-600' 
-                        : isFacilitator 
-                          ? 'bg-gradient-to-br from-amber-400 to-orange-500' 
-                          : 'bg-gradient-to-br from-indigo-500 to-blue-600'
-                    }`}>
-                      {user.firstName?.[0] || user.email[0].toUpperCase()}
-                      {user.role === 'ADMIN' && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-white">
-                          <Crown className="w-3 h-3 text-white" />
-                        </div>
-                      )}
-                      {isFacilitator && (
-                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center ring-2 ring-white">
-                          <Link2 className="w-3 h-3 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-gray-900 truncate">
-                        {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Sin nombre'}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                    </div>
-                  </div>
+                  <SelectTrigger className="w-full md:w-40">
+                    <SelectValue placeholder="Estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="active">Activos</SelectItem>
+                    <SelectItem value="inactive">Inactivos</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={roleFilter}
+                  onValueChange={(value: 'all' | 'USER' | 'ADMIN' | 'FACILITATOR') => {
+                    setRoleFilter(value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-full md:w-40">
+                    <SelectValue placeholder="Rol" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los roles</SelectItem>
+                    <SelectItem value="USER">Usuario</SelectItem>
+                    <SelectItem value="ADMIN">Administrador</SelectItem>
+                    <SelectItem value="FACILITATOR">Facilitador</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
 
-                  {/* Organización Column - Redesigned */}
-                  <div className="col-span-3 mb-3 lg:mb-0">
-                    {isFacilitator ? (
-                      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border border-amber-200/60">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-amber-100 rounded-md">
-                            <Building2 className="w-3.5 h-3.5 text-amber-600" />
-                          </div>
-                          <span className="font-semibold text-amber-800 text-sm truncate">{ownerCompany}</span>
-                        </div>
-                        <div className="space-y-1.5 pl-1">
-                          <div className="flex items-center gap-2 text-xs">
-                            <span className="text-gray-500 w-16">Invitó:</span>
-                            <span className="font-medium text-gray-700 truncate">{ownerName}</span>
-                          </div>
-                          {user.memberOf && (
-                            <>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-gray-500 w-16">Cargo:</span>
-                                <span className="text-gray-700 truncate">{user.memberOf.jobTitle}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs pt-1">
-                                <Badge 
-                                  className={`text-[10px] px-2 py-0.5 ${
-                                    user.memberOf.accessLevel === 'FULL_ACCESS' 
-                                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
-                                      : 'bg-gray-100 text-gray-600 border-gray-200'
-                                  }`}
-                                >
-                                  {user.memberOf.accessLevel === 'FULL_ACCESS' ? '✓ Acceso completo' : '○ Solo sus evaluaciones'}
-                                </Badge>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 rounded-lg p-3 border border-gray-200/60">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-indigo-100 rounded-md">
-                            <Building2 className="w-3.5 h-3.5 text-indigo-600" />
-                          </div>
-                          <span className="font-semibold text-gray-800 text-sm truncate">
-                            {user.company || 'Sin empresa'}
-                          </span>
-                        </div>
-                        {user._count.facilitators > 0 && (
-                          <div className="flex items-center gap-2 pl-1">
-                            <Badge className="text-[10px] px-2 py-0.5 bg-indigo-100 text-indigo-700 border-indigo-200">
-                              <UsersRound className="w-3 h-3 mr-1" />
-                              {user._count.facilitators} facilitador{user._count.facilitators > 1 ? 'es' : ''}
-                            </Badge>
-                          </div>
-                        )}
-                        {user._count.facilitators === 0 && (
-                          <p className="text-xs text-gray-400 pl-1">Usuario principal</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
+          {/* Users List */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-gray-50 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users className="w-5 h-5 text-indigo-600" />
+                  Usuarios Registrados
+                </CardTitle>
+                <Badge variant="outline" className="bg-white">
+                  {filteredUsers.length} usuarios
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {/* Table Header - Desktop */}
+              <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <div className="col-span-3">Usuario</div>
+                <div className="col-span-3">Organización</div>
+                <div className="col-span-2">Tipo / Rol</div>
+                <div className="col-span-1">Estado</div>
+                <div className="col-span-1">Créditos</div>
+                <div className="col-span-1">Eval.</div>
+                <div className="col-span-1 text-right">Acciones</div>
+              </div>
 
-                  {/* Tipo/Rol Column */}
-                  <div className="col-span-2 flex items-center mb-3 lg:mb-0">
-                    {isFacilitator ? (
-                      <Badge className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200 hover:from-amber-100 hover:to-orange-100">
-                        <UsersRound className="w-3 h-3 mr-1.5" />
-                        Facilitador
-                      </Badge>
-                    ) : (
-                      <Select
-                        value={user.role}
-                        onValueChange={(value: 'USER' | 'ADMIN' | 'FACILITATOR') => changeUserRole(user.id, value)}
-                        disabled={user.email === session?.user?.email}
-                      >
-                        <SelectTrigger className="w-28 h-8 text-xs bg-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USER">Usuario</SelectItem>
-                          <SelectItem value="ADMIN">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-
-                  {/* Estado Column */}
-                  <div className="col-span-1 flex items-center mb-3 lg:mb-0">
-                    <Badge 
-                      className={`${
-                        user.isActive 
-                          ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
-                          : 'bg-red-100 text-red-700 border-red-200'
+              {/* User Cards */}
+              <div className="divide-y divide-gray-100">
+                {paginatedUsers.map((user) => {
+                  const isFacilitator = user.ownerId !== null;
+                  const ownerName = user.owner 
+                    ? (user.owner.firstName && user.owner.lastName 
+                        ? `${user.owner.firstName} ${user.owner.lastName}` 
+                        : user.owner.email)
+                    : null;
+                  const ownerCompany = user.owner?.company || 'Sin empresa';
+                  
+                  return (
+                    <div 
+                      key={user.id} 
+                      className={`lg:grid lg:grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50/80 transition-colors ${
+                        isFacilitator ? 'bg-gradient-to-r from-amber-50/40 to-transparent' : ''
                       }`}
                     >
-                      {user.isActive ? 'Activo' : 'Inactivo'}
-                    </Badge>
-                  </div>
+                      {/* Usuario Column */}
+                      <div className="col-span-3 flex items-center gap-3 mb-3 lg:mb-0">
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-semibold relative shadow-sm ${
+                          user.role === 'ADMIN' 
+                            ? 'bg-gradient-to-br from-purple-500 to-violet-600' 
+                            : isFacilitator 
+                              ? 'bg-gradient-to-br from-amber-400 to-orange-500' 
+                              : 'bg-gradient-to-br from-indigo-500 to-blue-600'
+                        }`}>
+                          {user.firstName?.[0] || user.email[0].toUpperCase()}
+                          {user.role === 'ADMIN' && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-white">
+                              <Crown className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          {isFacilitator && (
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center ring-2 ring-white">
+                              <Link2 className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-gray-900 truncate">
+                            {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Sin nombre'}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                        </div>
+                      </div>
 
-                  {/* Créditos Column */}
-                  <div className="col-span-1 flex items-center gap-1 mb-3 lg:mb-0">
-                    {isFacilitator ? (
-                      <span className="text-xs text-gray-400 italic">Usa del dueño</span>
-                    ) : (
-                      <>
+                      {/* Organización Column - Redesigned */}
+                      <div className="col-span-3 mb-3 lg:mb-0">
+                        {isFacilitator ? (
+                          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border border-amber-200/60">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="p-1.5 bg-amber-100 rounded-md">
+                                <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                              </div>
+                              <span className="font-semibold text-amber-800 text-sm truncate">{ownerCompany}</span>
+                            </div>
+                            <div className="space-y-1.5 pl-1">
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-gray-500 w-16">Invitó:</span>
+                                <span className="font-medium text-gray-700 truncate">{ownerName}</span>
+                              </div>
+                              {user.memberOf && (
+                                <>
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-gray-500 w-16">Cargo:</span>
+                                    <span className="text-gray-700 truncate">{user.memberOf.jobTitle}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-xs pt-1">
+                                    <Badge 
+                                      className={`text-[10px] px-2 py-0.5 ${
+                                        user.memberOf.accessLevel === 'FULL_ACCESS' 
+                                          ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+                                          : 'bg-gray-100 text-gray-600 border-gray-200'
+                                      }`}
+                                    >
+                                      {user.memberOf.accessLevel === 'FULL_ACCESS' ? '✓ Acceso completo' : '○ Solo sus evaluaciones'}
+                                    </Badge>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200/60">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="p-1.5 bg-indigo-100 rounded-md">
+                                <Building2 className="w-3.5 h-3.5 text-indigo-600" />
+                              </div>
+                              <span className="font-semibold text-gray-800 text-sm truncate">
+                                {user.company || 'Sin empresa'}
+                              </span>
+                            </div>
+                            {user._count.facilitators > 0 && (
+                              <div className="flex items-center gap-2 pl-1">
+                                <Badge className="text-[10px] px-2 py-0.5 bg-indigo-100 text-indigo-700 border-indigo-200">
+                                  <UsersRound className="w-3 h-3 mr-1" />
+                                  {user._count.facilitators} facilitador{user._count.facilitators > 1 ? 'es' : ''}
+                                </Badge>
+                              </div>
+                            )}
+                            {user._count.facilitators === 0 && (
+                              <p className="text-xs text-gray-400 pl-1">Usuario principal</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Tipo/Rol Column */}
+                      <div className="col-span-2 flex items-center mb-3 lg:mb-0">
+                        {isFacilitator ? (
+                          <Badge className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200 hover:from-amber-100 hover:to-orange-100">
+                            <UsersRound className="w-3 h-3 mr-1.5" />
+                            Facilitador
+                          </Badge>
+                        ) : (
+                          <Select
+                            value={user.role}
+                            onValueChange={(value: 'USER' | 'ADMIN' | 'FACILITATOR') => changeUserRole(user.id, value)}
+                            disabled={user.email === session?.user?.email}
+                          >
+                            <SelectTrigger className="w-28 h-8 text-xs bg-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="USER">Usuario</SelectItem>
+                              <SelectItem value="ADMIN">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+
+                      {/* Estado Column */}
+                      <div className="col-span-1 flex items-center mb-3 lg:mb-0">
                         <Badge 
-                          variant="outline" 
                           className={`${
-                            user.credits > 0 
-                              ? 'border-amber-300 bg-amber-50 text-amber-700' 
-                              : 'border-red-300 bg-red-50 text-red-700'
+                            user.isActive 
+                              ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+                              : 'bg-red-100 text-red-700 border-red-200'
                           }`}
                         >
-                          <Coins className="w-3 h-3 mr-1" />
-                          {user.credits}
+                          {user.isActive ? 'Activo' : 'Inactivo'}
                         </Badge>
+                      </div>
+
+                      {/* Créditos Column */}
+                      <div className="col-span-1 flex items-center gap-1 mb-3 lg:mb-0">
+                        {isFacilitator ? (
+                          <span className="text-xs text-gray-400 italic">Usa del dueño</span>
+                        ) : (
+                          <>
+                            <Badge 
+                              variant="outline" 
+                              className={`${
+                                user.credits > 0 
+                                  ? 'border-amber-300 bg-amber-50 text-amber-700' 
+                                  : 'border-red-300 bg-red-50 text-red-700'
+                              }`}
+                            >
+                              <Coins className="w-3 h-3 mr-1" />
+                              {user.credits}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setUserToRecharge(user);
+                                setRechargeDialogOpen(true);
+                              }}
+                              className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 h-6 w-6 p-0"
+                              title="Recargar créditos"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Evaluaciones Column */}
+                      <div className="col-span-1 flex items-center mb-3 lg:mb-0">
+                        <span className="text-gray-700 font-semibold">{getTotalEvaluations(user)}</span>
+                      </div>
+
+                      {/* Acciones Column */}
+                      <div className="col-span-1 flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => fetchUserDetail(user.id)}
+                          disabled={loadingDetail}
+                          className="h-8 w-8 p-0 hover:bg-indigo-50"
+                          title="Ver detalles"
+                        >
+                          <Eye className="w-4 h-4 text-indigo-600" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            setUserToRecharge(user);
-                            setRechargeDialogOpen(true);
+                            setUserToToggle(user);
+                            setToggleDialogOpen(true);
                           }}
-                          className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 h-6 w-6 p-0"
-                          title="Recargar créditos"
+                          disabled={user.email === session?.user?.email}
+                          className={`h-8 w-8 p-0 ${
+                            user.isActive 
+                              ? 'text-red-500 hover:text-red-700 hover:bg-red-50' 
+                              : 'text-green-500 hover:text-green-700 hover:bg-green-50'
+                          }`}
+                          title={user.isActive ? 'Desactivar' : 'Activar'}
                         >
-                          <Plus className="w-3.5 h-3.5" />
+                          <Power className="w-4 h-4" />
                         </Button>
-                      </>
-                    )}
-                  </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setUserToDelete(user);
+                            setDeleteDialogOpen(true);
+                          }}
+                          disabled={user.email === session?.user?.email}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          title="Eliminar usuario"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
 
-                  {/* Evaluaciones Column */}
-                  <div className="col-span-1 flex items-center mb-3 lg:mb-0">
-                    <span className="text-gray-700 font-semibold">{getTotalEvaluations(user)}</span>
-                  </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 px-2">
+              <p className="text-sm text-gray-600">
+                Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} de {filteredUsers.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-sm text-gray-600">
+                  {currentPage} de {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </TabsContent>
 
-                  {/* Acciones Column */}
-                  <div className="col-span-1 flex items-center justify-end gap-1">
+        <TabsContent value="security" className="space-y-6">
+          <Card className="mb-0 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Settings className="w-5 h-5 text-amber-600" />
+                <span className="text-amber-900">Registro y acceso</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Permitir nuevos registros</h4>
+                      <p className="text-sm text-gray-600">
+                        {signupEnabled
+                          ? 'Los usuarios pueden crear una cuenta desde la página pública.'
+                          : 'El registro público está deshabilitado temporalmente.'
+                        }
+                      </p>
+                    </div>
+                    <Switch
+                      checked={signupEnabled}
+                      onCheckedChange={updateSignupEnabled}
+                      disabled={savingSettings}
+                      className="data-[state=checked]:bg-green-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Activación automática de nuevos usuarios</h4>
+                      <p className="text-sm text-gray-600">
+                        {defaultUserActive
+                          ? 'Los nuevos usuarios pueden acceder inmediatamente después de registrarse.'
+                          : 'Los nuevos usuarios deben ser activados manualmente por un administrador antes de poder acceder.'
+                        }
+                      </p>
+                    </div>
+                    <Switch
+                      checked={defaultUserActive}
+                      onCheckedChange={updateDefaultUserActive}
+                      disabled={savingSettings}
+                      className="data-[state=checked]:bg-green-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-0 border-rose-200 bg-gradient-to-br from-rose-50 to-pink-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Shield className="w-5 h-5 text-rose-600" />
+                <span className="text-rose-900">Seguridad de la plataforma</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Longitud mínima de contraseña</h4>
+                      <p className="text-sm text-gray-600 mb-3">Se aplica a nuevos registros y cambios de contraseña.</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="8"
+                          max="64"
+                          value={passwordMinLength}
+                          onChange={(e) => setPasswordMinLength(Math.max(8, parseInt(e.target.value) || 8))}
+                          className="w-24 text-center font-semibold"
+                          disabled={savingSettings}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updatePasswordMinLength(passwordMinLength)}
+                          disabled={savingSettings}
+                          className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                        >
+                          {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Intentos fallidos de acceso</h4>
+                      <p className="text-sm text-gray-600 mb-3">Bloquea temporalmente la cuenta cuando supera el límite.</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="20"
+                          value={loginMaxAttempts}
+                          onChange={(e) => setLoginMaxAttempts(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-24 text-center font-semibold"
+                          disabled={savingSettings}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateLoginMaxAttempts(loginMaxAttempts)}
+                          disabled={savingSettings}
+                          className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                        >
+                          {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Tiempo de bloqueo</h4>
+                      <p className="text-sm text-gray-600 mb-3">Tiempo en minutos antes de permitir nuevos intentos.</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="1440"
+                          value={loginLockoutMinutes}
+                          onChange={(e) => setLoginLockoutMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-24 text-center font-semibold"
+                          disabled={savingSettings}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateLoginLockoutMinutes(loginLockoutMinutes)}
+                          disabled={savingSettings}
+                          className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                        >
+                          {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Vigencia de pruebas técnicas</h4>
+                      <p className="text-sm text-gray-600 mb-3">Tiempo por defecto para que una evaluación técnica siga disponible.</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="365"
+                          value={technicalEvaluationExpiryDays}
+                          onChange={(e) => setTechnicalEvaluationExpiryDays(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-24 text-center font-semibold"
+                          disabled={savingSettings}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateTechnicalEvaluationExpiryDays(technicalEvaluationExpiryDays)}
+                          disabled={savingSettings}
+                          className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                        >
+                          {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Exportación PDF externa</h4>
+                      <p className="text-sm text-gray-600">
+                        Permite descargar reportes PDF desde resultados de pruebas externas y técnicas.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={allowExternalPdfExport}
+                      onCheckedChange={updateAllowExternalPdfExport}
+                      disabled={savingSettings}
+                      className="data-[state=checked]:bg-rose-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-rose-200 bg-white/75 p-5 xl:col-span-2">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 mb-1">Retención de auditoría</h4>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Días sugeridos para conservar eventos y registros críticos de seguridad.
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="7"
+                          max="3650"
+                          value={auditRetentionDays}
+                          onChange={(e) => setAuditRetentionDays(Math.max(7, parseInt(e.target.value) || 7))}
+                          className="w-28 text-center font-semibold"
+                          disabled={savingSettings}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateAuditRetentionDays(auditRetentionDays)}
+                          disabled={savingSettings}
+                          className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                        >
+                          {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="billing" className="space-y-6">
+          <Card className="mb-0 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Coins className="w-5 h-5 text-emerald-600" />
+                <span className="text-emerald-900">Configuración de Créditos</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">Créditos iniciales para nuevos usuarios</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Cantidad de créditos que recibe automáticamente un usuario al registrarse.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      value={defaultCredits}
+                      onChange={(e) => setDefaultCredits(Math.max(0, parseInt(e.target.value) || 0))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      onClick={() => fetchUserDetail(user.id)}
-                      disabled={loadingDetail}
-                      className="h-8 w-8 p-0 hover:bg-indigo-50"
-                      title="Ver detalles"
+                      onClick={() => updateDefaultCredits(defaultCredits)}
+                      disabled={savingSettings}
+                      className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
                     >
-                      <Eye className="w-4 h-4 text-indigo-600" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setUserToToggle(user);
-                        setToggleDialogOpen(true);
-                      }}
-                      disabled={user.email === session?.user?.email}
-                      className={`h-8 w-8 p-0 ${
-                        user.isActive 
-                          ? 'text-red-500 hover:text-red-700 hover:bg-red-50' 
-                          : 'text-green-500 hover:text-green-700 hover:bg-green-50'
-                      }`}
-                      title={user.isActive ? 'Desactivar' : 'Activar'}
-                    >
-                      <Power className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setUserToDelete(user);
-                        setDeleteDialogOpen(true);
-                      }}
-                      disabled={user.email === session?.user?.email}
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-                      title="Eliminar usuario"
-                    >
-                      <Trash2 className="w-4 h-4" />
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
                     </Button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">Créditos por evaluación enviada</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Cantidad de créditos que se descuentan al enviar una evaluación (cualquier tipo).
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      value={creditsPerEvaluation}
+                      onChange={(e) => setCreditsPerEvaluation(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateCreditsPerEvaluation(creditsPerEvaluation)}
+                      disabled={savingSettings}
+                      className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 px-2">
-          <p className="text-sm text-gray-600">
-            Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} de {filteredUsers.length}
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-sm text-gray-600">
-              {currentPage} de {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
+          <PayPalSettingsCard />
+          <CreditSalesCard />
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-6">
+          <Card className="mb-0 border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <History className="w-5 h-5 text-slate-600" />
+                <span className="text-slate-900">Auditoría reciente</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingAudit ? (
+                <div className="flex items-center gap-2 text-slate-500 py-6">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Cargando eventos de auditoría...</span>
+                </div>
+              ) : auditLogs.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-5 text-sm text-slate-600">
+                  Aún no hay eventos de auditoría registrados.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {auditLogs.map((log) => (
+                    <div key={log.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-xl bg-slate-100 text-slate-600">
+                          <ShieldAlert className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200">
+                              {log.action}
+                            </Badge>
+                            <span className="text-sm font-medium text-slate-900">{log.summary}</span>
+                          </div>
+                          <div className="text-xs text-slate-500 flex flex-wrap gap-x-3 gap-y-1">
+                            <span>{log.actor.name || log.actor.email}</span>
+                            <span>{log.entityType}{log.entityId ? ` · ${log.entityId}` : ''}</span>
+                            <span>{formatDate(log.createdAt)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Clock3 className="w-3.5 h-3.5" />
+                        <span>{new Date(log.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="technical" className="space-y-6">
+          <Card className="mb-0 border-sky-200 bg-gradient-to-br from-sky-50 to-blue-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Code className="w-5 h-5 text-sky-600" />
+                <span className="text-sky-900">Gestión de Pruebas Técnicas</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Banco de Preguntas Técnicas</h4>
+                  <p className="text-sm text-gray-600">
+                    Administra las preguntas técnicas para evaluaciones por cargo. Crea, edita y elimina preguntas con soporte bilingüe.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => router.push('/admin/technical-questions')}
+                  className="bg-sky-600 hover:bg-sky-700"
+                >
+                  <FileCode className="w-4 h-4 mr-2" />
+                  Gestionar Preguntas
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* User Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
