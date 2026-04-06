@@ -4,8 +4,9 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { escapeHtml } from '@/lib/security';
 import { getBooleanSetting, getSystemSettingsMap } from '@/lib/system-settings';
+import { getPortalEmailFromRequest } from '@/lib/results-portal';
 
-const validTypes = ['disc', 'driving-forces', 'eq', 'dna', 'acumen', 'values', 'stress'];
+const validTypes = ['disc', 'driving-forces', 'eq', 'dna', 'acumen', 'values', 'stress', 'technical'];
 
 export async function GET(
   request: NextRequest,
@@ -13,9 +14,6 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
-    }
 
     const settings = await getSystemSettingsMap(['allowExternalPdfExport']);
     if (!getBooleanSetting(settings, 'allowExternalPdfExport', true)) {
@@ -41,6 +39,9 @@ export async function GET(
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
         }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        }
         htmlContent = generateDISCPDF(evaluation);
         break;
 
@@ -51,6 +52,9 @@ export async function GET(
         });
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
+        }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
         }
         htmlContent = generateDrivingForcesPDF(evaluation);
         break;
@@ -63,6 +67,9 @@ export async function GET(
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
         }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        }
         htmlContent = generateEQPDF(evaluation);
         break;
 
@@ -73,6 +80,9 @@ export async function GET(
         });
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
+        }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
         }
         htmlContent = generateDNAPDF(evaluation);
         break;
@@ -85,6 +95,9 @@ export async function GET(
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
         }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        }
         htmlContent = generateAcumenPDF(evaluation);
         break;
 
@@ -95,6 +108,9 @@ export async function GET(
         });
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
+        }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
         }
         htmlContent = generateValuesPDF(evaluation);
         break;
@@ -107,7 +123,24 @@ export async function GET(
         if (!evaluation || evaluation.status !== 'COMPLETED') {
           return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
         }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        }
         htmlContent = generateStressPDF(evaluation);
+        break;
+
+      case 'technical':
+        evaluation = await prisma.externalTechnicalEvaluation.findUnique({
+          where: { token },
+          include: { senderUser: true, result: true },
+        });
+        if (!evaluation || evaluation.status !== 'COMPLETED') {
+          return NextResponse.json({ error: 'Evaluación no encontrada o no completada' }, { status: 404 });
+        }
+        if (!canAccessPdf(request, session, evaluation.recipientEmail)) {
+          return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        }
+        htmlContent = generateTechnicalPDF(evaluation);
         break;
 
       default:
@@ -126,6 +159,15 @@ export async function GET(
     console.error('Error generating PDF:', error);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
+}
+
+function canAccessPdf(request: NextRequest, session: any, recipientEmail: string) {
+  if (session?.user?.id) {
+    return true;
+  }
+
+  const portalEmail = getPortalEmailFromRequest(request);
+  return Boolean(portalEmail && portalEmail === recipientEmail.toLowerCase());
 }
 
 // Base styles for all PDFs
@@ -740,6 +782,138 @@ function generateStressPDF(evaluation: any): string {
           <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>
           <p>Confidencial - Solo para uso del evaluado y profesionales autorizados</p>
         </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+function generateTechnicalPDF(evaluation: any): string {
+  const result = evaluation.result;
+  const completedDate = new Date(evaluation.completedAt!).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const categoryScores = result?.categoryScores ? Object.entries(result.categoryScores).sort(([, a], [, b]) => (b as number) - (a as number)) : [];
+
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reporte Técnico - ${escapeHtml(String(evaluation.recipientName || ''))}</title>
+      <style>
+        ${getBaseStyles()}
+        .technical-score {
+          background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+          border: 1px solid #bae6fd;
+          border-radius: 18px;
+          padding: 24px;
+          text-align: center;
+        }
+        .technical-score .big {
+          font-size: 42px;
+          font-weight: 800;
+          color: #0369a1;
+        }
+        .technical-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 16px;
+          margin-top: 20px;
+        }
+        .technical-card {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 16px;
+        }
+        .technical-list {
+          margin-top: 12px;
+          padding-left: 18px;
+        }
+        .technical-list li {
+          margin-bottom: 6px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="report-container">
+        <div class="header">
+          <h1>Reporte de Prueba Técnica</h1>
+          <div class="subtitle">Reclu System</div>
+          <div class="subtitle">${escapeHtml(String(evaluation.recipientName || ''))}</div>
+          <div class="date">Completado el ${completedDate}</div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Desempeño general</h2>
+          <div class="technical-score">
+            <div class="big">${Math.round(result?.totalScore || 0)}%</div>
+            <div style="margin-top: 6px; color: #075985; font-size: 16px; font-weight: 700;">
+              ${escapeHtml(String(result?.performanceLevel || 'Pendiente'))}
+            </div>
+            <div style="margin-top: 8px; color: #0f172a;">
+              ${Math.round(result?.correctAnswers || 0)} respuestas correctas de ${Math.round(result?.totalQuestions || 0)} preguntas
+            </div>
+            <div style="margin-top: 8px; color: #475569;">
+              Cargo evaluado: ${escapeHtml(String(evaluation.jobPositionTitle || 'N/D'))}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Métricas clave</h2>
+          <div class="technical-grid">
+            <div class="technical-card">
+              <div class="score-label">Tiempo promedio</div>
+              <div class="score-value">${typeof result?.averageTimePerQuestion === 'number' ? `${Math.round(result.averageTimePerQuestion)}s` : 'N/D'}</div>
+            </div>
+            <div class="technical-card">
+              <div class="score-label">Preguntas totales</div>
+              <div class="score-value">${result?.totalQuestions ?? 'N/D'}</div>
+            </div>
+            <div class="technical-card">
+              <div class="score-label">Categorías evaluadas</div>
+              <div class="score-value">${categoryScores.length}</div>
+            </div>
+          </div>
+        </div>
+
+        ${categoryScores.length > 0 ? `
+          <div class="section">
+            <h2 class="section-title">Categorías destacadas</h2>
+            <div class="technical-grid">
+              ${categoryScores.slice(0, 6).map(([label, value]) => `
+                <div class="technical-card">
+                  <div class="score-label">${escapeHtml(String(label))}</div>
+                  <div class="score-value">${Math.round(value as number)}%</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${Array.isArray(result?.strengths) && result.strengths.length > 0 ? `
+          <div class="section">
+            <h2 class="section-title">Fortalezas</h2>
+            <ul class="technical-list">
+              ${result.strengths.slice(0, 8).map((item: string) => `<li>${escapeHtml(String(item))}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
+        ${Array.isArray(result?.weaknesses) && result.weaknesses.length > 0 ? `
+          <div class="section">
+            <h2 class="section-title">Áreas de mejora</h2>
+            <ul class="technical-list">
+              ${result.weaknesses.slice(0, 8).map((item: string) => `<li>${escapeHtml(String(item))}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
       </div>
     </body>
     </html>

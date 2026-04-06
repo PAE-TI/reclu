@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { getAppBaseUrl } from '@/lib/site-url';
+import { escapeHtml } from '@/lib/security';
 interface EmailOptions {
   to: string;
   subject: string;
@@ -10,6 +11,163 @@ interface EmailOptions {
 class EmailService {
   async sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
     return this.sendViaSMTP({ to, subject, html, text });
+  }
+
+  generateResultsPortalAccessEmail(
+    recipientEmail: string,
+    accessCode: string,
+    accessLink: string,
+    expiryMinutes: number = 15
+  ): { subject: string; html: string; text: string } {
+    const safeEmail = escapeHtml(recipientEmail);
+    const safeCode = escapeHtml(accessCode);
+    const safeLink = escapeHtml(accessLink);
+    const subject = 'Acceso a tus resultados en Reclu';
+    const text = [
+      'Hola,',
+      '',
+      'Solicitaste acceso al portal de resultados de Reclu.',
+      `Tu código de acceso es: ${accessCode}`,
+      `También puedes abrir el enlace directo: ${accessLink}`,
+      '',
+      `Este acceso expira en ${expiryMinutes} minutos por seguridad.`,
+      '',
+      'Si no solicitaste este acceso, puedes ignorar este correo.',
+    ].join('\n');
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Acceso a tus resultados</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background: #f8fafc;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0f172a;
+          }
+          .wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 24px;
+          }
+          .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+          }
+          .hero {
+            padding: 32px;
+            background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+            color: white;
+          }
+          .hero h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+          }
+          .hero p {
+            margin: 0;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.5;
+          }
+          .body {
+            padding: 32px;
+          }
+          .code-box {
+            border: 1px solid #c7d2fe;
+            background: #eef2ff;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            margin: 24px 0;
+          }
+          .code {
+            font-size: 34px;
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            color: #4338ca;
+            margin: 0;
+          }
+          .muted {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+          .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 14px;
+            padding: 14px 22px;
+            font-weight: 700;
+            margin-top: 8px;
+          }
+          .link {
+            display: block;
+            word-break: break-all;
+            color: #4338ca;
+            font-size: 13px;
+            margin-top: 12px;
+          }
+          .note {
+            margin-top: 24px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+          .footer {
+            padding: 18px 32px 30px;
+            color: #64748b;
+            font-size: 12px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="wrapper">
+          <div class="card">
+            <div class="hero">
+              <h1>Acceso a tus resultados</h1>
+              <p>Usa este acceso temporal para revisar tus evaluaciones, estados y descargas desde el portal de Reclu.</p>
+            </div>
+            <div class="body">
+              <p>Hola,</p>
+              <p class="muted">
+                Solicitaste acceso al portal de resultados asociado al correo <strong>${safeEmail}</strong>.
+                Usa el botón o ingresa el código manualmente en la página.
+              </p>
+              <div class="code-box">
+                <p class="muted" style="margin: 0 0 10px;">Tu código de acceso</p>
+                <p class="code">${safeCode}</p>
+              </div>
+              <div style="text-align: center;">
+                <a href="${safeLink}" class="button">Abrir portal de resultados</a>
+              </div>
+              <div class="link">${safeLink}</div>
+              <div class="note">
+                Este acceso expira en <strong>${expiryMinutes} minutos</strong> por seguridad.
+                Si no solicitaste este ingreso, puedes ignorar este correo sin hacer nada.
+              </div>
+            </div>
+            <div class="footer">
+              Reclu | Portal de resultados para evaluaciones externas
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return { subject, html, text };
   }
 
   private async sendViaSMTP({ to, subject, html, text }: EmailOptions): Promise<boolean> {
