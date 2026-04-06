@@ -49,6 +49,9 @@ import {
   Code,
   FileCode,
   Trash2,
+  Clock3,
+  ShieldAlert,
+  History,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PayPalSettingsCard } from '@/components/admin/paypal-settings';
@@ -106,6 +109,23 @@ interface Stats {
   adminUsers: number;
   facilitatorUsers: number;
   mainUsers: number;
+}
+
+interface AuditLog {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  summary: string;
+  metadata: Record<string, unknown> | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+  actor: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
 }
 
 interface OwnerInfoDetail {
@@ -180,6 +200,8 @@ export default function AdminPage() {
   const [allowExternalPdfExport, setAllowExternalPdfExport] = useState(true);
   const [auditRetentionDays, setAuditRetentionDays] = useState(180);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [loadingAudit, setLoadingAudit] = useState(true);
   
   // Recharge dialog
   const [rechargeDialogOpen, setRechargeDialogOpen] = useState(false);
@@ -198,6 +220,7 @@ export default function AdminPage() {
   useEffect(() => {
     fetchUsers();
     fetchSettings();
+    fetchAuditLogs();
   }, []);
 
   const fetchSettings = async () => {
@@ -346,6 +369,21 @@ export default function AdminPage() {
       toast.error('Error al cargar usuarios');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAuditLogs = async () => {
+    try {
+      const response = await fetch('/api/admin/audit?limit=8');
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      setAuditLogs(data.logs || []);
+    } catch (error) {
+      console.error('Error fetching audit logs:', error);
+    } finally {
+      setLoadingAudit(false);
     }
   };
 
@@ -801,6 +839,56 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8 border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <History className="w-5 h-5 text-slate-600" />
+            <span className="text-slate-900">Auditoría reciente</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loadingAudit ? (
+            <div className="flex items-center gap-2 text-slate-500 py-6">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Cargando eventos de auditoría...</span>
+            </div>
+          ) : auditLogs.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-5 text-sm text-slate-600">
+              Aún no hay eventos de auditoría registrados.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {auditLogs.map((log) => (
+                <div key={log.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-slate-100 text-slate-600">
+                      <ShieldAlert className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200">
+                          {log.action}
+                        </Badge>
+                        <span className="text-sm font-medium text-slate-900">{log.summary}</span>
+                      </div>
+                      <div className="text-xs text-slate-500 flex flex-wrap gap-x-3 gap-y-1">
+                        <span>{log.actor.name || log.actor.email}</span>
+                        <span>{log.entityType}{log.entityId ? ` · ${log.entityId}` : ''}</span>
+                        <span>{formatDate(log.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <Clock3 className="w-3.5 h-3.5" />
+                    <span>{new Date(log.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 

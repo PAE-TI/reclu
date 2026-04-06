@@ -80,6 +80,7 @@ model User {
   
   // Notifications
   notifications            Notification[]
+  adminAuditLogs           AdminAuditLog[] @relation("AdminAuditActor")
   
   // Evaluation Notes
   evaluationNotes          EvaluationNote[]
@@ -1992,6 +1993,25 @@ model SystemSettings {
   updatedAt     DateTime  @updatedAt
 
   @@map("system_settings")
+}
+
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  action      String
+  entityType  String
+  entityId    String?
+  summary     String
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor       User     @relation("AdminAuditActor", fields: [actorUserId], references: [id], onDelete: Cascade)
+
+  @@index([actorUserId, createdAt])
+  @@index([entityType, entityId])
+  @@map("admin_audit_logs")
 }
 
 // Credit Transactions

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { createAdminAuditLog } from '@/lib/admin-audit';
 import {
   SYSTEM_SETTING_DEFAULTS,
   SYSTEM_SETTING_DESCRIPTIONS,
@@ -94,6 +95,16 @@ export async function PUT(request: NextRequest) {
         value: normalizedValue,
         description: SYSTEM_SETTING_DESCRIPTIONS[key] || ''
       }
+    });
+
+    await createAdminAuditLog({
+      actorUserId: session.user.id,
+      action: 'SETTING_UPDATE',
+      entityType: 'SystemSetting',
+      entityId: key,
+      summary: `Actualizó la configuración ${key}`,
+      metadata: { key, value: normalizedValue },
+      request,
     });
 
     return NextResponse.json({ setting });

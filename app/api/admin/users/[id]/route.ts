@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { createAdminAuditLog } from '@/lib/admin-audit';
 
 export async function GET(
   request: Request,
@@ -227,6 +228,16 @@ export async function DELETE(
       prisma.user.delete({ where: { id: params.id } }),
     ]);
 
+    await createAdminAuditLog({
+      actorUserId: currentUser.id,
+      action: 'USER_DELETE',
+      entityType: 'User',
+      entityId: params.id,
+      summary: `Eliminó al usuario ${params.id}`,
+      metadata: { userId: params.id },
+      request,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting user:', error);
@@ -285,6 +296,30 @@ export async function PATCH(
         isActive: true,
       }
     });
+
+    if (typeof isActive === 'boolean') {
+      await createAdminAuditLog({
+        actorUserId: currentUser.id,
+        action: 'USER_STATUS_UPDATE',
+        entityType: 'User',
+        entityId: params.id,
+        summary: `${isActive ? 'Activó' : 'Desactivó'} al usuario ${params.id}`,
+        metadata: { isActive },
+        request,
+      });
+    }
+
+    if (role && ['USER', 'ADMIN', 'FACILITATOR'].includes(role)) {
+      await createAdminAuditLog({
+        actorUserId: currentUser.id,
+        action: 'USER_ROLE_UPDATE',
+        entityType: 'User',
+        entityId: params.id,
+        summary: `Cambió el rol del usuario ${params.id} a ${role}`,
+        metadata: { role },
+        request,
+      });
+    }
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {

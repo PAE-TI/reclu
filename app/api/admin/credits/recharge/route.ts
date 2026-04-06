@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { createCreditRechargeNotification } from '@/lib/notifications';
+import { createAdminAuditLog } from '@/lib/admin-audit';
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,21 @@ export async function POST(request: NextRequest) {
       console.error('Error creating recharge notification:', notifError);
       // No fallar la operación si la notificación falla
     }
+
+    await createAdminAuditLog({
+      actorUserId: session.user.id,
+      action: 'CREDIT_RECHARGE',
+      entityType: 'User',
+      entityId: userId,
+      summary: `Recargó ${amount} créditos a ${user.email}`,
+      metadata: {
+        userEmail: user.email,
+        amount,
+        newBalance,
+        description: description || null,
+      },
+      request,
+    });
 
     return NextResponse.json({ 
       success: true, 
