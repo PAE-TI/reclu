@@ -68,6 +68,7 @@ export default function EditProfile() {
     confirm: false
   });
   const [changePassword, setChangePassword] = useState(false);
+  const [passwordMinLength, setPasswordMinLength] = useState(8);
 
   // Cargar datos del usuario al montar
   useEffect(() => {
@@ -88,6 +89,22 @@ export default function EditProfile() {
       router.push('/auth/signin');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          setPasswordMinLength(Number(data.passwordMinLength || 8));
+        }
+      } catch (error) {
+        console.error('Error loading security settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -111,7 +128,7 @@ export default function EditProfile() {
 
       if (!formData.newPassword) {
         newErrors.newPassword = t('profileEdit.newPasswordRequired');
-      } else if (formData.newPassword.length < 6) {
+      } else if (formData.newPassword.length < passwordMinLength) {
         newErrors.newPassword = t('profileEdit.newPasswordMinLength');
       }
 

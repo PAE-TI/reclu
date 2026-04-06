@@ -3,6 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/db';
 import { giveInitialCredits } from '@/lib/credits';
+import {
+  SYSTEM_SETTING_DEFAULTS,
+  getBooleanSetting,
+  getNumberSetting,
+  getSystemSettingsMap,
+} from '@/lib/system-settings';
 
 export const dynamic = "force-dynamic";
 
@@ -59,13 +65,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verificar configuración de activación por defecto
-    const defaultActiveSetting = await prisma.systemSettings.findUnique({
-      where: { key: 'defaultUserActive' }
-    });
-    const isActiveByDefault = defaultActiveSetting?.value !== 'false';
+    const settings = await getSystemSettingsMap([
+      'signupEnabled',
+      'defaultUserActive',
+      'passwordMinLength',
+    ]);
+
+    if (!getBooleanSetting(settings, 'signupEnabled', true)) {
+      return NextResponse.json(
+        { error: 'Los registros están deshabilitados temporalmente' },
+        { status: 403 }
+      );
+    }
+
+    const isActiveByDefault = getBooleanSetting(settings, 'defaultUserActive', true);
+    const passwordMinLength = getNumberSetting(
+      settings,
+      'passwordMinLength',
+      parseInt(SYSTEM_SETTING_DEFAULTS.passwordMinLength, 10),
+      8,
+      64
+    );
 
     // Hash password
+    if (safePassword.length < passwordMinLength) {
+      return NextResponse.json(
+        { error: `La contraseña debe tener al menos ${passwordMinLength} caracteres` },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(safePassword, 12);
 
     // Crear usuario

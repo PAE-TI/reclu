@@ -42,6 +42,15 @@ export function ExternalResultsExportButton({
   const handleDownload = async () => {
     setDownloading(true);
     try {
+      const settingsResponse = await fetch('/api/settings/public');
+      if (settingsResponse.ok) {
+        const settings = await settingsResponse.json();
+        if (settings.allowExternalPdfExport === false) {
+          toast.error('La exportación PDF está deshabilitada temporalmente');
+          return;
+        }
+      }
+
       const resultsUrl = getResultsPageUrl(type, token);
       if (!resultsUrl) {
         throw new Error('Tipo de evaluación no válido');
@@ -68,6 +77,7 @@ export function ExternalResultsExportButton({
     } catch (error) {
       console.error('Error downloading PDF:', error);
       toast.error(error instanceof Error ? error.message : 'Error al descargar el PDF');
+    } finally {
       setDownloading(false);
     }
   };

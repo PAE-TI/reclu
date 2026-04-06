@@ -3,6 +3,11 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { prisma } from './db';
+import {
+  SYSTEM_SETTING_DEFAULTS,
+  getNumberSetting,
+  getSystemSettingsMap,
+} from './system-settings';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -22,6 +27,24 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const email = credentials.email.trim().toLowerCase();
+          const settings = await getSystemSettingsMap([
+            'loginMaxAttempts',
+            'loginLockoutMinutes',
+          ]);
+          const loginMaxAttempts = getNumberSetting(
+            settings,
+            'loginMaxAttempts',
+            parseInt(SYSTEM_SETTING_DEFAULTS.loginMaxAttempts, 10),
+            1,
+            20
+          );
+          const loginLockoutMinutes = getNumberSetting(
+            settings,
+            'loginLockoutMinutes',
+            parseInt(SYSTEM_SETTING_DEFAULTS.loginLockoutMinutes, 10),
+            1,
+            1440
+          );
           const user = await prisma.user.findUnique({
             where: { email },
           });
@@ -30,13 +53,53 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
+          if (user.lockedUntil) {
+            if (user.lockedUntil > new Date()) {
+              throw new Error('ACCOUNT_LOCKED');
+            }
+
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                failedLoginAttempts: 0,
+                lockedUntil: null,
+              },
+            });
+          }
+
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
             user.password
           );
 
           if (!isPasswordValid) {
+            const nextFailedAttempts = user.failedLoginAttempts + 1;
+            const shouldLock = nextFailedAttempts >= loginMaxAttempts;
+
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                failedLoginAttempts: shouldLock ? loginMaxAttempts : nextFailedAttempts,
+                lockedUntil: shouldLock
+                  ? new Date(Date.now() + loginLockoutMinutes * 60 * 1000)
+                  : user.lockedUntil,
+              },
+            });
+
+            if (shouldLock) {
+              throw new Error('ACCOUNT_LOCKED');
+            }
             return null;
+          }
+
+          if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                failedLoginAttempts: 0,
+                lockedUntil: null,
+              },
+            });
           }
 
           // Verificar si el usuario está activo DESPUÉS de validar credenciales
@@ -59,6 +122,9 @@ export const authOptions: NextAuthOptions = {
         } catch (error) {
           // Re-throw INACTIVE_USER error para que el cliente lo maneje
           if (error instanceof Error && error.message === 'INACTIVE_USER') {
+            throw error;
+          }
+          if (error instanceof Error && error.message === 'ACCOUNT_LOCKED') {
             throw error;
           }
           console.error('Auth error:', error);

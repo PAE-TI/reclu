@@ -22,6 +22,8 @@ model User {
   image         String?
   role          UserRole  @default(USER)
   isActive      Boolean   @default(true)
+  failedLoginAttempts Int @default(0)
+  lockedUntil   DateTime?
   credits       Int       @default(0)  // User credit balance
   themePreference String  @default("light") // light, dark, system
   language      String    @default("es") // es, en - User's preferred language

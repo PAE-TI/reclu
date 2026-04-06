@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,6 +92,23 @@ export default function ProfileClient({ user, facilitatorInfo, teamMembers = [] 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [passwordMinLength, setPasswordMinLength] = useState(8);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          setPasswordMinLength(Number(data.passwordMinLength || 8));
+        }
+      } catch (error) {
+        console.error('Error loading security settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const isFacilitator = !!facilitatorInfo;
 
@@ -159,7 +176,7 @@ export default function ProfileClient({ user, facilitatorInfo, teamMembers = [] 
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
+    if (passwordData.newPassword.length < passwordMinLength) {
       setError(t('profile.passwordMinLength'));
       return;
     }

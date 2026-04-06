@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -43,7 +43,29 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [requiresActivation, setRequiresActivation] = useState(false);
+  const [signupEnabled, setSignupEnabled] = useState(true);
+  const [passwordMinLength, setPasswordMinLength] = useState(8);
+  const [loadingSettings, setLoadingSettings] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadPublicSettings = async () => {
+      try {
+        const response = await fetch('/api/settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          setSignupEnabled(data.signupEnabled !== false);
+          setPasswordMinLength(Number(data.passwordMinLength || 8));
+        }
+      } catch (error) {
+        console.error('Error loading public settings:', error);
+      } finally {
+        setLoadingSettings(false);
+      }
+    };
+
+    loadPublicSettings();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +88,7 @@ export default function SignUp() {
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (formData.password.length < passwordMinLength) {
       setError(t('auth.signup.errorPasswordLength'));
       setIsLoading(false);
       return;
@@ -193,6 +215,14 @@ export default function SignUp() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {!loadingSettings && !signupEnabled && (
+                <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                  <h4 className="font-semibold text-amber-800 mb-1">Registro deshabilitado</h4>
+                  <p className="text-sm text-amber-700">
+                    El administrador desactivó temporalmente el registro de nuevos usuarios.
+                  </p>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
                   <div className="flex items-center gap-3 p-4 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
@@ -217,6 +247,7 @@ export default function SignUp() {
                         placeholder={t('auth.signup.firstNamePlaceholder')}
                         className="pl-10 h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                         required
+                        disabled={!signupEnabled}
                       />
                     </div>
                   </div>
@@ -234,6 +265,7 @@ export default function SignUp() {
                       placeholder={t('auth.signup.lastNamePlaceholder')}
                       className="h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                       required
+                      disabled={!signupEnabled}
                     />
                   </div>
                 </div>
@@ -253,6 +285,7 @@ export default function SignUp() {
                       placeholder={t('auth.signup.emailPlaceholder')}
                       className="pl-10 h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                       required
+                      disabled={!signupEnabled}
                     />
                   </div>
                 </div>
@@ -272,6 +305,7 @@ export default function SignUp() {
                       placeholder={t('auth.signup.companyPlaceholder')}
                       className="pl-10 h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                       required
+                      disabled={!signupEnabled}
                     />
                   </div>
                 </div>
@@ -289,9 +323,10 @@ export default function SignUp() {
                         type={showPassword ? 'text' : 'password'}
                         value={formData.password}
                         onChange={handleChange}
-                        placeholder="••••••"
+                        placeholder={`•••••• (${passwordMinLength}+)`}
                         className="pl-10 pr-10 h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                         required
+                        disabled={!signupEnabled}
                       />
                       <button
                         type="button"
@@ -318,6 +353,7 @@ export default function SignUp() {
                         placeholder="••••••"
                         className="pl-10 h-11 bg-gray-50 border-gray-200 rounded-xl focus:bg-white transition-colors"
                         required
+                        disabled={!signupEnabled}
                       />
                     </div>
                   </div>
@@ -359,11 +395,11 @@ export default function SignUp() {
                 </div>
 
                 <div className="pt-2">
-                  <Button
-                    type="submit"
-                    disabled={isLoading || !acceptTerms}
-                    className="w-full h-12 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-600 hover:to-indigo-600 text-white rounded-xl shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                <Button
+                  type="submit"
+                  disabled={isLoading || !acceptTerms || !signupEnabled}
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-600 hover:to-indigo-600 text-white rounded-xl shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                     {isLoading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

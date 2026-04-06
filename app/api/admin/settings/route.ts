@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import {
+  SYSTEM_SETTING_DEFAULTS,
+  SYSTEM_SETTING_DESCRIPTIONS,
+  normalizeSettingValue,
+} from '@/lib/system-settings';
 
 export const dynamic = "force-dynamic";
 
@@ -29,15 +34,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Valores por defecto si no existen
-    if (!settingsObj['defaultUserActive']) {
-      settingsObj['defaultUserActive'] = 'true';
-    }
-    if (!settingsObj['defaultCredits']) {
-      settingsObj['defaultCredits'] = '100';
-    }
-    if (!settingsObj['creditsPerEvaluation']) {
-      settingsObj['creditsPerEvaluation'] = '2';
-    }
+    Object.entries(SYSTEM_SETTING_DEFAULTS).forEach(([key, value]) => {
+      if (!settingsObj[key]) {
+        settingsObj[key] = value;
+      }
+    });
 
     return NextResponse.json({ settings: settingsObj });
   } catch (error) {
@@ -72,19 +73,41 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    const allowedKeys = Object.keys(SYSTEM_SETTING_DEFAULTS);
+
+    if (!allowedKeys.includes(key)) {
+      return NextResponse.json(
+        { error: 'Clave no permitida' },
+        { status: 400 }
+      );
+    }
+
+    const normalizedValue = normalizeSettingValue(key, value);
+    validateSettingValue(key, normalizedValue);
+
     // Upsert la configuración
     const setting = await prisma.systemSettings.upsert({
       where: { key },
-      update: { value: String(value) },
+      update: { value: normalizedValue },
       create: {
         key,
-        value: String(value),
-        description: getSettingDescription(key)
+        value: normalizedValue,
+        description: SYSTEM_SETTING_DESCRIPTIONS[key] || ''
       }
     });
 
     return NextResponse.json({ setting });
   } catch (error) {
+    if (error instanceof Error && (
+      error.message.includes('inválido') ||
+      error.message.includes('permitida') ||
+      error.message.includes('entre')
+    )) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
     console.error('Error updating setting:', error);
     return NextResponse.json(
       { error: 'Error al actualizar configuración' },
@@ -93,11 +116,31 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-function getSettingDescription(key: string): string {
-  const descriptions: Record<string, string> = {
-    'defaultUserActive': 'Define si los nuevos usuarios registrados quedan activos automáticamente',
-    'defaultCredits': 'Créditos iniciales que reciben los nuevos usuarios al registrarse',
-    'creditsPerEvaluation': 'Créditos que se descuentan al enviar cada evaluación',
+function validateSettingValue(key: string, value: string) {
+  if (key === 'defaultUserActive' || key === 'signupEnabled' || key === 'allowExternalPdfExport') {
+    if (!['true', 'false'].includes(value)) {
+      throw new Error(`Valor booleano inválido para ${key}`);
+    }
+    return;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) {
+    throw new Error(`Valor numérico inválido para ${key}`);
+  }
+
+  const limits: Record<string, { min: number; max: number }> = {
+    defaultCredits: { min: 0, max: 100000 },
+    creditsPerEvaluation: { min: 1, max: 1000 },
+    passwordMinLength: { min: 8, max: 64 },
+    loginMaxAttempts: { min: 1, max: 20 },
+    loginLockoutMinutes: { min: 1, max: 1440 },
+    technicalEvaluationExpiryDays: { min: 1, max: 365 },
+    auditRetentionDays: { min: 7, max: 3650 },
   };
-  return descriptions[key] || '';
+
+  const limit = limits[key];
+  if (limit && (parsed < limit.min || parsed > limit.max)) {
+    throw new Error(`El valor para ${key} debe estar entre ${limit.min} y ${limit.max}`);
+  }
 }

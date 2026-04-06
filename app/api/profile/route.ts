@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { getFacilitatorInfo } from '@/lib/team';
+import { SYSTEM_SETTING_DEFAULTS, getNumberSetting, getSystemSettingsMap } from '@/lib/system-settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -146,9 +147,18 @@ export async function PUT(req: NextRequest) {
         );
       }
 
-      if (data.newPassword.length < 6) {
+      const settings = await getSystemSettingsMap(['passwordMinLength']);
+      const passwordMinLength = getNumberSetting(
+        settings,
+        'passwordMinLength',
+        parseInt(SYSTEM_SETTING_DEFAULTS.passwordMinLength, 10),
+        8,
+        64
+      );
+
+      if (data.newPassword.length < passwordMinLength) {
         return NextResponse.json(
-          { error: 'La nueva contraseña debe tener al menos 6 caracteres' },
+          { error: `La nueva contraseña debe tener al menos ${passwordMinLength} caracteres` },
           { status: 400 }
         );
       }

@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { escapeHtml } from '@/lib/security';
+import { getBooleanSetting, getSystemSettingsMap } from '@/lib/system-settings';
 
 export async function GET(
   request: NextRequest,
@@ -14,6 +15,11 @@ export async function GET(
 
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const settings = await getSystemSettingsMap(['allowExternalPdfExport']);
+    if (!getBooleanSetting(settings, 'allowExternalPdfExport', true)) {
+      return NextResponse.json({ error: 'La exportación PDF está deshabilitada temporalmente' }, { status: 403 });
     }
 
     // Obtener evaluación con resultados e interpretación

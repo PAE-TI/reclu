@@ -172,6 +172,13 @@ export default function AdminPage() {
   const [defaultUserActive, setDefaultUserActive] = useState(true);
   const [defaultCredits, setDefaultCredits] = useState(100);
   const [creditsPerEvaluation, setCreditsPerEvaluation] = useState(2);
+  const [signupEnabled, setSignupEnabled] = useState(true);
+  const [passwordMinLength, setPasswordMinLength] = useState(8);
+  const [loginMaxAttempts, setLoginMaxAttempts] = useState(5);
+  const [loginLockoutMinutes, setLoginLockoutMinutes] = useState(15);
+  const [technicalEvaluationExpiryDays, setTechnicalEvaluationExpiryDays] = useState(30);
+  const [allowExternalPdfExport, setAllowExternalPdfExport] = useState(true);
+  const [auditRetentionDays, setAuditRetentionDays] = useState(180);
   const [savingSettings, setSavingSettings] = useState(false);
   
   // Recharge dialog
@@ -201,6 +208,13 @@ export default function AdminPage() {
         setDefaultUserActive(data.settings.defaultUserActive === 'true');
         setDefaultCredits(parseInt(data.settings.defaultCredits || '100'));
         setCreditsPerEvaluation(parseInt(data.settings.creditsPerEvaluation || '2'));
+        setSignupEnabled(data.settings.signupEnabled !== 'false');
+        setPasswordMinLength(parseInt(data.settings.passwordMinLength || '8'));
+        setLoginMaxAttempts(parseInt(data.settings.loginMaxAttempts || '5'));
+        setLoginLockoutMinutes(parseInt(data.settings.loginLockoutMinutes || '15'));
+        setTechnicalEvaluationExpiryDays(parseInt(data.settings.technicalEvaluationExpiryDays || '30'));
+        setAllowExternalPdfExport(data.settings.allowExternalPdfExport !== 'false');
+        setAuditRetentionDays(parseInt(data.settings.auditRetentionDays || '180'));
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -240,6 +254,49 @@ export default function AdminPage() {
   const updateCreditsPerEvaluation = async (value: number) => {
     setCreditsPerEvaluation(value);
     await updateSetting('creditsPerEvaluation', String(value), `Créditos por evaluación: ${value}`);
+  };
+
+  const updateSignupEnabled = async (value: boolean) => {
+    setSignupEnabled(value);
+    await updateSetting(
+      'signupEnabled',
+      String(value),
+      value ? 'Registro habilitado' : 'Registro deshabilitado'
+    );
+  };
+
+  const updatePasswordMinLength = async (value: number) => {
+    setPasswordMinLength(value);
+    await updateSetting('passwordMinLength', String(value), `Longitud mínima de contraseña: ${value}`);
+  };
+
+  const updateLoginMaxAttempts = async (value: number) => {
+    setLoginMaxAttempts(value);
+    await updateSetting('loginMaxAttempts', String(value), `Intentos máximos: ${value}`);
+  };
+
+  const updateLoginLockoutMinutes = async (value: number) => {
+    setLoginLockoutMinutes(value);
+    await updateSetting('loginLockoutMinutes', String(value), `Bloqueo por ${value} min`);
+  };
+
+  const updateTechnicalEvaluationExpiryDays = async (value: number) => {
+    setTechnicalEvaluationExpiryDays(value);
+    await updateSetting('technicalEvaluationExpiryDays', String(value), `Vigencia técnica: ${value} días`);
+  };
+
+  const updateAllowExternalPdfExport = async (value: boolean) => {
+    setAllowExternalPdfExport(value);
+    await updateSetting(
+      'allowExternalPdfExport',
+      String(value),
+      value ? 'Exportación PDF habilitada' : 'Exportación PDF deshabilitada'
+    );
+  };
+
+  const updateAuditRetentionDays = async (value: number) => {
+    setAuditRetentionDays(value);
+    await updateSetting('auditRetentionDays', String(value), `Retención de auditoría: ${value} días`);
   };
 
   const rechargeCredits = async () => {
@@ -451,33 +508,49 @@ export default function AdminPage() {
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Settings className="w-5 h-5 text-amber-600" />
-            <span className="text-amber-900">Configuración de Registro</span>
+            <span className="text-amber-900">Registro y acceso</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900 mb-1">Activación automática de nuevos usuarios</h4>
-              <p className="text-sm text-gray-600">
-                {defaultUserActive 
-                  ? 'Los nuevos usuarios pueden acceder inmediatamente después de registrarse.'
-                  : 'Los nuevos usuarios deben ser activados manualmente por un administrador antes de poder acceder.'
-                }
-              </p>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Permitir nuevos registros</h4>
+                  <p className="text-sm text-gray-600">
+                    {signupEnabled
+                      ? 'Los usuarios pueden crear una cuenta desde la página pública.'
+                      : 'El registro público está deshabilitado temporalmente.'
+                    }
+                  </p>
+                </div>
+                <Switch
+                  checked={signupEnabled}
+                  onCheckedChange={updateSignupEnabled}
+                  disabled={savingSettings}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className={`text-sm font-medium ${!defaultUserActive ? 'text-amber-700' : 'text-gray-400'}`}>
-                Requiere activación
-              </span>
-              <Switch
-                checked={defaultUserActive}
-                onCheckedChange={updateDefaultUserActive}
-                disabled={savingSettings}
-                className="data-[state=checked]:bg-green-500"
-              />
-              <span className={`text-sm font-medium ${defaultUserActive ? 'text-green-700' : 'text-gray-400'}`}>
-                Activo automáticamente
-              </span>
+
+            <div className="rounded-2xl border border-amber-200 bg-white/70 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Activación automática de nuevos usuarios</h4>
+                  <p className="text-sm text-gray-600">
+                    {defaultUserActive
+                      ? 'Los nuevos usuarios pueden acceder inmediatamente después de registrarse.'
+                      : 'Los nuevos usuarios deben ser activados manualmente por un administrador antes de poder acceder.'
+                    }
+                  </p>
+                </div>
+                <Switch
+                  checked={defaultUserActive}
+                  onCheckedChange={updateDefaultUserActive}
+                  disabled={savingSettings}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -541,6 +614,190 @@ export default function AdminPage() {
                 >
                   {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
                 </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8 border-rose-200 bg-gradient-to-br from-rose-50 to-pink-50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Shield className="w-5 h-5 text-rose-600" />
+            <span className="text-rose-900">Seguridad de la plataforma</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Longitud mínima de contraseña</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Se aplica a nuevos registros y cambios de contraseña.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="8"
+                      max="64"
+                      value={passwordMinLength}
+                      onChange={(e) => setPasswordMinLength(Math.max(8, parseInt(e.target.value) || 8))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updatePasswordMinLength(passwordMinLength)}
+                      disabled={savingSettings}
+                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Intentos fallidos de acceso</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Bloquea temporalmente la cuenta cuando supera el límite.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={loginMaxAttempts}
+                      onChange={(e) => setLoginMaxAttempts(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateLoginMaxAttempts(loginMaxAttempts)}
+                      disabled={savingSettings}
+                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Tiempo de bloqueo</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Tiempo en minutos antes de permitir nuevos intentos.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="1440"
+                      value={loginLockoutMinutes}
+                      onChange={(e) => setLoginLockoutMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateLoginLockoutMinutes(loginLockoutMinutes)}
+                      disabled={savingSettings}
+                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Vigencia de pruebas técnicas</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Tiempo por defecto para que una evaluación técnica siga disponible.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="365"
+                      value={technicalEvaluationExpiryDays}
+                      onChange={(e) => setTechnicalEvaluationExpiryDays(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-24 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateTechnicalEvaluationExpiryDays(technicalEvaluationExpiryDays)}
+                      disabled={savingSettings}
+                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Exportación PDF externa</h4>
+                  <p className="text-sm text-gray-600">
+                    Permite descargar reportes PDF desde resultados de pruebas externas y técnicas.
+                  </p>
+                </div>
+                <Switch
+                  checked={allowExternalPdfExport}
+                  onCheckedChange={updateAllowExternalPdfExport}
+                  disabled={savingSettings}
+                  className="data-[state=checked]:bg-rose-500"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-rose-200 bg-white/75 p-5 xl:col-span-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">Retención de auditoría</h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Días sugeridos para conservar eventos y registros críticos de seguridad.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="7"
+                      max="3650"
+                      value={auditRetentionDays}
+                      onChange={(e) => setAuditRetentionDays(Math.max(7, parseInt(e.target.value) || 7))}
+                      className="w-28 text-center font-semibold"
+                      disabled={savingSettings}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateAuditRetentionDays(auditRetentionDays)}
+                      disabled={savingSettings}
+                      className="border-rose-300 text-rose-700 hover:bg-rose-100"
+                    >
+                      {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

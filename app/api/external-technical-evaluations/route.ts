@@ -4,8 +4,10 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { emailService } from '@/lib/email';
+import { getCreditSettings } from '@/lib/credits';
 import { getTeamUserIds } from '@/lib/team';
 import { JOB_POSITIONS } from '@/lib/job-positions';
+import { getNumberSetting, getSystemSettingsMap, SYSTEM_SETTING_DEFAULTS } from '@/lib/system-settings';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -107,23 +109,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const creditSettings = await getCreditSettings();
+    const creditsPerEvaluation = creditSettings.creditsPerEvaluation;
+
     // Check if user has credits
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { credits: true },
     });
 
-    if (!user || user.credits < 2) {
+    if (!user || user.credits < creditsPerEvaluation) {
       return NextResponse.json(
-        { error: 'Créditos insuficientes. Se requieren 2 créditos por evaluación técnica.' },
+        { error: `Créditos insuficientes. Se requieren ${creditsPerEvaluation} créditos por evaluación técnica.` },
         { status: 402 }
       );
     }
 
+    const settings = await getSystemSettingsMap(['technicalEvaluationExpiryDays']);
+    const technicalEvaluationExpiryDays = getNumberSetting(
+      settings,
+      'technicalEvaluationExpiryDays',
+      parseInt(SYSTEM_SETTING_DEFAULTS.technicalEvaluationExpiryDays, 10),
+      1,
+      365
+    );
+
     // Deduct credits
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { credits: { decrement: 2 } },
+      data: { credits: { decrement: creditsPerEvaluation } },
     });
 
     const template = technicalTemplateId
@@ -165,7 +179,7 @@ export async function POST(request: NextRequest) {
     // Generate secure token
     const token = randomBytes(32).toString('hex');
     const tokenExpiry = new Date();
-    tokenExpiry.setDate(tokenExpiry.getDate() + 30); // 30 days expiry
+    tokenExpiry.setDate(tokenExpiry.getDate() + technicalEvaluationExpiryDays);
 
     // Create evaluation
     const evaluation = await prisma.externalTechnicalEvaluation.create({

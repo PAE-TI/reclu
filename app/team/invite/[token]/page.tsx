@@ -41,6 +41,7 @@ export default function AcceptInvitePage({ params }: { params: { token: string }
   const [error, setError] = useState<{ message: string; status?: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [passwordMinLength, setPasswordMinLength] = useState(8);
   
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -50,6 +51,22 @@ export default function AcceptInvitePage({ params }: { params: { token: string }
   useEffect(() => {
     fetchInvitation();
   }, [params.token]);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          setPasswordMinLength(Number(data.passwordMinLength || 8));
+        }
+      } catch (error) {
+        console.error('Error loading public settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const fetchInvitation = async () => {
     try {
@@ -73,8 +90,8 @@ export default function AcceptInvitePage({ params }: { params: { token: string }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
+    if (password.length < passwordMinLength) {
+      toast.error(`La contraseña debe tener al menos ${passwordMinLength} caracteres`);
       return;
     }
 
@@ -261,7 +278,7 @@ export default function AcceptInvitePage({ params }: { params: { token: string }
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder={`Mínimo ${passwordMinLength} caracteres`}
                   required
                 />
                 <button

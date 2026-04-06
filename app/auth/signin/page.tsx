@@ -39,6 +39,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isInactiveUser, setIsInactiveUser] = useState(false);
+  const [isLockedUser, setIsLockedUser] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +47,7 @@ export default function SignIn() {
     setIsLoading(true);
     setError('');
     setIsInactiveUser(false);
+    setIsLockedUser(false);
 
     if (!acceptTerms) {
       setError(t('auth.login.errorTerms'));
@@ -63,6 +65,8 @@ export default function SignIn() {
       if (result?.error) {
         if (result.error === 'INACTIVE_USER' || result.error.includes('INACTIVE_USER')) {
           setIsInactiveUser(true);
+        } else if (result.error === 'ACCOUNT_LOCKED' || result.error.includes('ACCOUNT_LOCKED')) {
+          setIsLockedUser(true);
         } else {
           setError(t('auth.login.errorCredentials'));
         }
@@ -249,7 +253,23 @@ export default function SignIn() {
                   </div>
                 )}
 
-                {error && !isInactiveUser && (
+                {isLockedUser && (
+                  <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-rose-100 rounded-lg flex-shrink-0">
+                        <AlertCircle className="w-5 h-5 text-rose-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-rose-800">Cuenta bloqueada temporalmente</h4>
+                        <p className="text-sm text-rose-700">
+                          Se detectaron demasiados intentos fallidos. Intenta de nuevo más tarde o contacta a un administrador.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {error && !isInactiveUser && !isLockedUser && (
                   <div className="flex items-center gap-3 p-4 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
                     <AlertCircle className="w-5 h-5 flex-shrink-0" />
                     <span>{error}</span>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { SYSTEM_SETTING_DEFAULTS, getNumberSetting, getSystemSettingsMap } from '@/lib/system-settings';
 
 // GET - Get invitation details (public endpoint)
 export async function GET(
@@ -118,9 +119,18 @@ export async function POST(
     const body = await request.json();
     const { password, name } = body;
 
-    if (!password || password.length < 6) {
+    const settings = await getSystemSettingsMap(['passwordMinLength']);
+    const passwordMinLength = getNumberSetting(
+      settings,
+      'passwordMinLength',
+      parseInt(SYSTEM_SETTING_DEFAULTS.passwordMinLength, 10),
+      8,
+      64
+    );
+
+    if (!password || password.length < passwordMinLength) {
       return NextResponse.json(
-        { error: 'La contraseña debe tener al menos 6 caracteres' },
+        { error: `La contraseña debe tener al menos ${passwordMinLength} caracteres` },
         { status: 400 }
       );
     }
