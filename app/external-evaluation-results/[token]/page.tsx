@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useLanguage } from '@/contexts/language-context';
+import { getDiscInterpretations } from '@/lib/disc-interpretations';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ import {
   Star,
   BarChart3,
   CheckCircle,
+  CheckCircle2,
   Target,
   TrendingUp,
   AlertTriangle,
@@ -29,7 +31,8 @@ import {
   Lock,
   Clock,
   User,
-  Globe
+  Globe,
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -166,41 +169,7 @@ export default function ExternalEvaluationResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [requireAuth, setRequireAuth] = useState(false);
 
-  // Build interpretations using translations
-  const interpretations = useMemo(() => ({
-    'D': {
-      title: t('disc.d.title'),
-      description: t('disc.d.description'),
-      strengths: [t('disc.d.strength1'), t('disc.d.strength2'), t('disc.d.strength3'), t('disc.d.strength4'), t('disc.d.strength5')],
-      challenges: [t('disc.d.challenge1'), t('disc.d.challenge2'), t('disc.d.challenge3'), t('disc.d.challenge4')],
-      motivators: [t('disc.d.motivator1'), t('disc.d.motivator2'), t('disc.d.motivator3'), t('disc.d.motivator4'), t('disc.d.motivator5')],
-      stressors: [t('disc.d.stressor1'), t('disc.d.stressor2'), t('disc.d.stressor3'), t('disc.d.stressor4'), t('disc.d.stressor5')]
-    },
-    'I': {
-      title: t('disc.i.title'),
-      description: t('disc.i.description'),
-      strengths: [t('disc.i.strength1'), t('disc.i.strength2'), t('disc.i.strength3'), t('disc.i.strength4'), t('disc.i.strength5')],
-      challenges: [t('disc.i.challenge1'), t('disc.i.challenge2'), t('disc.i.challenge3'), t('disc.i.challenge4')],
-      motivators: [t('disc.i.motivator1'), t('disc.i.motivator2'), t('disc.i.motivator3'), t('disc.i.motivator4'), t('disc.i.motivator5')],
-      stressors: [t('disc.i.stressor1'), t('disc.i.stressor2'), t('disc.i.stressor3'), t('disc.i.stressor4'), t('disc.i.stressor5')]
-    },
-    'S': {
-      title: t('disc.s.title'),
-      description: t('disc.s.description'),
-      strengths: [t('disc.s.strength1'), t('disc.s.strength2'), t('disc.s.strength3'), t('disc.s.strength4'), t('disc.s.strength5')],
-      challenges: [t('disc.s.challenge1'), t('disc.s.challenge2'), t('disc.s.challenge3'), t('disc.s.challenge4')],
-      motivators: [t('disc.s.motivator1'), t('disc.s.motivator2'), t('disc.s.motivator3'), t('disc.s.motivator4'), t('disc.s.motivator5')],
-      stressors: [t('disc.s.stressor1'), t('disc.s.stressor2'), t('disc.s.stressor3'), t('disc.s.stressor4'), t('disc.s.stressor5')]
-    },
-    'C': {
-      title: t('disc.c.title'),
-      description: t('disc.c.description'),
-      strengths: [t('disc.c.strength1'), t('disc.c.strength2'), t('disc.c.strength3'), t('disc.c.strength4'), t('disc.c.strength5')],
-      challenges: [t('disc.c.challenge1'), t('disc.c.challenge2'), t('disc.c.challenge3'), t('disc.c.challenge4')],
-      motivators: [t('disc.c.motivator1'), t('disc.c.motivator2'), t('disc.c.motivator3'), t('disc.c.motivator4'), t('disc.c.motivator5')],
-      stressors: [t('disc.c.stressor1'), t('disc.c.stressor2'), t('disc.c.stressor3'), t('disc.c.stressor4'), t('disc.c.stressor5')]
-    }
-  }), [t]);
+  const interpretations = useMemo(() => getDiscInterpretations(t), [t]);
 
   // Dimension labels for scores
   const dimensionLabels = useMemo(() => ([
@@ -452,6 +421,112 @@ export default function ExternalEvaluationResultsPage() {
                 </CardContent>
               </Card>
 
+              {/* Análisis detallado DISC */}
+              <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className={`${primaryColor.bg} ${primaryColor.border} border-b`}>
+                  <CardTitle className={`text-lg ${primaryColor.text} flex items-center gap-2`}>
+                    <Brain className="w-5 h-5" />
+                    {t('analytics.disc.detailedAnalysis')} {interpretation.title}
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    {interpretation.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className={`p-4 rounded-xl ${primaryColor.bg} ${primaryColor.border} border`}>
+                      <h4 className={`font-semibold ${primaryColor.text} mb-3 flex items-center gap-2`}>
+                        <CheckCircle2 className="w-4 h-4" />
+                        {t('analytics.disc.strengths')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.strengths.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className={`w-1.5 h-1.5 ${primaryColor.bar} rounded-full mt-1.5 flex-shrink-0`}></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                      <h4 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4" />
+                        {t('analytics.disc.developmentAreas')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.challenges.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+                      <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
+                        {t('analytics.disc.motivators')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.motivators.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                      <h4 className="font-semibold text-rose-700 mb-3 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" />
+                        {t('analytics.disc.stressors')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.stressors.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="w-1.5 h-1.5 bg-rose-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                      <h4 className="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        {t('analytics.disc.howToCommunicate')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.communication.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
+                      <h4 className="font-semibold text-purple-700 mb-3 flex items-center gap-2">
+                        <Target className="w-4 h-4" />
+                        {t('analytics.disc.idealEnvironment')}
+                      </h4>
+                      <ul className="space-y-2">
+                        {interpretation.idealEnvironment.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* DISC Scores */}
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
                 <CardHeader>
@@ -491,46 +566,6 @@ export default function ExternalEvaluationResultsPage() {
                 </CardContent>
               </Card>
 
-              {/* Strengths & Challenges */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-green-50 border-green-200 border shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-green-800">
-                      <CheckCircle className="w-5 h-5" />
-                      {t('results.disc.strengths')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {interpretation.strengths.map((strength, index) => (
-                        <li key={index} className="flex items-center gap-2 text-green-700">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                          <span className="text-sm">{strength}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-amber-50 border-amber-200 border shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-amber-800">
-                      <Target className="w-5 h-5" />
-                      {t('results.disc.developmentAreas')}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {interpretation.challenges.map((challenge, index) => (
-                        <li key={index} className="flex items-center gap-2 text-amber-700">
-                          <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                          <span className="text-sm">{challenge}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
             </div>
 
             {/* Sidebar */}

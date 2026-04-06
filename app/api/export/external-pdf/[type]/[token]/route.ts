@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db';
 import { escapeHtml } from '@/lib/security';
 import { getBooleanSetting, getSystemSettingsMap } from '@/lib/system-settings';
 import { getPortalEmailFromRequest } from '@/lib/results-portal';
+import { getPersonalityInterpretation } from '@/lib/disc-calculator';
 
 const validTypes = ['disc', 'driving-forces', 'eq', 'dna', 'acumen', 'values', 'stress', 'technical'];
 
@@ -216,6 +217,7 @@ function formatDate(date: Date | string): string {
 function generateDISCPDF(evaluation: any): string {
   const result = evaluation.result;
   const safeRecipientName = escapeHtml(String(evaluation.recipientName || ''));
+  const interpretation = getPersonalityInterpretation(String(result?.personalityType || result?.primaryStyle || 'D'));
   const getDimensionColor = (dimension: string) => {
     const colors: Record<string, { bg: string; color: string; border: string }> = {
       'D': { bg: '#fee2e2', color: '#dc2626', border: '#fecaca' },
@@ -227,6 +229,78 @@ function generateDISCPDF(evaluation: any): string {
   };
 
   const primaryColor = getDimensionColor(result?.primaryStyle || 'D');
+  const discSections = (() => {
+    switch (String(result?.primaryStyle || 'D')) {
+      case 'I':
+        return {
+          communication: [
+            'Comunicación cálida, cercana y entusiasta.',
+            'Responde mejor a mensajes positivos y motivadores.',
+            'Le favorecen conversaciones dinámicas e interactivas.',
+            'Prefiere feedback ágil y con reconocimiento.',
+            'Suele conectar mejor con un tono humano y amistoso.',
+          ],
+          idealEnvironment: [
+            'Ambientes sociales y colaborativos.',
+            'Variedad de actividades y oportunidades para interactuar.',
+            'Espacios donde pueda influir e inspirar a otros.',
+            'Reconocimiento visible por su aporte.',
+            'Libertad para expresarse con energía y creatividad.',
+          ],
+        };
+      case 'S':
+        return {
+          communication: [
+            'Comunicación tranquila, respetuosa y clara.',
+            'Responde bien a explicaciones paso a paso.',
+            'Prefiere mensajes sin presión excesiva.',
+            'Valora la empatía y la constancia en el trato.',
+            'Suele procesar mejor la información en un entorno sereno.',
+          ],
+          idealEnvironment: [
+            'Entornos estables y predecibles.',
+            'Equipos cohesionados y colaborativos.',
+            'Procesos claros y cambios bien explicados.',
+            'Tiempo suficiente para adaptarse.',
+            'Relaciones laborales armónicas y confiables.',
+          ],
+        };
+      case 'C':
+        return {
+          communication: [
+            'Comunicación precisa, lógica y orientada a datos.',
+            'Responde mejor cuando hay claridad y estructura.',
+            'Prefiere argumentos bien sustentados.',
+            'Valora el detalle y la exactitud en la información.',
+            'Suele confiar más cuando el mensaje está bien documentado.',
+          ],
+          idealEnvironment: [
+            'Ambientes con procesos y estándares claros.',
+            'Espacios que valoren la calidad y la precisión.',
+            'Tiempo suficiente para analizar y validar.',
+            'Reglas consistentes y expectativas explícitas.',
+            'Proyectos donde la excelencia técnica tenga peso.',
+          ],
+        };
+      default:
+        return {
+          communication: [
+            'Comunicación breve, directa y enfocada en resultados.',
+            'Responde mejor a mensajes concretos y sin rodeos.',
+            'Prefiere claridad sobre amplitud innecesaria.',
+            'Valora la decisión rápida y la acción.',
+            'Suele apreciar conversaciones orientadas a objetivos.',
+          ],
+          idealEnvironment: [
+            'Entornos retadores con metas claras.',
+            'Espacios con autonomía para decidir y actuar.',
+            'Ritmo ágil y foco en resultados.',
+            'Oportunidades para liderar o influir.',
+            'Retos constantes que exijan iniciativa.',
+          ],
+        };
+    }
+  })();
 
   return `
     <!DOCTYPE html>
@@ -246,18 +320,60 @@ function generateDISCPDF(evaluation: any): string {
         </div>
 
         <div class="section">
-          <h2 class="section-title">Perfil de Personalidad</h2>
+          <h2 class="section-title">Análisis detallado DISC</h2>
           <div style="background: ${primaryColor.bg}; border: 2px solid ${primaryColor.border}; border-radius: 12px; padding: 20px; text-align: center;">
             <div style="font-size: 22px; font-weight: bold; color: ${primaryColor.color}; margin-bottom: 10px;">
-              ${result?.interpretation?.title || `Tipo ${result?.personalityType || 'N/A'}`}
+              ${escapeHtml(interpretation.title)}
             </div>
             <div style="color: ${primaryColor.color}; font-size: 14px; margin-bottom: 15px;">
-              ${result?.interpretation?.description || 'Tu perfil de personalidad dominante'}
+              ${escapeHtml(interpretation.description)}
             </div>
             <div>
               <strong>Estilo Principal:</strong> ${result?.primaryStyle || 'N/A'}
               ${result?.secondaryStyle ? `<br><strong>Estilo Secundario:</strong> ${result.secondaryStyle}` : ''}
               <br><strong>Intensidad:</strong> ${result?.styleIntensity?.toFixed(1) || 0}%
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Fortalezas y Desafíos</h2>
+          <div class="two-column">
+            <div class="strengths-card" style="background: ${primaryColor.bg}; border-color: ${primaryColor.border};">
+              <div class="card-title">Fortalezas</div>
+              ${interpretation.strengths.map((s: string) => `<div class="list-item"><div class="list-bullet" style="background: ${primaryColor.color};"></div><div>${escapeHtml(s)}</div></div>`).join('')}
+            </div>
+            <div class="challenges-card">
+              <div class="card-title">Desafíos</div>
+              ${interpretation.challenges.map((c: string) => `<div class="list-item"><div class="list-bullet"></div><div>${escapeHtml(c)}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Motivadores y Estresores</h2>
+          <div class="two-column">
+            <div class="strengths-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+              <div class="card-title">Motivadores</div>
+              ${interpretation.motivators.map((m: string) => `<div class="list-item"><div class="list-bullet"></div><div>${escapeHtml(m)}</div></div>`).join('')}
+            </div>
+            <div class="challenges-card" style="background: #fff1f2; border-color: #fecdd3;">
+              <div class="card-title">Estresores</div>
+              ${interpretation.stressors.map((s: string) => `<div class="list-item"><div class="list-bullet"></div><div>${escapeHtml(s)}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">Comunicación y Ambiente ideal</h2>
+          <div class="two-column">
+            <div class="strengths-card" style="background: #eff6ff; border-color: #bfdbfe;">
+              <div class="card-title">Cómo comunicarse</div>
+              ${discSections.communication.map((item: string) => `<div class="list-item"><div class="list-bullet"></div><div>${escapeHtml(item)}</div></div>`).join('')}
+            </div>
+            <div class="challenges-card" style="background: #faf5ff; border-color: #e9d5ff;">
+              <div class="card-title">Ambiente ideal</div>
+              ${discSections.idealEnvironment.map((item: string) => `<div class="list-item"><div class="list-bullet"></div><div>${escapeHtml(item)}</div></div>`).join('')}
             </div>
           </div>
         </div>
@@ -287,22 +403,6 @@ function generateDISCPDF(evaluation: any): string {
             </div>
           </div>
         </div>
-
-        ${result?.interpretation ? `
-        <div class="section">
-          <h2 class="section-title">Fortalezas y Áreas de Desarrollo</h2>
-          <div class="two-column">
-            <div class="strengths-card">
-              <div class="card-title">✓ Fortalezas</div>
-              ${(result.interpretation.strengths || []).map((s: string) => `<div class="list-item"><div class="list-bullet"></div><div>${s}</div></div>`).join('')}
-            </div>
-            <div class="challenges-card">
-              <div class="card-title">→ Áreas de Desarrollo</div>
-              ${(result.interpretation.challenges || []).map((c: string) => `<div class="list-item"><div class="list-bullet"></div><div>${c}</div></div>`).join('')}
-            </div>
-          </div>
-        </div>
-        ` : ''}
 
         <div class="footer">
           <p>Este reporte fue generado por Reclu - ${formatDate(new Date())}</p>

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { PDFGenerator } from '@/lib/pdf-generator';
 import { getPerformanceLevelLabel } from '@/lib/technical-calculator';
+import { getDiscInterpretations } from '@/lib/disc-interpretations';
 import { useLanguage } from '@/contexts/language-context';
 import {
   Search,
@@ -34,6 +35,7 @@ import {
   Heart,
   Dna,
   Compass,
+  Users,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -257,13 +259,22 @@ function renderExecutiveReading(type: PortalEvaluationType, result: any, languag
   return text;
 }
 
-function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en') {
+function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en', t: (key: string) => string) {
   const result = record.result as any;
   if (!result) return null;
   const executiveReading = renderExecutiveReading(record.type, result, language);
 
   switch (record.type) {
     case 'disc':
+      const discInterpretations = getDiscInterpretations(t);
+      const interpretation = discInterpretations[result.primaryStyle || 'D'];
+      const styleColors: Record<string, { bg: string; text: string; border: string; light: string }> = {
+        D: { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-200', light: 'bg-red-50' },
+        I: { bg: 'bg-yellow-500', text: 'text-yellow-700', border: 'border-yellow-200', light: 'bg-yellow-50' },
+        S: { bg: 'bg-green-500', text: 'text-green-700', border: 'border-green-200', light: 'bg-green-50' },
+        C: { bg: 'bg-blue-500', text: 'text-blue-700', border: 'border-blue-200', light: 'bg-blue-50' },
+      };
+      const colors = styleColors[result.primaryStyle || 'D'] || styleColors.D;
       return (
         <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
@@ -283,27 +294,113 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               <p className="text-sm text-slate-600">Complemento natural</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="mb-3 text-sm font-semibold text-slate-900">Dimensiones DISC</p>
-            <div className="grid gap-3 md:grid-cols-2">
-              {[
-                ['D', result.percentileD],
-                ['I', result.percentileI],
-                ['S', result.percentileS],
-                ['C', result.percentileC],
-              ].map(([label, value]) => (
-                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
-                  <span className="text-sm text-slate-600">{label}</span>
-                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
-                </div>
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`p-4 rounded-xl ${colors.light} ${colors.border} border`}>
+              <h4 className={`font-semibold ${colors.text} mb-3 flex items-center gap-2`}>
+                <CheckCircle2 className="w-4 h-4" />
+                Fortalezas
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.strengths?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className={`w-1.5 h-1.5 ${colors.bg} rounded-full mt-1.5 flex-shrink-0`}></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-          <div className="rounded-2xl bg-sky-50 p-4">
-            <p className="text-sm font-semibold text-sky-900">Lectura ejecutiva</p>
-            <p className="mt-2 text-sm leading-6 text-slate-700">
-              {executiveReading}
-            </p>
+
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <h4 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                Desafíos
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.challenges?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+              <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                <Flame className="w-4 h-4" />
+                Motivadores
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.motivators?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200">
+              <h4 className="font-semibold text-rose-700 mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                Estresores
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.stressors?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-rose-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+              <h4 className="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Comunicación
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.communication?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
+              <h4 className="font-semibold text-purple-700 mb-3 flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Ambiente ideal
+              </h4>
+              <ul className="space-y-2">
+                {interpretation?.idealEnvironment?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <p className="mb-3 text-sm font-semibold text-slate-900">Dimensiones DISC</p>
+              <div className="grid gap-3 md:grid-cols-2">
+                {[
+                  ['D', result.percentileD],
+                  ['I', result.percentileI],
+                  ['S', result.percentileS],
+                  ['C', result.percentileC],
+                ].map(([label, value]) => (
+                  <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                    <span className="text-sm text-slate-600">{label}</span>
+                    <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -662,7 +759,7 @@ function statusBadgeClasses(status: string) {
 }
 
 export default function ResultsPortalClient() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -1050,7 +1147,7 @@ export default function ResultsPortalClient() {
                               {record.type === 'technical' ? (
                                 renderTechnicalDetails(result, language)
                               ) : (
-                                renderGenericDetails(record, language)
+                                renderGenericDetails(record, language, (key: string) => t(key))
                               )}
 
                               {Array.isArray((result as any)?.primaryStrengths) && (result as any).primaryStrengths.length > 0 && (
