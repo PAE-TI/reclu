@@ -7042,18 +7042,22 @@ export default function AnalyticsClient({ people }: AnalyticsClientProps) {
                                   {language === 'es' ? 'Lectura ejecutiva' : 'Executive summary'}
                                 </p>
                                 <p className="text-sm text-slate-600 mt-1">
-                                  {selectedPerson.technical.performanceLevel === 'BELOW_AVERAGE'
-                                    ? (language === 'es'
-                                      ? 'El resultado muestra brechas claras en la base técnica. Conviene validar fundamentos antes de avanzar.'
-                                      : 'The result shows clear technical gaps. It is worth validating fundamentals before moving forward.')
-                                    : selectedPerson.technical.performanceLevel === 'AVERAGE'
-                                      ? (language === 'es'
-                                        ? 'El desempeño es funcional, con margen de mejora en preguntas de mayor complejidad.'
-                                        : 'Performance is functional, with room to improve on more complex questions.')
-                                      : (language === 'es'
-                                        ? 'El desempeño técnico es sólido y consistente para el contexto evaluado.'
-                                        : 'Technical performance is solid and consistent for the evaluated context.')}
-                                </p>
+                                {language === 'es'
+                                  ? `Nivel técnico ${getPerformanceLevelLabel(selectedPerson.technical.performanceLevel, language)}. ${
+                                      selectedPerson.technical.totalScore >= 70
+                                        ? 'El desempeño es sólido y consistente para el contexto evaluado.'
+                                        : selectedPerson.technical.totalScore >= 55
+                                          ? 'El desempeño es funcional, con margen de mejora en preguntas de mayor complejidad.'
+                                          : 'El resultado muestra brechas claras en la base técnica. Conviene validar fundamentos antes de avanzar.'
+                                    }`
+                                  : `Technical level ${getPerformanceLevelLabel(selectedPerson.technical.performanceLevel, language)}. ${
+                                      selectedPerson.technical.totalScore >= 70
+                                        ? 'Performance is solid and consistent for the evaluated context.'
+                                        : selectedPerson.technical.totalScore >= 55
+                                          ? 'Performance is functional, with room to improve on more complex questions.'
+                                          : 'The result shows clear technical gaps. It is worth validating fundamentals before moving forward.'
+                                    }`}
+                              </p>
                               </div>
                               <Badge className={`self-start ${
                                 selectedPerson.technical.totalScore >= 80 ? 'bg-green-100 text-green-700 border-green-200' :

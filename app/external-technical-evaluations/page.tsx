@@ -423,7 +423,7 @@ export default function ExternalTechnicalEvaluationsPage() {
       'MUY_BUENO': language === 'es' ? 'Muy Bueno' : 'Very Good',
       'BUENO': language === 'es' ? 'Bueno' : 'Good',
       'ACEPTABLE': language === 'es' ? 'Aceptable' : 'Acceptable',
-      'NECESITA_MEJORA': language === 'es' ? 'Necesita Mejora' : 'Needs Improvement',
+      'NECESITA_MEJORA': language === 'es' ? 'Necesita mejorar' : 'Needs improvement',
       'INSUFICIENTE': language === 'es' ? 'Insuficiente' : 'Insufficient',
     };
     return labels[level] || level;

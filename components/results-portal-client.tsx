@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { PDFGenerator } from '@/lib/pdf-generator';
+import { getPerformanceLevelLabel } from '@/lib/technical-calculator';
 import { useLanguage } from '@/contexts/language-context';
 import {
   Search,
@@ -128,9 +129,10 @@ function StatusIcon({ status }: { status: string }) {
   }
 }
 
-function renderTechnicalDetails(result: any) {
+function renderTechnicalDetails(result: any, language: 'es' | 'en') {
   if (!result) return null;
   const categoryEntries = Object.entries(result.categoryScores || {}).sort(([, a], [, b]) => (b as number) - (a as number));
+  const performanceLabel = getPerformanceLevelLabel(result.performanceLevel || '', language);
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
@@ -141,7 +143,7 @@ function renderTechnicalDetails(result: any) {
       </div>
       <div className="rounded-2xl bg-slate-50 p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p>
-        <p className="mt-2 text-2xl font-bold text-slate-900">{result.performanceLevel || 'Pendiente'}</p>
+        <p className="mt-2 text-2xl font-bold text-slate-900">{performanceLabel}</p>
         <p className="text-sm text-slate-600">Lectura automática del rendimiento</p>
       </div>
       <div className="rounded-2xl bg-slate-50 p-4">
@@ -172,7 +174,7 @@ function renderTechnicalDetails(result: any) {
   );
 }
 
-function renderGenericDetails(record: PortalEvaluationRecord) {
+function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en') {
   const result = record.result as any;
   if (!result) return null;
 
@@ -249,7 +251,7 @@ function renderGenericDetails(record: PortalEvaluationRecord) {
         </div>
       );
     case 'technical':
-      return renderTechnicalDetails(result);
+      return renderTechnicalDetails(result, language);
     default:
       return null;
   }
@@ -314,7 +316,11 @@ export default function ResultsPortalClient() {
       const data = await response.json();
       setAccessEmail(data.email);
       setEvaluations(data.evaluations || []);
-      setExpandedToken((current) => current || data.evaluations?.[0]?.token || null);
+      setExpandedToken((current) => (
+        current && data.evaluations?.some((evaluation: PortalEvaluationRecord) => evaluation.token === current)
+          ? current
+          : null
+      ));
       return true;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'No se pudieron cargar los resultados');
@@ -649,9 +655,9 @@ export default function ResultsPortalClient() {
                                 {language === 'es' ? 'Detalle del resultado' : 'Result details'}
                               </h4>
                               {record.type === 'technical' ? (
-                                renderTechnicalDetails(result)
+                                renderTechnicalDetails(result, language)
                               ) : (
-                                renderGenericDetails(record)
+                                renderGenericDetails(record, language)
                               )}
 
                               {Array.isArray((result as any)?.primaryStrengths) && (result as any).primaryStrengths.length > 0 && (

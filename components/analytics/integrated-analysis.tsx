@@ -25,6 +25,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useLanguage, Language } from '@/contexts/language-context';
+import { getPerformanceLevelLabel } from '@/lib/technical-calculator';
 
 interface DiscData {
   percentileD: number;
@@ -718,26 +719,26 @@ export default function IntegratedAnalysis({ discData, dfData, eqData, dnaData, 
                     <p className="text-2xl font-bold text-cyan-600">{technicalData.correctAnswers}/{technicalData.totalQuestions}</p>
                     <p className="text-xs text-gray-500">{language === 'es' ? 'Correctas' : 'Correct'}</p>
                   </div>
-                  <div className="text-center p-3 bg-white rounded-xl shadow-sm">
-                    <Badge className={`${
-                      technicalData.totalScore >= 80 ? 'bg-green-100 text-green-700' :
-                      technicalData.totalScore >= 60 ? 'bg-blue-100 text-blue-700' :
-                      technicalData.totalScore >= 40 ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {technicalData.performanceLevel}
-                    </Badge>
-                  </div>
+                <div className="text-center p-3 bg-white rounded-xl shadow-sm">
+                  <Badge className={`${
+                    technicalData.totalScore >= 80 ? 'bg-green-100 text-green-700' :
+                    technicalData.totalScore >= 60 ? 'bg-blue-100 text-blue-700' :
+                    technicalData.totalScore >= 40 ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                      {getPerformanceLevelLabel(technicalData.performanceLevel, language)}
+                  </Badge>
                 </div>
-                <p className="text-sm text-gray-600">
-                  {discData ? (
-                    language === 'es' 
-                      ? `Con un estilo ${discData.primaryStyle} y un puntaje técnico del ${Math.round(technicalData.totalScore)}%, ${userName} ${technicalData.totalScore >= 70 ? 'demuestra sólidas competencias técnicas que complementan su perfil de comportamiento' : 'tiene oportunidades de fortalecer sus conocimientos técnicos para potenciar su perfil'}.`
-                      : `With a ${discData.primaryStyle} style and a technical score of ${Math.round(technicalData.totalScore)}%, ${userName} ${technicalData.totalScore >= 70 ? 'demonstrates solid technical competencies that complement their behavioral profile' : 'has opportunities to strengthen technical knowledge to enhance their profile'}.`
+              </div>
+              <p className="text-sm text-gray-600">
+                {discData ? (
+                  language === 'es' 
+                      ? `Con un estilo ${discData.primaryStyle} y un nivel técnico ${getPerformanceLevelLabel(technicalData.performanceLevel, language).toLowerCase()}, ${userName} ${technicalData.totalScore >= 70 ? 'demuestra sólidas competencias técnicas que complementan su perfil de comportamiento' : 'tiene oportunidades de fortalecer sus conocimientos técnicos para potenciar su perfil'}.`
+                      : `With a ${discData.primaryStyle} style and a technical level of ${getPerformanceLevelLabel(technicalData.performanceLevel, language).toLowerCase()}, ${userName} ${technicalData.totalScore >= 70 ? 'demonstrates solid technical competencies that complement their behavioral profile' : 'has opportunities to strengthen technical knowledge to enhance their profile'}.`
                   ) : (
                     language === 'es'
-                      ? `${userName} obtuvo un puntaje técnico del ${Math.round(technicalData.totalScore)}% con ${technicalData.correctAnswers} respuestas correctas.`
-                      : `${userName} achieved a technical score of ${Math.round(technicalData.totalScore)}% with ${technicalData.correctAnswers} correct answers.`
+                      ? `${userName} obtuvo un puntaje técnico del ${Math.round(technicalData.totalScore)}% con ${technicalData.correctAnswers} respuestas correctas y un nivel ${getPerformanceLevelLabel(technicalData.performanceLevel, language).toLowerCase()}.`
+                      : `${userName} achieved a technical score of ${Math.round(technicalData.totalScore)}% with ${technicalData.correctAnswers} correct answers and a ${getPerformanceLevelLabel(technicalData.performanceLevel, language).toLowerCase()} level.`
                   )}
                 </p>
                 {technicalData.strengths && technicalData.strengths.length > 0 && (

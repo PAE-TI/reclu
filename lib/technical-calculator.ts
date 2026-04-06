@@ -51,15 +51,15 @@ export function getPerformanceLevelLabel(level: string, language: string = 'es')
       EXCELLENT: 'Excelente',
       GOOD: 'Bueno',
       AVERAGE: 'Promedio',
-      BELOW_AVERAGE: 'Por Debajo del Promedio',
-      POOR: 'Necesita Mejorar',
+      BELOW_AVERAGE: 'Por debajo del promedio',
+      POOR: 'Necesita mejorar',
     },
     en: {
       EXCELLENT: 'Excellent',
       GOOD: 'Good',
       AVERAGE: 'Average',
       BELOW_AVERAGE: 'Below Average',
-      POOR: 'Needs Improvement',
+      POOR: 'Needs improvement',
     },
   };
   return labels[language]?.[level] || labels['es'][level] || level;
