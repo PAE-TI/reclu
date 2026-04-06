@@ -56,6 +56,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PayPalSettingsCard } from '@/components/admin/paypal-settings';
+import { StripeSettingsCard } from '@/components/admin/stripe-settings';
 import { CreditSalesCard } from '@/components/admin/credit-sales';
 
 interface OwnerInfo {
@@ -1318,6 +1319,7 @@ export default function AdminPage() {
           </Card>
 
           <PayPalSettingsCard />
+          <StripeSettingsCard />
           <CreditSalesCard />
         </TabsContent>
 

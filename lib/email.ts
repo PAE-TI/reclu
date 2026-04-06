@@ -1528,12 +1528,13 @@ interface PurchaseInvoiceData {
   creditAmount: number;
   pricePerCredit: number;
   totalAmount: number;
-  paypalOrderId: string;
+  paymentProvider: 'PayPal' | 'Stripe';
+  paymentReference: string;
   purchaseDate: Date;
 }
 
 export async function sendPurchaseInvoiceEmail(data: PurchaseInvoiceData): Promise<boolean> {
-  const { to, userName, invoiceNumber, creditAmount, pricePerCredit, totalAmount, paypalOrderId, purchaseDate } = data;
+  const { to, userName, invoiceNumber, creditAmount, pricePerCredit, totalAmount, paymentProvider, paymentReference, purchaseDate } = data;
   
   const formattedDate = purchaseDate.toLocaleDateString('es-ES', {
     day: '2-digit',
@@ -1616,8 +1617,8 @@ export async function sendPurchaseInvoiceEmail(data: PurchaseInvoiceData): Promi
           </div>
           
           <div class="line-item">
-            <span class="item-label">ID de Transacción PayPal</span>
-            <span class="item-value" style="font-size: 12px;">${paypalOrderId}</span>
+            <span class="item-label">Referencia de Transacción ${paymentProvider}</span>
+            <span class="item-value" style="font-size: 12px;">${paymentReference}</span>
           </div>
           
           <div class="total-row">

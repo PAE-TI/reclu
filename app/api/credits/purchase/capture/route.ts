@@ -97,7 +97,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         success: true,
         message: 'El pago ya fue procesado',
-        creditAmount: purchase.creditAmount
+        creditAmount: purchase.creditAmount,
+        paymentProvider: 'PAYPAL'
       });
     }
 
@@ -201,7 +202,8 @@ export async function POST(request: NextRequest) {
         creditAmount: purchase.creditAmount,
         pricePerCredit: purchase.pricePerCredit,
         totalAmount: purchase.priceUSD,
-        paypalOrderId: orderId,
+        paymentProvider: 'PayPal',
+        paymentReference: orderId,
         purchaseDate: new Date()
       });
 
@@ -218,7 +220,8 @@ export async function POST(request: NextRequest) {
       success: true,
       creditAmount: purchase.creditAmount,
       newBalance,
-      invoiceNumber
+      invoiceNumber,
+      paymentProvider: 'PAYPAL'
     });
   } catch (error) {
     console.error('Error capturing payment:', error);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { getPaymentSettingsMap } from '@/lib/payment-settings';
 
 // Obtener access token de PayPal
 async function getPayPalAccessToken(): Promise<string | null> {
@@ -81,33 +82,18 @@ export async function POST(request: NextRequest) {
     const { creditAmount } = body;
 
     // Obtener configuración
-    const settings = await prisma.systemSettings.findMany({
-      where: {
-        key: {
-          in: [
-            'credit_price_usd',
-            'credit_purchases_enabled',
-            'min_credits_purchase',
-            'max_credits_purchase',
-            'paypal_mode'
-          ]
-        }
-      }
-    });
-
-    const settingsMap: Record<string, string> = {};
-    settings.forEach(s => settingsMap[s.key] = s.value);
+    const settings = await getPaymentSettingsMap();
 
     // Validaciones
-    if (settingsMap['credit_purchases_enabled'] !== 'true') {
+    if (!settings.creditPurchasesEnabled || !settings.paypalEnabled) {
       return NextResponse.json({ 
         error: 'Las compras de créditos no están habilitadas actualmente' 
       }, { status: 400 });
     }
 
-    const pricePerCredit = parseFloat(settingsMap['credit_price_usd'] || '0.10');
-    const minCredits = parseInt(settingsMap['min_credits_purchase'] || '10');
-    const maxCredits = parseInt(settingsMap['max_credits_purchase'] || '1000');
+    const pricePerCredit = settings.creditPriceUSD;
+    const minCredits = settings.minCredits;
+    const maxCredits = settings.maxCredits;
 
     if (!creditAmount || creditAmount < minCredits || creditAmount > maxCredits) {
       return NextResponse.json({ 
@@ -125,7 +111,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const mode = settingsMap['paypal_mode'] || 'sandbox';
+    const mode = settings.paypalMode;
     const baseUrl = mode === 'live' 
       ? 'https://api-m.paypal.com' 
       : 'https://api-m.sandbox.paypal.com';
@@ -167,6 +153,7 @@ export async function POST(request: NextRequest) {
         creditAmount,
         priceUSD: parseFloat(totalPrice),
         pricePerCredit,
+        paymentProvider: 'PAYPAL',
         paypalOrderId: orderData.id,
         status: 'PENDING'
       }

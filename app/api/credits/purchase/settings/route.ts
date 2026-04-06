@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { getPaymentSettingsMap } from '@/lib/payment-settings';
 
 // GET - Obtener configuración pública de compras para usuarios
 export async function GET() {
@@ -25,32 +26,21 @@ export async function GET() {
       });
     }
 
-    const settings = await prisma.systemSettings.findMany({
-      where: {
-        key: {
-          in: [
-            'credit_price_usd',
-            'credit_purchases_enabled',
-            'min_credits_purchase',
-            'max_credits_purchase',
-            'paypal_client_id'
-          ]
-        }
-      }
-    });
+    const settings = await getPaymentSettingsMap();
 
-    const settingsMap: Record<string, string> = {};
-    settings.forEach(s => settingsMap[s.key] = s.value);
-
-    const enabled = settingsMap['credit_purchases_enabled'] === 'true' && 
-                    !!settingsMap['paypal_client_id'];
+    const paypalAvailable = settings.creditPurchasesEnabled && settings.paypalEnabled && !!settings.paypalClientId;
+    const stripeAvailable = settings.creditPurchasesEnabled && settings.stripeEnabled && settings.stripeSecretKeyConfigured;
 
     return NextResponse.json({
-      enabled,
-      pricePerCredit: parseFloat(settingsMap['credit_price_usd'] || '0.10'),
-      minCredits: parseInt(settingsMap['min_credits_purchase'] || '10'),
-      maxCredits: parseInt(settingsMap['max_credits_purchase'] || '1000'),
-      paypalClientId: enabled ? settingsMap['paypal_client_id'] : null
+      enabled: paypalAvailable || stripeAvailable,
+      pricePerCredit: settings.creditPriceUSD,
+      minCredits: settings.minCredits,
+      maxCredits: settings.maxCredits,
+      paypalEnabled: paypalAvailable,
+      paypalClientId: paypalAvailable ? settings.paypalClientId : null,
+      stripeEnabled: stripeAvailable,
+      stripeConfigured: settings.stripeSecretKeyConfigured,
+      stripeMode: settings.stripeMode,
     });
   } catch (error) {
     console.error('Error fetching purchase settings:', error);

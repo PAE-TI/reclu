@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,24 +37,32 @@ interface PurchaseSettings {
   minCredits: number;
   maxCredits: number;
   paypalClientId: string | null;
+  paypalEnabled: boolean;
+  stripeEnabled: boolean;
+  stripeConfigured: boolean;
+  stripeMode: 'test' | 'live';
 }
 
 export default function PurchaseCreditsPage() {
   const { data: session, status } = useSession() || {};
   const router = useRouter();
-  const { t } = useLanguage();
+  const searchParams = useSearchParams();
+  const { t, language } = useLanguage();
   const [settings, setSettings] = useState<PurchaseSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [creditAmount, setCreditAmount] = useState(50);
   const [processing, setProcessing] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalError, setPaypalError] = useState(false);
+  const [stripeProcessing, setStripeProcessing] = useState(false);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
   const [purchaseResult, setPurchaseResult] = useState<{
     creditAmount: number;
     newBalance: number;
     invoiceNumber: string;
+    paymentProvider?: 'PAYPAL' | 'STRIPE';
   } | null>(null);
+  const stripeCompletionHandled = useRef(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -63,6 +71,22 @@ export default function PurchaseCreditsPage() {
       fetchSettings();
     }
   }, [status, router]);
+
+  useEffect(() => {
+    const sessionId = searchParams?.get('stripe_session_id');
+    const cancelled = searchParams?.get('stripe_cancelled');
+
+    if (cancelled && !purchaseComplete) {
+      toast.error(t('purchase.paymentCancelled'));
+      router.replace('/credits/purchase');
+      return;
+    }
+
+    if (!sessionId || stripeCompletionHandled.current || purchaseComplete) return;
+
+    stripeCompletionHandled.current = true;
+    completeStripePurchase(sessionId);
+  }, [searchParams, purchaseComplete, router, t]);
 
   const fetchSettings = async () => {
     try {
@@ -78,6 +102,34 @@ export default function PurchaseCreditsPage() {
       console.error('Error fetching settings:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const completeStripePurchase = async (sessionId: string) => {
+    setProcessing(true);
+    try {
+      const response = await fetch('/api/credits/purchase/stripe/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || t('purchase.errorCapturing'));
+      }
+
+      setPurchaseResult(result);
+      setPurchaseComplete(true);
+      window.dispatchEvent(new Event('credits-updated'));
+      toast.success(t('purchase.creditsAddedToast').replace('{amount}', result.creditAmount.toString()));
+      router.replace('/credits/purchase');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('purchase.paymentError'));
+      router.replace('/credits/purchase');
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -159,6 +211,32 @@ export default function PurchaseCreditsPage() {
       }
     }).render('#paypal-button-container');
   }, [creditAmount, settings?.paypalClientId, t]);
+
+  const handleStripeCheckout = async () => {
+    setStripeProcessing(true);
+    try {
+      const response = await fetch('/api/credits/purchase/create-stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ creditAmount }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || t('purchase.paymentError'));
+      }
+
+      if (!data.url) {
+        throw new Error(t('purchase.paymentError'));
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('purchase.paymentError'));
+      setStripeProcessing(false);
+    }
+  };
 
   useEffect(() => {
     if (paypalLoaded && settings?.paypalClientId) {
@@ -263,6 +341,14 @@ export default function PurchaseCreditsPage() {
               <span className="font-bold text-emerald-400">{purchaseResult.creditAmount}</span>
               {t('purchase.successDesc').split('{amount}')[1]}
             </p>
+
+            <div className="mb-6">
+              <Badge className="bg-white/10 text-white border border-white/20">
+                {purchaseResult.paymentProvider === 'STRIPE'
+                  ? 'Stripe'
+                  : 'PayPal'}
+              </Badge>
+            </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6 mb-6">
               <div className="grid grid-cols-2 gap-4 text-left">
@@ -309,7 +395,7 @@ export default function PurchaseCreditsPage() {
 
   return (
     <>
-      {settings.paypalClientId && !paypalError && (
+      {settings.paypalEnabled && settings.paypalClientId && !paypalError && (
         <Script
           src={`https://www.paypal.com/sdk/js?client-id=${settings.paypalClientId}&currency=USD&enable-funding=card&disable-funding=paylater,venmo`}
           onLoad={() => {
@@ -323,7 +409,7 @@ export default function PurchaseCreditsPage() {
         />
       )}
       
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header with gradient */}
         <div className="mb-8">
           <div className="flex items-center gap-4">
@@ -412,44 +498,84 @@ export default function PurchaseCreditsPage() {
                 </div>
 
                 {/* PayPal Button */}
-                <div className="pt-4">
-                  {processing && (
-                    <div className="flex items-center justify-center py-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
-                      <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mr-3" />
-                      <span className="text-indigo-700 font-medium">{t('purchase.processing')}</span>
-                    </div>
-                  )}
-                  <div id="paypal-button-container" className={processing ? 'hidden' : ''}></div>
-                  {!paypalLoaded && !processing && settings?.paypalClientId && !paypalError && (
-                    <div className="flex flex-col items-center justify-center py-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
-                      <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
-                      <span className="text-indigo-700">{t('purchase.loadingPaypal')}</span>
-                      <span className="text-xs text-indigo-500 mt-1">{t('purchase.loadingPaypalDesc')}</span>
-                    </div>
-                  )}
-                  {paypalError && !paypalLoaded && (
-                    <Alert className="border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <AlertDescription className="text-amber-800 text-sm">
-                        <div className="flex flex-col gap-2">
-                          <span>{t('purchase.paypalError')}</span>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => window.location.reload()}
-                            className="w-fit border-amber-300 text-amber-700 hover:bg-amber-100"
-                          >
-                            {t('purchase.reloadPage')}
-                          </Button>
+                <div className="pt-4 space-y-4">
+                  {(settings?.paypalEnabled && settings?.paypalClientId) && (
+                    <div className="rounded-2xl border border-indigo-100 bg-white p-4 shadow-sm">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900">PayPal</p>
+                          <p className="text-sm text-slate-500">{language === 'es' ? 'Pago rápido con tu cuenta PayPal o tarjeta.' : 'Fast checkout with PayPal or card.'}</p>
                         </div>
-                      </AlertDescription>
-                    </Alert>
+                        <Badge className="bg-amber-100 text-amber-700">PayPal</Badge>
+                      </div>
+                      {processing && (
+                        <div className="flex items-center justify-center py-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                          <Loader2 className="w-6 h-6 animate-spin text-indigo-600 mr-3" />
+                          <span className="text-indigo-700 font-medium">{t('purchase.processing')}</span>
+                        </div>
+                      )}
+                      <div id="paypal-button-container" className={processing ? 'hidden' : ''}></div>
+                      {!paypalLoaded && !processing && settings?.paypalClientId && !paypalError && (
+                        <div className="flex flex-col items-center justify-center py-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                          <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
+                          <span className="text-indigo-700">{t('purchase.loadingPaypal')}</span>
+                        </div>
+                      )}
+                      {paypalError && !paypalLoaded && (
+                        <Alert className="border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50">
+                          <AlertCircle className="h-4 w-4 text-amber-600" />
+                          <AlertDescription className="text-amber-800 text-sm">
+                            <div className="flex flex-col gap-2">
+                              <span>{t('purchase.paypalError')}</span>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.location.reload()}
+                                className="w-fit border-amber-300 text-amber-700 hover:bg-amber-100"
+                              >
+                                {t('purchase.reloadPage')}
+                              </Button>
+                            </div>
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
                   )}
-                  {!settings?.paypalClientId && !processing && (
+
+                  {(settings?.stripeEnabled && settings?.stripeConfigured) && (
+                    <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900">Stripe</p>
+                          <p className="text-sm text-slate-500">{language === 'es' ? 'Checkout seguro y profesional con tarjeta.' : 'Secure, professional card checkout.'}</p>
+                        </div>
+                        <Badge className="bg-sky-100 text-sky-700">Stripe</Badge>
+                      </div>
+                      <Button
+                        onClick={handleStripeCheckout}
+                        disabled={stripeProcessing || processing}
+                        className="w-full bg-sky-600 hover:bg-sky-700 text-white"
+                      >
+                        {stripeProcessing ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <CreditCard className="w-4 h-4 mr-2" />
+                        )}
+                        {stripeProcessing ? (language === 'es' ? 'Redirigiendo...' : 'Redirecting...') : (language === 'es' ? 'Pagar con Stripe' : 'Pay with Stripe')}
+                      </Button>
+                      <p className="mt-2 text-xs text-slate-500">
+                        {settings.stripeMode === 'live'
+                          ? (language === 'es' ? 'Modo producción activo.' : 'Live mode active.')
+                          : (language === 'es' ? 'Modo de pruebas activo.' : 'Test mode active.')}
+                      </p>
+                    </div>
+                  )}
+
+                  {!settings?.paypalEnabled && !settings?.stripeEnabled && (
                     <Alert className="border-red-300 bg-gradient-to-r from-red-50 to-rose-50">
                       <AlertCircle className="h-4 w-4 text-red-600" />
                       <AlertDescription className="text-red-800 text-sm">
-                        {t('purchase.paypalNotConfigured')}
+                        {t('purchase.notAvailableDesc')}
                       </AlertDescription>
                     </Alert>
                   )}

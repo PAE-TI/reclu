@@ -2048,9 +2048,13 @@ model CreditPurchase {
   creditAmount    Int                 // Number of credits purchased
   priceUSD        Float               // Total price in USD
   pricePerCredit  Float               // Price per credit at time of purchase
+  paymentProvider PaymentProvider      @default(PAYPAL)
   paypalOrderId   String?             @unique  // PayPal order ID
   paypalPayerId   String?             // PayPal payer ID
   paypalPayerEmail String?            // PayPal payer email
+  stripeCheckoutSessionId String?      @unique
+  stripePaymentIntentId String?
+  stripeCustomerId String?
   status          CreditPurchaseStatus @default(PENDING)
   invoiceNumber   String?             // Generated invoice number
   invoiceSentAt   DateTime?           // When invoice email was sent
@@ -2063,8 +2067,15 @@ model CreditPurchase {
   updatedAt       DateTime            @updatedAt
   
   @@index([userId, status])
+  @@index([paymentProvider, status])
   @@index([paypalOrderId])
+  @@index([stripeCheckoutSessionId])
   @@map("credit_purchases")
+}
+
+enum PaymentProvider {
+  PAYPAL
+  STRIPE
 }
 
 enum CreditPurchaseStatus {

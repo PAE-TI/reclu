@@ -32,8 +32,11 @@ interface Purchase {
   creditAmount: number;
   priceUSD: number;
   pricePerCredit: number;
+  paymentProvider: 'PAYPAL' | 'STRIPE';
   paypalOrderId: string | null;
   paypalPayerEmail: string | null;
+  stripeCheckoutSessionId: string | null;
+  stripePaymentIntentId: string | null;
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   invoiceNumber: string | null;
   completedAt: string | null;
@@ -113,6 +116,13 @@ export function CreditSalesCard() {
     }
   };
 
+  const getProviderBadge = (provider: Purchase['paymentProvider']) => {
+    if (provider === 'STRIPE') {
+      return <Badge className="bg-sky-100 text-sky-700">Stripe</Badge>;
+    }
+    return <Badge className="bg-amber-100 text-amber-700">PayPal</Badge>;
+  };
+
   return (
     <Card className="mb-8 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
       <CardHeader className="pb-3">
@@ -186,6 +196,7 @@ export function CreditSalesCard() {
                     <th className="text-left py-3 px-2 font-medium text-gray-600">Usuario</th>
                     <th className="text-right py-3 px-2 font-medium text-gray-600">Créditos</th>
                     <th className="text-right py-3 px-2 font-medium text-gray-600">Monto</th>
+                    <th className="text-center py-3 px-2 font-medium text-gray-600">Proveedor</th>
                     <th className="text-center py-3 px-2 font-medium text-gray-600">Estado</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-600">Factura</th>
                   </tr>
@@ -215,6 +226,9 @@ export function CreditSalesCard() {
                       </td>
                       <td className="py-3 px-2 text-right">
                         <span className="font-semibold text-green-700">${purchase.priceUSD.toFixed(2)}</span>
+                      </td>
+                      <td className="py-3 px-2 text-center">
+                        {getProviderBadge(purchase.paymentProvider)}
                       </td>
                       <td className="py-3 px-2 text-center">
                         {getStatusBadge(purchase.status)}
