@@ -1374,28 +1374,48 @@ export default function AdminPage() {
         </TabsContent>
 
         <TabsContent value="technical" className="space-y-6">
-          <Card className="mb-0 border-sky-200 bg-gradient-to-br from-sky-50 to-blue-50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Code className="w-5 h-5 text-sky-600" />
-                <span className="text-sky-900">Gestión de Pruebas Técnicas</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">Banco de Preguntas Técnicas</h4>
-                  <p className="text-sm text-gray-600">
-                    Administra las preguntas técnicas para evaluaciones por cargo. Crea, edita y elimina preguntas con soporte bilingüe.
+          <Card className="overflow-hidden border-sky-200 bg-gradient-to-br from-sky-50 via-white to-blue-50 shadow-sm">
+            <CardContent className="p-6">
+              <div className="grid gap-6 lg:grid-cols-[1.35fr_0.95fr]">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-sky-700">
+                    <Code className="w-3.5 h-3.5" />
+                    Pruebas técnicas
+                  </div>
+                  <h3 className="mt-4 text-2xl font-semibold text-slate-900">
+                    Banco de preguntas, cargos y plantillas en un solo centro
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+                    Administra preguntas, revisa cobertura por cargo y entra a las plantillas técnicas desde una vista más limpia, rápida y fácil de operar.
                   </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Button onClick={() => router.push('/admin/technical-questions?tab=overview')} className="bg-sky-600 hover:bg-sky-700">
+                      <FileCode className="w-4 h-4 mr-2" />
+                      Abrir panel técnico
+                    </Button>
+                    <Button variant="outline" onClick={() => router.push('/admin/technical-questions?tab=questions')}>
+                      Banco de preguntas
+                    </Button>
+                    <Button variant="outline" onClick={() => router.push('/admin/technical-questions?tab=templates')}>
+                      Plantillas
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  onClick={() => router.push('/admin/technical-questions')}
-                  className="bg-sky-600 hover:bg-sky-700"
-                >
-                  <FileCode className="w-4 h-4 mr-2" />
-                  Gestionar Preguntas
-                </Button>
+
+                <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                  <div className="rounded-2xl border border-white/80 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-600">Crear</p>
+                    <p className="mt-2 text-sm text-slate-700">Nueva pregunta técnica con soporte bilingüe.</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/80 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-600">Cobertura</p>
+                    <p className="mt-2 text-sm text-slate-700">Revisa cargos cubiertos y nivel de dificultad.</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/80 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-600">Plantillas</p>
+                    <p className="mt-2 text-sm text-slate-700">Sets reutilizables para enviar pruebas más rápido.</p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
