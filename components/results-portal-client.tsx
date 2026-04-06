@@ -260,6 +260,7 @@ function renderExecutiveReading(type: PortalEvaluationType, result: any, languag
 function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en') {
   const result = record.result as any;
   if (!result) return null;
+  const executiveReading = renderExecutiveReading(record.type, result, language);
 
   switch (record.type) {
     case 'disc':
@@ -298,6 +299,12 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-sky-50 p-4">
+            <p className="text-sm font-semibold text-sky-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
         </div>
       );
     case 'driving-forces':
@@ -329,6 +336,12 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-emerald-50 p-4">
+            <p className="text-sm font-semibold text-emerald-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
         </div>
       );
     case 'eq':
@@ -356,6 +369,36 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-rose-50 p-4">
+            <p className="text-sm font-semibold text-rose-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
+          {(Array.isArray(result.strengths) || Array.isArray(result.developmentAreas)) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {Array.isArray(result.strengths) && result.strengths.length > 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-sm font-semibold text-emerald-900">Fortalezas</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.strengths.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.developmentAreas) && result.developmentAreas.length > 0 && (
+                <div className="rounded-2xl bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-amber-900">Áreas de desarrollo</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.developmentAreas.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-amber-700 border border-amber-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     case 'dna':
@@ -383,6 +426,36 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-teal-50 p-4">
+            <p className="text-sm font-semibold text-teal-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
+          {(Array.isArray(result.primaryStrengths) || Array.isArray(result.developmentAreas)) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {Array.isArray(result.primaryStrengths) && result.primaryStrengths.length > 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-sm font-semibold text-emerald-900">Competencias destacadas</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.primaryStrengths.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.developmentAreas) && result.developmentAreas.length > 0 && (
+                <div className="rounded-2xl bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-amber-900">Áreas de desarrollo</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.developmentAreas.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-amber-700 border border-amber-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     case 'acumen':
@@ -413,6 +486,36 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-amber-50 p-4">
+            <p className="text-sm font-semibold text-amber-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
+          {(Array.isArray(result.primaryStrengths) || Array.isArray(result.developmentAreas)) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {Array.isArray(result.primaryStrengths) && result.primaryStrengths.length > 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-sm font-semibold text-emerald-900">Fortalezas</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.primaryStrengths.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.developmentAreas) && result.developmentAreas.length > 0 && (
+                <div className="rounded-2xl bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-amber-900">Áreas de desarrollo</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.developmentAreas.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-amber-700 border border-amber-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     case 'values':
@@ -441,6 +544,46 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-violet-50 p-4">
+            <p className="text-sm font-semibold text-violet-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
+          {(Array.isArray(result.primaryValues) || Array.isArray(result.situationalValues) || Array.isArray(result.indifferentValues)) && (
+            <div className="grid gap-4 md:grid-cols-3">
+              {Array.isArray(result.primaryValues) && result.primaryValues.length > 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-sm font-semibold text-emerald-900">Valores primarios</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.primaryValues.slice(0, 4).map((item: string) => (
+                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.situationalValues) && result.situationalValues.length > 0 && (
+                <div className="rounded-2xl bg-sky-50 p-4">
+                  <p className="text-sm font-semibold text-sky-900">Valores situacionales</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.situationalValues.slice(0, 4).map((item: string) => (
+                      <Badge key={item} className="bg-white text-sky-700 border border-sky-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.indifferentValues) && result.indifferentValues.length > 0 && (
+                <div className="rounded-2xl bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-amber-900">Valores indiferentes</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.indifferentValues.slice(0, 4).map((item: string) => (
+                      <Badge key={item} className="bg-white text-amber-700 border border-amber-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     case 'stress':
@@ -468,6 +611,36 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
               ))}
             </div>
           </div>
+          <div className="rounded-2xl bg-orange-50 p-4">
+            <p className="text-sm font-semibold text-orange-900">Lectura ejecutiva</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              {executiveReading}
+            </p>
+          </div>
+          {(Array.isArray(result.protectiveFactors) || Array.isArray(result.riskFactors)) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {Array.isArray(result.protectiveFactors) && result.protectiveFactors.length > 0 && (
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-sm font-semibold text-emerald-900">Factores protectores</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.protectiveFactors.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {Array.isArray(result.riskFactors) && result.riskFactors.length > 0 && (
+                <div className="rounded-2xl bg-rose-50 p-4">
+                  <p className="text-sm font-semibold text-rose-900">Factores de riesgo</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.riskFactors.slice(0, 6).map((item: string) => (
+                      <Badge key={item} className="bg-white text-rose-700 border border-rose-200">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     case 'technical':
