@@ -55,6 +55,7 @@ export default function PurchaseCreditsPage() {
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalError, setPaypalError] = useState(false);
   const [stripeProcessing, setStripeProcessing] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<'PAYPAL' | 'STRIPE' | null>(null);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
   const [purchaseResult, setPurchaseResult] = useState<{
     creditAmount: number;
@@ -97,6 +98,17 @@ export default function PurchaseCreditsPage() {
         if (data.minCredits) {
           setCreditAmount(Math.max(data.minCredits, 50));
         }
+        setSelectedProvider((current) => {
+          if (current && (
+            (current === 'PAYPAL' && data.paypalEnabled) ||
+            (current === 'STRIPE' && data.stripeEnabled)
+          )) {
+            return current;
+          }
+          if (data.stripeEnabled) return 'STRIPE';
+          if (data.paypalEnabled) return 'PAYPAL';
+          return null;
+        });
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -239,10 +251,10 @@ export default function PurchaseCreditsPage() {
   };
 
   useEffect(() => {
-    if (paypalLoaded && settings?.paypalClientId) {
+    if (selectedProvider === 'PAYPAL' && paypalLoaded && settings?.paypalClientId) {
       renderPayPalButton();
     }
-  }, [paypalLoaded, settings?.paypalClientId, creditAmount, renderPayPalButton]);
+  }, [selectedProvider, paypalLoaded, settings?.paypalClientId, creditAmount, renderPayPalButton]);
 
   // Timeout para detectar si PayPal no carga
   useEffect(() => {
@@ -257,6 +269,43 @@ export default function PurchaseCreditsPage() {
   }, [settings?.paypalClientId, paypalLoaded, paypalError]);
 
   const totalPrice = settings ? (creditAmount * settings.pricePerCredit).toFixed(2) : '0.00';
+  const canUsePayPal = Boolean(settings?.paypalEnabled && settings?.paypalClientId);
+  const canUseStripe = Boolean(settings?.stripeEnabled && settings?.stripeConfigured);
+
+  const providerCards = [
+    {
+      id: 'PAYPAL' as const,
+      name: 'PayPal',
+      title: language === 'es' ? 'Rápido y familiar' : 'Fast and familiar',
+      description: language === 'es'
+        ? 'Ideal si prefieres una experiencia conocida con soporte de tarjeta o cuenta PayPal.'
+        : 'Ideal if you prefer a familiar experience with PayPal account or card support.',
+      badge: language === 'es' ? 'Más usado' : 'Most familiar',
+      accent: 'from-amber-500 to-yellow-500',
+      border: 'border-amber-200',
+      bg: 'bg-amber-50',
+      available: canUsePayPal,
+      features: language === 'es'
+        ? ['Checkout estándar de PayPal', 'Pago con tarjeta si está habilitado', 'Flujo directo y conocido']
+        : ['Standard PayPal checkout', 'Card payment if enabled', 'Direct familiar flow'],
+    },
+    {
+      id: 'STRIPE' as const,
+      name: 'Stripe',
+      title: language === 'es' ? 'Moderno y elegante' : 'Modern and elegant',
+      description: language === 'es'
+        ? 'Recomendado si buscas una experiencia más limpia, rápida y optimizada para tarjeta.'
+        : 'Recommended if you want a cleaner, faster, card-first checkout experience.',
+      badge: language === 'es' ? 'Recomendado' : 'Recommended',
+      accent: 'from-sky-500 to-cyan-500',
+      border: 'border-sky-200',
+      bg: 'bg-sky-50',
+      available: canUseStripe,
+      features: language === 'es'
+        ? ['Checkout de tarjeta profesional', 'Redirección segura a Stripe', 'Experiencia más moderna']
+        : ['Professional card checkout', 'Secure redirect to Stripe', 'More modern experience'],
+    },
+  ];
 
   // Calcular escalas dinámicas basadas en min/max
   const calculatePresetAmounts = (): number[] => {
@@ -497,28 +546,87 @@ export default function PurchaseCreditsPage() {
                   </div>
                 </div>
 
-                {/* PayPal Button */}
-                <div className="pt-4 space-y-4">
-                  {(settings?.paypalEnabled && settings?.paypalClientId) && (
-                    <div className="rounded-2xl border border-indigo-100 bg-white p-4 shadow-sm">
-                      <div className="mb-3 flex items-center justify-between">
+                <div className="pt-4 space-y-5">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {providerCards.map((provider) => (
+                      <button
+                        key={provider.id}
+                        type="button"
+                        onClick={() => provider.available && setSelectedProvider(provider.id)}
+                        disabled={!provider.available}
+                        className={`group rounded-3xl border p-5 text-left transition-all ${
+                          selectedProvider === provider.id
+                            ? `${provider.border} ${provider.bg} shadow-lg ring-2 ring-offset-2 ring-slate-100`
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                        } ${!provider.available ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                              {provider.name}
+                            </p>
+                            <h3 className="mt-2 text-lg font-semibold text-slate-900">{provider.title}</h3>
+                          </div>
+                          <Badge className={selectedProvider === provider.id ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}>
+                            {provider.badge}
+                          </Badge>
+                        </div>
+                        <p className="mt-3 text-sm leading-6 text-slate-600">{provider.description}</p>
+                        <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                          {provider.features.map((feature) => (
+                            <li key={feature} className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-emerald-500" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-5 flex items-center justify-between">
+                          <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
+                            {provider.available
+                              ? (language === 'es' ? 'Disponible' : 'Available')
+                              : (language === 'es' ? 'No disponible' : 'Unavailable')}
+                          </span>
+                          <span className={`h-2.5 w-2.5 rounded-full ${provider.available ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {!selectedProvider && (
+                    <Alert className="border-slate-200 bg-slate-50">
+                      <AlertCircle className="h-4 w-4 text-slate-600" />
+                      <AlertDescription className="text-slate-700 text-sm">
+                        {language === 'es'
+                          ? 'Selecciona un método de pago para continuar.'
+                          : 'Choose a payment method to continue.'}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {selectedProvider === 'PAYPAL' && canUsePayPal && (
+                    <div className="rounded-3xl border border-amber-100 bg-white p-5 shadow-sm">
+                      <div className="mb-4 flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-900">PayPal</p>
-                          <p className="text-sm text-slate-500">{language === 'es' ? 'Pago rápido con tu cuenta PayPal o tarjeta.' : 'Fast checkout with PayPal or card.'}</p>
+                          <p className="text-sm text-slate-500">
+                            {language === 'es'
+                              ? 'Pago rápido con PayPal o tarjeta.'
+                              : 'Fast checkout with PayPal or card.'}
+                          </p>
                         </div>
                         <Badge className="bg-amber-100 text-amber-700">PayPal</Badge>
                       </div>
                       {processing && (
-                        <div className="flex items-center justify-center py-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
-                          <Loader2 className="w-6 h-6 animate-spin text-indigo-600 mr-3" />
-                          <span className="text-indigo-700 font-medium">{t('purchase.processing')}</span>
+                        <div className="flex items-center justify-center py-6 rounded-2xl bg-amber-50">
+                          <Loader2 className="w-6 h-6 animate-spin text-amber-600 mr-3" />
+                          <span className="text-amber-700 font-medium">{t('purchase.processing')}</span>
                         </div>
                       )}
                       <div id="paypal-button-container" className={processing ? 'hidden' : ''}></div>
                       {!paypalLoaded && !processing && settings?.paypalClientId && !paypalError && (
-                        <div className="flex flex-col items-center justify-center py-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
-                          <Loader2 className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
-                          <span className="text-indigo-700">{t('purchase.loadingPaypal')}</span>
+                        <div className="flex flex-col items-center justify-center py-6 rounded-2xl bg-amber-50">
+                          <Loader2 className="w-6 h-6 animate-spin text-amber-500 mb-2" />
+                          <span className="text-amber-700">{t('purchase.loadingPaypal')}</span>
                         </div>
                       )}
                       {paypalError && !paypalLoaded && (
@@ -542,28 +650,36 @@ export default function PurchaseCreditsPage() {
                     </div>
                   )}
 
-                  {(settings?.stripeEnabled && settings?.stripeConfigured) && (
-                    <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                      <div className="mb-3 flex items-center justify-between">
+                  {selectedProvider === 'STRIPE' && canUseStripe && (
+                    <div className="rounded-3xl border border-sky-100 bg-white p-5 shadow-sm">
+                      <div className="mb-4 flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-900">Stripe</p>
-                          <p className="text-sm text-slate-500">{language === 'es' ? 'Checkout seguro y profesional con tarjeta.' : 'Secure, professional card checkout.'}</p>
+                          <p className="text-sm text-slate-500">
+                            {language === 'es'
+                              ? 'Checkout moderno y más limpio para tarjetas.'
+                              : 'Modern, clean card-first checkout.'}
+                          </p>
                         </div>
                         <Badge className="bg-sky-100 text-sky-700">Stripe</Badge>
                       </div>
-                      <Button
-                        onClick={handleStripeCheckout}
-                        disabled={stripeProcessing || processing}
-                        className="w-full bg-sky-600 hover:bg-sky-700 text-white"
-                      >
-                        {stripeProcessing ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        ) : (
-                          <CreditCard className="w-4 h-4 mr-2" />
-                        )}
-                        {stripeProcessing ? (language === 'es' ? 'Redirigiendo...' : 'Redirecting...') : (language === 'es' ? 'Pagar con Stripe' : 'Pay with Stripe')}
-                      </Button>
-                      <p className="mt-2 text-xs text-slate-500">
+                      <div className="rounded-2xl bg-sky-50 p-4">
+                        <Button
+                          onClick={handleStripeCheckout}
+                          disabled={stripeProcessing || processing}
+                          className="w-full bg-sky-600 hover:bg-sky-700 text-white"
+                        >
+                          {stripeProcessing ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          ) : (
+                            <CreditCard className="w-4 h-4 mr-2" />
+                          )}
+                          {stripeProcessing
+                            ? (language === 'es' ? 'Redirigiendo...' : 'Redirecting...')
+                            : (language === 'es' ? 'Continuar con Stripe' : 'Continue with Stripe')}
+                        </Button>
+                      </div>
+                      <p className="mt-3 text-xs text-slate-500">
                         {settings.stripeMode === 'live'
                           ? (language === 'es' ? 'Modo producción activo.' : 'Live mode active.')
                           : (language === 'es' ? 'Modo de pruebas activo.' : 'Test mode active.')}
@@ -571,7 +687,7 @@ export default function PurchaseCreditsPage() {
                     </div>
                   )}
 
-                  {!settings?.paypalEnabled && !settings?.stripeEnabled && (
+                  {!selectedProvider && !canUsePayPal && !canUseStripe && (
                     <Alert className="border-red-300 bg-gradient-to-r from-red-50 to-rose-50">
                       <AlertCircle className="h-4 w-4 text-red-600" />
                       <AlertDescription className="text-red-800 text-sm">
