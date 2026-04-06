@@ -467,9 +467,9 @@ export default function ResultsPortalClient() {
   const isAuthenticated = Boolean(accessEmail);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[420px_minmax(0,1fr)]">
+    <div className="min-h-screen">
+      <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
           <Card className="border-slate-200 bg-white/95 shadow-xl shadow-slate-200/50">
             <CardHeader className="space-y-3 border-b border-slate-100 bg-gradient-to-r from-slate-950 to-indigo-950 text-white">
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-100">
@@ -486,7 +486,7 @@ export default function ResultsPortalClient() {
               </p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl bg-slate-50 p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total</p>
                   <p className="mt-1 text-2xl font-bold text-slate-900">{counts.total}</p>
@@ -526,7 +526,7 @@ export default function ResultsPortalClient() {
                   </form>
 
                   {codeRequestedFor && (
-                    <form onSubmit={handleVerifyCode} className="space-y-4 rounded-3xl border border-indigo-100 bg-indigo-50/60 p-4">
+                    <form onSubmit={handleVerifyCode} className="space-y-4 rounded-3xl border border-indigo-100 bg-indigo-50/60 p-4 shadow-sm">
                       <div>
                         <p className="text-sm font-semibold text-indigo-900">
                           {language === 'es' ? 'Ya enviamos el acceso' : 'Access sent'}
@@ -551,11 +551,11 @@ export default function ResultsPortalClient() {
                     </form>
                   )}
 
-                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                    <p className="text-sm font-semibold text-slate-900">
-                      {language === 'es' ? '¿Cómo funciona?' : 'How it works'}
-                    </p>
-                    <ol className="mt-3 space-y-2 text-sm text-slate-600">
+                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {language === 'es' ? '¿Cómo funciona?' : 'How it works'}
+                      </p>
+                      <ol className="mt-3 space-y-2 text-sm text-slate-600">
                       <li>1. Ingresa tu correo.</li>
                       <li>2. Recibe un código y un enlace seguro.</li>
                       <li>3. Revisa tus evaluaciones y descargas.</li>
@@ -595,6 +595,11 @@ export default function ResultsPortalClient() {
                   <FolderKanban className="h-5 w-5 text-indigo-600" />
                   {language === 'es' ? 'Mis evaluaciones' : 'My assessments'}
                 </CardTitle>
+                <p className="text-sm text-slate-500">
+                  {language === 'es'
+                    ? 'Tus pruebas aparecen ordenadas por fecha. Usa los filtros para ver solo lo que necesitas.'
+                    : 'Your assessments are ordered by date. Use filters to narrow down what you need.'}
+                </p>
               </CardHeader>
               <CardContent className="p-5">
                 <div className="flex flex-wrap gap-2">
@@ -656,7 +661,7 @@ export default function ResultsPortalClient() {
 
                   return (
                     <Card key={record.token} className="border-slate-200 bg-white shadow-lg">
-                      <CardHeader className={`border-b ${accent.border} ${accent.bg}`}>
+                      <CardHeader className={`border-b ${accent.border} ${accent.bg} px-4 py-5 sm:px-6`}>
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                           <div className="flex items-start gap-4">
                             <div className={`rounded-2xl border ${accent.border} bg-white p-3 ${accent.icon}`}>
@@ -680,7 +685,7 @@ export default function ResultsPortalClient() {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 lg:justify-end">
                             {record.status === 'COMPLETED' && (
                               <Button variant="outline" size="sm" onClick={() => handleDownloadPdf(record)}>
                                 <Download className="mr-2 h-4 w-4" />
@@ -704,7 +709,7 @@ export default function ResultsPortalClient() {
                         </div>
                       </CardHeader>
 
-                      <CardContent className="space-y-5 p-5">
+                      <CardContent className="space-y-5 px-4 py-5 sm:px-6">
                         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                           {record.summary.metrics.slice(0, 4).map((metric) => (
                             <div key={`${record.token}-${metric.label}`} className="rounded-2xl bg-slate-50 p-4">
