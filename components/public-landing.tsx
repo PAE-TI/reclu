@@ -95,12 +95,6 @@ export default function PublicLanding() {
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link href="/mis-resultados">
-                  <Button variant="outline" size="lg" className="text-lg px-8 py-6 rounded-xl border-2 border-white/20 text-white bg-white/5 hover:bg-white/10 w-full sm:w-auto">
-                    <Search className="w-5 h-5 mr-2" />
-                    {language === 'es' ? 'Ver mis resultados' : 'View my results'}
-                  </Button>
-                </Link>
                 <Link href="/#como-funciona">
                   <Button variant="outline" size="lg" className="text-lg px-8 py-6 rounded-xl border-2 border-white/20 text-white bg-white/5 hover:bg-white/10 w-full sm:w-auto">
                     <Play className="w-5 h-5 mr-2" />

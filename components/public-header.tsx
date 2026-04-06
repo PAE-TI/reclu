@@ -196,6 +196,11 @@ export default function PublicHeader() {
             <Link href="/auth/signin">
               <Button variant="ghost" className="text-gray-700 hover:text-indigo-600">{t('header.login')}</Button>
             </Link>
+            <Link href="/mis-resultados">
+              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                {language === 'es' ? 'Ver mis resultados' : 'View my results'}
+              </Button>
+            </Link>
             <Link href="/auth/signup">
               <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25">
                 {t('header.startFree')}
@@ -310,6 +315,11 @@ export default function PublicHeader() {
             <div className="pt-4 border-t border-gray-100 space-y-2">
               <Link href="/auth/signin" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button variant="outline" className="w-full">{t('header.login')}</Button>
+              </Link>
+              <Link href="/mis-resultados" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                  {language === 'es' ? 'Ver mis resultados' : 'View my results'}
+                </Button>
               </Link>
               <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600">{t('header.startFree')}</Button>
