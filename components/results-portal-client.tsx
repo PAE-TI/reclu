@@ -218,6 +218,45 @@ function renderTechnicalDetails(result: any, language: 'es' | 'en') {
   );
 }
 
+function renderExecutiveReading(type: PortalEvaluationType, result: any, language: 'es' | 'en') {
+  if (!result) return null;
+
+  const score = Math.round(
+    type === 'technical'
+      ? result.totalScore || 0
+      : type === 'eq'
+        ? result.totalScore || result.overallEQ || 0
+        : type === 'dna'
+          ? result.totalDNAPercentile || 0
+          : type === 'acumen'
+            ? result.totalAcumenScore || 0
+            : type === 'values'
+              ? result.totalValuesScore || result.integrityScore || 0
+              : type === 'stress'
+                ? result.indiceResiliencia || result.resilienceIndex || 0
+                : 0
+  );
+
+  const text =
+    score >= 80
+      ? language === 'es'
+        ? 'Desempeño sobresaliente. La lectura general muestra una base fuerte y consistente.'
+        : 'Outstanding performance. The overall reading shows a strong and consistent base.'
+      : score >= 60
+        ? language === 'es'
+          ? 'Desempeño sólido. Hay una base positiva con oportunidades puntuales de mejora.'
+          : 'Solid performance. There is a positive base with specific opportunities for improvement.'
+        : score >= 40
+          ? language === 'es'
+            ? 'Desempeño en desarrollo. Conviene complementar con una revisión más profunda.'
+            : 'Developing performance. It is worth complementing with a deeper review.'
+          : language === 'es'
+            ? 'Desempeño bajo. La validación adicional es recomendable antes de avanzar.'
+            : 'Low performance. Additional validation is recommended before moving forward.';
+
+  return text;
+}
+
 function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | 'en') {
   const result = record.result as any;
   if (!result) return null;
@@ -225,73 +264,210 @@ function renderGenericDetails(record: PortalEvaluationRecord, language: 'es' | '
   switch (record.type) {
     case 'disc':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estilo principal</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">{result.primaryStyle || 'N/D'}</p>
-            <p className="text-sm text-slate-600">{result.personalityType || 'Perfil DISC'}</p>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estilo principal</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{result.primaryStyle || 'N/D'}</p>
+              <p className="text-sm text-slate-600">{result.personalityType || 'Perfil DISC'}</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Intensidad</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.styleIntensity || 0)}%</p>
+              <p className="text-sm text-slate-600">Claridad del patrón</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estilo secundario</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{result.secondaryStyle || 'N/D'}</p>
+              <p className="text-sm text-slate-600">Complemento natural</p>
+            </div>
           </div>
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Intensidad</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.styleIntensity || 0)}%</p>
-            <p className="text-sm text-slate-600">Claridad del patrón</p>
-          </div>
-          <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estilo secundario</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">{result.secondaryStyle || 'N/D'}</p>
-            <p className="text-sm text-slate-600">Complemento natural</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Dimensiones DISC</p>
+            <div className="grid gap-3 md:grid-cols-2">
+              {[
+                ['D', result.percentileD],
+                ['I', result.percentileI],
+                ['S', result.percentileS],
+                ['C', result.percentileC],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       );
     case 'driving-forces':
       return (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {(result.primaryMotivators || []).slice(0, 4).map((motivator: string, index: number) => (
-            <div key={`${motivator}-${index}`} className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Top {index + 1}</p>
-              <p className="mt-2 text-lg font-bold text-slate-900">{motivator}</p>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {(result.primaryMotivators || []).slice(0, 4).map((motivator: string, index: number) => (
+              <div key={`${motivator}-${index}`} className="rounded-2xl bg-slate-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Top {index + 1}</p>
+                <p className="mt-2 text-lg font-bold text-slate-900">{motivator}</p>
+              </div>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Lectura motivacional</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {Object.entries({
+                Teórico: result.theoretical,
+                Utilitario: result.utilitarian,
+                Estético: result.aesthetic,
+                Social: result.social,
+                Individualista: result.individualistic,
+                Tradicional: result.traditional,
+              }).map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       );
     case 'eq':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel EQ</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.eqLevel || 'N/D'}</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Autoconciencia</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.selfAwarenessPercentile || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Empatía</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.empathyPercentile || 0)}%</p></div>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel EQ</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.eqLevel || 'N/D'}</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Puntaje total</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.totalScore || result.totalEQPercentile || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Empatía</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.empathyPercentile || 0)}%</p></div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Dimensiones EQ</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {[
+                ['Autoconciencia', result.selfAwarenessPercentile],
+                ['Autorregulación', result.selfRegulationPercentile],
+                ['Motivación', result.motivationPercentile],
+                ['Empatía', result.empathyPercentile],
+                ['Habilidades sociales', result.socialSkillsPercentile],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     case 'dna':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel DNA</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.dnaLevel || 'N/D'}</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pensamiento</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.thinkingCategoryScore || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Comunicación</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.communicationCategoryScore || 0)}%</p></div>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel DNA</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.dnaLevel || 'N/D'}</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Puntaje total</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.totalDNAPercentile || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Perfil</p><p className="mt-2 text-lg font-bold text-slate-900">{result.dnaProfile || 'N/D'}</p></div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Categorías DNA</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {[
+                ['Pensamiento', result.thinkingCategoryScore],
+                ['Comunicación', result.communicationCategoryScore],
+                ['Liderazgo', result.leadershipCategoryScore],
+                ['Resultados', result.resultsCategoryScore],
+                ['Relaciones', result.relationshipCategoryScore],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     case 'acumen':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.acumenLevel || 'N/D'}</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Clarity externa</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.externalClarityScore || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Clarity interna</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.internalClarityScore || 0)}%</p></div>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.acumenLevel || 'N/D'}</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Puntaje total</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.totalAcumenScore || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Perfil</p><p className="mt-2 text-lg font-bold text-slate-900">{result.acumenProfile || 'N/D'}</p></div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Clarity por dominio</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {[
+                ['Externa', result.externalClarityScore],
+                ['Interna', result.internalClarityScore],
+                ['Otros', result.understandingOthersClarity],
+                ['Práctico', result.practicalThinkingClarity],
+                ['Sistémico', result.systemsJudgmentClarity],
+                ['Autoconocimiento', result.senseOfSelfClarity],
+                ['Dirección', result.selfDirectionClarity],
+                ['Rol', result.roleAwarenessClarity],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     case 'values':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.valuesLevel || 'N/D'}</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Integridad</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.integrityScore || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Autenticidad</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.authenticityScore || 0)}%</p></div>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nivel</p><p className="mt-2 text-2xl font-bold text-slate-900">{result.valuesLevel || 'N/D'}</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Integridad</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.integrityScore || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Autenticidad</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.authenticityScore || 0)}%</p></div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Valores y dimensiones</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {[
+                ['Teórico', result.teoricoPercentile],
+                ['Utilitario', result.utilitarioPercentile],
+                ['Estético', result.esteticoPercentile],
+                ['Social', result.socialPercentile],
+                ['Individual', result.individualistaPercentile],
+                ['Tradicional', result.tradicionalPercentile],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     case 'stress':
       return (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estrés general</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.nivelEstresGeneral || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Resiliencia</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.indiceResiliencia || 0)}%</p></div>
-          <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Adaptación</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.capacidadAdaptacion || 0)}%</p></div>
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Estrés general</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.nivelEstresGeneral || result.generalStressLevel || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Resiliencia</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.indiceResiliencia || result.resilienceIndex || 0)}%</p></div>
+            <div className="rounded-2xl bg-slate-50 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Adaptación</p><p className="mt-2 text-2xl font-bold text-slate-900">{Math.round(result.capacidadAdaptacion || 0)}%</p></div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-3 text-sm font-semibold text-slate-900">Dimensiones de estrés</p>
+            <div className="grid gap-2 md:grid-cols-2">
+              {[
+                ['Estrés laboral', result.estresLaboralScore || result.workStress],
+                ['Manejo emocional', result.manejoEmocionalScore || result.emotionalManagement],
+                ['Recuperación', result.capacidadRecuperacionScore || result.recoveryCapacity],
+                ['Apoyo social', result.apoyoSocialScore || result.socialSupport],
+                ['Afrontamiento', result.estrategiasAfrontamientoScore || result.copingStrategies],
+              ].map(([label, value]) => (
+                <div key={label as string} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-slate-900">{Math.round((value as number) || 0)}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     case 'technical':
@@ -719,6 +895,21 @@ export default function ResultsPortalClient() {
                                 </div>
                               )}
 
+                              {Array.isArray((result as any)?.strengths) && (result as any).strengths.length > 0 && (
+                                <div className="rounded-2xl bg-emerald-50 p-4">
+                                  <p className="text-sm font-semibold text-emerald-900">
+                                    {language === 'es' ? 'Fortalezas principales' : 'Primary strengths'}
+                                  </p>
+                                  <div className="mt-3 flex flex-wrap gap-2">
+                                    {(result as any).strengths.slice(0, 6).map((item: string) => (
+                                      <Badge key={item} className="bg-white text-emerald-700 border border-emerald-200">
+                                        {item}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
                               {Array.isArray((result as any)?.developmentAreas) && (result as any).developmentAreas.length > 0 && (
                                 <div className="rounded-2xl bg-amber-50 p-4">
                                   <p className="text-sm font-semibold text-amber-900">
@@ -726,6 +917,21 @@ export default function ResultsPortalClient() {
                                   </p>
                                   <div className="mt-3 flex flex-wrap gap-2">
                                     {(result as any).developmentAreas.slice(0, 6).map((item: string) => (
+                                      <Badge key={item} className="bg-white text-amber-700 border border-amber-200">
+                                        {item}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {Array.isArray((result as any)?.weaknesses) && (result as any).weaknesses.length > 0 && (
+                                <div className="rounded-2xl bg-amber-50 p-4">
+                                  <p className="text-sm font-semibold text-amber-900">
+                                    {language === 'es' ? 'Áreas de desarrollo' : 'Development areas'}
+                                  </p>
+                                  <div className="mt-3 flex flex-wrap gap-2">
+                                    {(result as any).weaknesses.slice(0, 6).map((item: string) => (
                                       <Badge key={item} className="bg-white text-amber-700 border border-amber-200">
                                         {item}
                                       </Badge>
