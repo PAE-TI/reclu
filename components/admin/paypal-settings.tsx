@@ -128,14 +128,33 @@ export function PayPalSettingsCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="rounded-2xl border border-blue-100 bg-white p-4">
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h4 className="font-medium text-slate-900">PayPal listo para usar</h4>
+              <p className="text-sm text-slate-600">
+                Configura Client ID, Secret y modo. Cuando esté activo y la compra global esté encendida, aparecerá automáticamente en el checkout.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge className={isPayPalConfigured ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}>
+                {isPayPalConfigured ? 'Configurado' : 'Pendiente'}
+              </Badge>
+              <Badge className={purchasesEnabled ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}>
+                {purchasesEnabled ? 'Activo' : 'Inactivo'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
         {/* Habilitar/Deshabilitar compras */}
         <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-blue-100">
           <div>
-            <h4 className="font-medium text-gray-900">Compras de créditos activas</h4>
+            <h4 className="font-medium text-gray-900">PayPal activo</h4>
             <p className="text-sm text-gray-600">
-              {purchasesEnabled 
-                ? 'Los usuarios pueden comprar créditos con PayPal' 
-                : 'Las compras de créditos están deshabilitadas'
+              {purchasesEnabled
+                ? 'Los usuarios pueden comprar créditos con PayPal cuando la compra global está activa.'
+                : 'PayPal está oculto en el checkout'
               }
             </p>
           </div>
@@ -143,8 +162,8 @@ export function PayPalSettingsCard() {
             checked={purchasesEnabled}
             onCheckedChange={(checked) => {
               setPurchasesEnabled(checked);
-              saveSetting('credit_purchases_enabled', String(checked), 
-                checked ? 'Compras habilitadas' : 'Compras deshabilitadas');
+              saveSetting('paypal_enabled', String(checked),
+                checked ? 'PayPal habilitado' : 'PayPal deshabilitado');
             }}
             disabled={!isPayPalConfigured || saving !== null}
             className="data-[state=checked]:bg-green-500"

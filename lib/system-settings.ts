@@ -4,6 +4,7 @@ export const SYSTEM_SETTING_DEFAULTS = {
   defaultUserActive: 'true',
   defaultCredits: '100',
   creditsPerEvaluation: '2',
+  creditPurchasesEnabled: 'true',
   signupEnabled: 'true',
   passwordMinLength: '8',
   loginMaxAttempts: '5',
@@ -17,6 +18,7 @@ export const SYSTEM_SETTING_DESCRIPTIONS: Record<string, string> = {
   defaultUserActive: 'Define si los nuevos usuarios registrados quedan activos automáticamente',
   defaultCredits: 'Créditos iniciales que reciben los nuevos usuarios al registrarse',
   creditsPerEvaluation: 'Créditos que se descuentan al enviar cada evaluación',
+  creditPurchasesEnabled: 'Activa o desactiva la compra de créditos desde la tienda pública',
   signupEnabled: 'Permite o bloquea el registro de nuevos usuarios',
   passwordMinLength: 'Longitud mínima requerida para contraseñas nuevas y cambios de contraseña',
   loginMaxAttempts: 'Cantidad máxima de intentos fallidos antes de bloquear temporalmente una cuenta',
@@ -28,6 +30,7 @@ export const SYSTEM_SETTING_DESCRIPTIONS: Record<string, string> = {
 
 export const SECURITY_SETTINGS_KEYS = [
   'signupEnabled',
+  'creditPurchasesEnabled',
   'defaultUserActive',
   'passwordMinLength',
   'loginMaxAttempts',
@@ -87,7 +90,7 @@ export function getNumberSetting(
 export function normalizeSettingValue(key: string, value: unknown) {
   if (key in SYSTEM_SETTING_DEFAULTS) {
     if (typeof SYSTEM_SETTING_DEFAULTS[key as SystemSettingKey] === 'string') {
-      if (key === 'defaultUserActive' || key === 'signupEnabled' || key === 'allowExternalPdfExport') {
+      if (key === 'defaultUserActive' || key === 'signupEnabled' || key === 'allowExternalPdfExport' || key === 'creditPurchasesEnabled') {
         return value === true || value === 'true' ? 'true' : 'false';
       }
     }

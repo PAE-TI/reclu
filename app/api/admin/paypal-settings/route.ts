@@ -21,6 +21,7 @@ export async function GET() {
             'paypal_mode',
             'credit_price_usd',
             'credit_purchases_enabled',
+            'paypal_enabled',
             'min_credits_purchase',
             'max_credits_purchase'
           ]
@@ -46,7 +47,9 @@ export async function GET() {
         clientSecretConfigured: settingsMap['paypal_client_secret_configured'] === 'true',
         mode: settingsMap['paypal_mode'] || 'sandbox',
         creditPriceUSD: parseFloat(settingsMap['credit_price_usd'] || '0.10'),
-        purchasesEnabled: settingsMap['credit_purchases_enabled'] === 'true',
+        purchasesEnabled: Object.prototype.hasOwnProperty.call(settingsMap, 'paypal_enabled')
+          ? settingsMap['paypal_enabled'] === 'true'
+          : settingsMap['credit_purchases_enabled'] === 'true',
         minCredits: parseInt(settingsMap['min_credits_purchase'] || '10'),
         maxCredits: parseInt(settingsMap['max_credits_purchase'] || '1000')
       }
@@ -75,6 +78,7 @@ export async function PUT(request: NextRequest) {
       'paypal_mode',
       'credit_price_usd',
       'credit_purchases_enabled',
+      'paypal_enabled',
       'min_credits_purchase',
       'max_credits_purchase'
     ];

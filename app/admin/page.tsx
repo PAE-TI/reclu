@@ -43,6 +43,7 @@ import {
   Crown,
   Settings,
   Coins,
+  CreditCard,
   Plus,
   UsersRound,
   Link2,
@@ -194,6 +195,7 @@ export default function AdminPage() {
   const [defaultUserActive, setDefaultUserActive] = useState(true);
   const [defaultCredits, setDefaultCredits] = useState(100);
   const [creditsPerEvaluation, setCreditsPerEvaluation] = useState(2);
+  const [creditPurchasesEnabled, setCreditPurchasesEnabled] = useState(true);
   const [signupEnabled, setSignupEnabled] = useState(true);
   const [passwordMinLength, setPasswordMinLength] = useState(8);
   const [loginMaxAttempts, setLoginMaxAttempts] = useState(5);
@@ -233,6 +235,7 @@ export default function AdminPage() {
         setDefaultUserActive(data.settings.defaultUserActive === 'true');
         setDefaultCredits(parseInt(data.settings.defaultCredits || '100'));
         setCreditsPerEvaluation(parseInt(data.settings.creditsPerEvaluation || '2'));
+        setCreditPurchasesEnabled(data.settings.creditPurchasesEnabled !== 'false');
         setSignupEnabled(data.settings.signupEnabled !== 'false');
         setPasswordMinLength(parseInt(data.settings.passwordMinLength || '8'));
         setLoginMaxAttempts(parseInt(data.settings.loginMaxAttempts || '5'));
@@ -279,6 +282,15 @@ export default function AdminPage() {
   const updateCreditsPerEvaluation = async (value: number) => {
     setCreditsPerEvaluation(value);
     await updateSetting('creditsPerEvaluation', String(value), `Créditos por evaluación: ${value}`);
+  };
+
+  const updateCreditPurchasesEnabled = async (value: boolean) => {
+    setCreditPurchasesEnabled(value);
+    await updateSetting(
+      'creditPurchasesEnabled',
+      String(value),
+      value ? 'Compras de créditos habilitadas' : 'Compras de créditos deshabilitadas'
+    );
   };
 
   const updateSignupEnabled = async (value: boolean) => {
@@ -1255,6 +1267,35 @@ export default function AdminPage() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
+          <Card className="mb-0 border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-slate-600" />
+                <span className="text-slate-900">Canal de pagos</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h4 className="font-medium text-slate-900 mb-1">Compras de créditos activas</h4>
+                  <p className="text-sm text-slate-600">
+                    Activa o desactiva la compra pública de créditos sin tocar la configuración de cada proveedor.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge className={creditPurchasesEnabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}>
+                    {creditPurchasesEnabled ? 'Activas' : 'Desactivadas'}
+                  </Badge>
+                  <Switch
+                    checked={creditPurchasesEnabled}
+                    onCheckedChange={(checked) => updateCreditPurchasesEnabled(checked)}
+                    disabled={savingSettings}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="mb-0 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">

@@ -104,8 +104,8 @@ export function StripeSettingsCard() {
             <h4 className="font-medium text-gray-900">Compras de créditos con Stripe activas</h4>
             <p className="text-sm text-gray-600">
               {purchasesEnabled
-                ? 'Los usuarios pueden comprar créditos con Stripe'
-                : 'Las compras de créditos con Stripe están deshabilitadas'}
+                ? 'Los usuarios pueden comprar créditos con Stripe cuando la compra global esté activa.'
+                : 'Stripe no aparecerá en el checkout hasta activarlo aquí.'}
             </p>
           </div>
           <Switch
@@ -194,7 +194,7 @@ export function StripeSettingsCard() {
             </h4>
 
             <div className="rounded-2xl border border-cyan-100 bg-white p-4">
-              <p className="text-sm text-gray-600">Stripe se mostrará en el checkout cuando esté activado y tenga la Secret Key configurada.</p>
+              <p className="text-sm text-gray-600">Stripe se mostrará en el checkout cuando esté activado, tenga la Secret Key configurada y la compra global esté encendida.</p>
               <div className="mt-4 flex items-center gap-2">
                 <Badge className={isStripeConfigured ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}>
                   {isStripeConfigured ? 'Listo para usar' : 'Falta configuración'}

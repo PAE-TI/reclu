@@ -44,7 +44,7 @@ export async function getPaymentSettingsMap(): Promise<PaymentSettingsMap> {
 
   return {
     creditPriceUSD: parseFloat(settingsMap.credit_price_usd || '0.10'),
-    creditPurchasesEnabled: settingsMap.credit_purchases_enabled === 'true',
+    creditPurchasesEnabled: settingsMap.credit_purchases_enabled ? settingsMap.credit_purchases_enabled === 'true' : true,
     minCredits: parseInt(settingsMap.min_credits_purchase || '10', 10),
     maxCredits: parseInt(settingsMap.max_credits_purchase || '1000', 10),
     paypalClientId: settingsMap.paypal_client_id || '',
